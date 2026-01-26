@@ -32,7 +32,7 @@ export const TopNavBar = () => {
           <img
             src={hdj_logo}
             alt="hameau_des_jeunes_logo"
-            className="h-[60px] w-[60px]"
+            className="h-15 w-15"
           />
         </div>
         <p className="font-heading text-xl font-bold">Hameau des Jeunes</p>
@@ -44,7 +44,7 @@ export const TopNavBar = () => {
             </Button>
           </SheetTrigger>
 
-          <SheetContent side="right" className="w-[280px]">
+          <SheetContent side="right" className="w-70">
             <nav className="flex flex-col gap-6 mt-10">
               {navItems.map((item) => (
                 <Link
