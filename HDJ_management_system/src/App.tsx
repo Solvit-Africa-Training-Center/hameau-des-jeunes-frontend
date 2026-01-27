@@ -1,4 +1,6 @@
 import "./App.css";
+import { AppRoutes } from "./routes/AppRoutes";
+import "./App.css";
 import { Fundraising } from "./components/Fundraising";
 import { GetInTouch } from "./components/GetInTouch";
 import { Impact } from "./components/Impact";
@@ -26,5 +28,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;
