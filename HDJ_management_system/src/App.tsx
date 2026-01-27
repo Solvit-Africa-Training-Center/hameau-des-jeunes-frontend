@@ -15,6 +15,7 @@ function App() {
     <>
       <div className="min-h-screen">
         <main className="pt-14 sm:pt-16">
+          <AppRoutes />
           <WhoWeAre />
           <WhatWeDo />
           <Impact />
