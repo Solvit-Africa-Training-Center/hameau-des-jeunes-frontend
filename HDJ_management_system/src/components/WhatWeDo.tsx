@@ -67,8 +67,7 @@ export const WhatWeDo: React.FC = () => {
             );
           })}
         </div>
-
-        {/* Explore Programs Button */}
+        
         <div className="mt-8 text-center sm:mt-10 md:mt-12">
           <button className="rounded-md border-2 border-gray-900 bg-transparent px-6 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:px-8 sm:py-3 sm:text-base">
             Explore Our Programs

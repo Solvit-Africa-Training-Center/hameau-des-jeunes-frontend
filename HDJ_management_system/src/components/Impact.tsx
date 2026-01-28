@@ -1,4 +1,3 @@
-// components/OurImpact.tsx
 import React, { useEffect, useRef, useState } from 'react';
 
 interface StatItemProps {
@@ -76,7 +75,6 @@ export const Impact: React.FC = () => {
   return (
     <section className="bg-[#1B4332] py-12 md:py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="mb-8 text-center md:mb-12">
           <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl md:text-4xl lg:text-5xl">
             Our Impact
@@ -86,7 +84,6 @@ export const Impact: React.FC = () => {
           </p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 md:gap-12">
           {stats.map((stat, index) => (
             <StatItem

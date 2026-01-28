@@ -3,7 +3,6 @@ import ourStoryImage from "@/assets/photo_story.png";
 export const OurStory = () => {
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-[#FAFAFA] px-6 md:px-16 lg:px-30 py-16">
-      {/* LEFT: TEXT */}
       <div>
         <div className="flex items-center gap-2 mb-6">
           <div className="w-8 h-1 bg-blue-400" />
@@ -35,9 +34,7 @@ export const OurStory = () => {
         </p>
       </div>
 
-      {/* RIGHT: IMAGE */}
       <div className="relative mx-auto md:mx-7 w-full max-w-lg">
-        {/* Yellow bar – hidden on small screens */}
         <div className="hidden md:block absolute -left-2.5 top-[5%]  h-[90%] w-[10px] bg-button-yellow rounded-bl-3xl rounded-tl-3xl" />
 
         <img

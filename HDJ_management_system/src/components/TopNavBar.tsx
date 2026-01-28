@@ -8,7 +8,6 @@ import { Button } from "./ui/button";
 import { Heart, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import hdj_logo from "@/assets/hameau_des_jeunes_logo.png";
-// className="flex items-center justify-center px-5 py-5 space-x-4 shadow-sm"
 
 const navItems = [
   { label: "Home", to: "/" },
@@ -23,7 +22,6 @@ const navItems = [
 export const TopNavBar = () => {
   return (
     <header className="w-full border-b bg-background">
-      {/* Mobile / Tablet */}
       <div className="flex md:hidden items-center justify-between px-4 py-4">
         <div>
           <img
@@ -63,15 +61,13 @@ export const TopNavBar = () => {
           </SheetContent>
         </Sheet>
       </div>
-
-      {/* Desktop */}
       <div className="hidden md:flex justify-center">
         <NavigationMenu className="flex gap-30">
           <div>
             <img
               src={hdj_logo}
               alt="hameau_des_jeunes_logo"
-              className="h-[60px] w-[60px]"
+              className="h-15 w-15"
             />
           </div>
           <NavigationMenuList className="flex items-center justify-center gap-10 my-6">
