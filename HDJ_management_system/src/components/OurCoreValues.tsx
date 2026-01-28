@@ -71,7 +71,7 @@ export const OurCoreValues = () => {
           const Icon = item.icon;
           return (
             <Card
-              className="bg-white drop-shadow-gray-100 rounded-xl  md:w-[300px] py-3"
+              className="bg-white drop-shadow-gray-100 rounded-xl  md:w-[300px] py-6"
               key={item.id}
             >
               <div className="bg-[#E7ECEA] rounded-lg w-10 h-10 mx-5 flex items-center justify-center text-black">
