@@ -12,9 +12,11 @@ export const OurStory = () => {
           </h1>
         </div>
 
-        <h1 className="font-bold text-3xl md:text-5xl mb-5">Who We Are</h1>
+        <h1 className="font-bold text-3xl md:text-5xl mb-5 text-[#0F3D2E]">
+          Who We Are
+        </h1>
 
-        <p className="mb-10 text-sm md:text-base leading-relaxed">
+        <p className="mb-10 text-sm md:text-base leading-relaxed text-justify">
           <span className="font-bold">Hameau des Jeunes Saint Kizito </span>
           is a youth village with a history deeply rooted in caring for Rwanda’s
           most vulnerable children. We provide residential care, education, and
@@ -24,9 +26,11 @@ export const OurStory = () => {
           run 7 core programs that combine care, learning, and livelihood.
         </p>
 
-        <h1 className="font-bold text-3xl md:text-5xl mb-5">Our Story</h1>
+        <h1 className="font-bold text-3xl md:text-5xl mb-5 text-[#0F3D2E]">
+          Our Story
+        </h1>
 
-        <p className="text-sm md:text-base leading-relaxed">
+        <p className="text-sm md:text-base leading-relaxed text-justify">
           Founded more than five decades ago by Father Hermann, what began as
           informal street outreach and skill-teaching grew into a safe haven for
           children who had nowhere else to go. With early support from friends

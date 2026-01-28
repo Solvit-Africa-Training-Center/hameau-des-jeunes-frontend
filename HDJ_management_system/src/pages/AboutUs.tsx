@@ -2,6 +2,7 @@ import { TopNavBar } from "@/components/TopNavBar";
 import aboutImage from "@/assets/hameadu_des_jeunes_community.jpeg";
 import { OurStory } from "@/components/OurStory";
 import { MissionAndVision } from "@/components/MissionAndVision";
+import { OurCoreValues } from "@/components/OurCoreValues";
 
 export const AboutUs = () => {
   return (
@@ -27,6 +28,7 @@ export const AboutUs = () => {
       </header>
       <OurStory />
       <MissionAndVision />
+      <OurCoreValues />
     </>
   );
 };
