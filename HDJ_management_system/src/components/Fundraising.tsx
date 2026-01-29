@@ -1,18 +1,15 @@
-// components/FundraisingCTA.tsx
 import React from 'react';
 
 export const Fundraising: React.FC = () => {
   return (
     <section className="relative h-100 w-full sm:h-125 md:h-150">
-      {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTslh6fJC23goQWVV7PuSvSJpCIYufTUUHeZw&s')`
         }}
       />
-      
-      {/* Content */}
+ 
       <div className="relative z-10 flex h-full items-center justify-center px-4">
         <div className="max-w-4xl text-center">
           <p className="mb-3 text-base text-white/90 sm:text-lg md:mb-4 md:text-xl">

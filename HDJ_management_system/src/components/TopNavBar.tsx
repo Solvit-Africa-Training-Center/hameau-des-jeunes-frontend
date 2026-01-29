@@ -12,7 +12,7 @@ import hdj_logo from "@/assets/hameau_des_jeunes_logo.png";
 const navItems = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "Impact", to: "/impact" },
+  { label: "Impact", to: "/OurImpact" },
   { label: "Programs", to: "/programs" },
   { label: "International Internships", to: "/internships" },
   { label: "Gallery", to: "/gallery" },

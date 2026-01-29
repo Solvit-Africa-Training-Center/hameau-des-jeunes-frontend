@@ -1,4 +1,3 @@
-// components/GetInTouch.tsx
 import React, { useState } from 'react';
 import { Mail, Phone, Clock, MapPin } from 'lucide-react';
 
@@ -27,7 +26,6 @@ export const GetInTouch: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission logic will be added later
     console.log('Form submitted:', formData);
   };
 
@@ -41,7 +39,6 @@ export const GetInTouch: React.FC = () => {
   return (
     <section className="bg-white py-12 md:py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="mb-8 text-center md:mb-12">
           <h2 className="mb-4 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
             Get in Touch
@@ -49,7 +46,6 @@ export const GetInTouch: React.FC = () => {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-          {/* Left Column - Contact Info */}
           <div>
             <h3 className="mb-4 text-xl font-bold text-gray-900 sm:text-2xl md:mb-6">
               Contact Info
@@ -59,7 +55,6 @@ export const GetInTouch: React.FC = () => {
             </p>
 
             <div className="space-y-4 md:space-y-6">
-              {/* Email */}
               <div className="flex items-start gap-3 md:gap-4">
                 <div className="rounded-lg bg-blue-50 p-2 md:p-3">
                   <Mail className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
@@ -73,7 +68,6 @@ export const GetInTouch: React.FC = () => {
                 </div>
               </div>
 
-              {/* Phone */}
               <div className="flex items-start gap-3 md:gap-4">
                 <div className="rounded-lg bg-blue-50 p-2 md:p-3">
                   <Phone className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
@@ -87,7 +81,6 @@ export const GetInTouch: React.FC = () => {
                 </div>
               </div>
 
-              {/* Office Hours */}
               <div className="flex items-start gap-3 md:gap-4">
                 <div className="rounded-lg bg-blue-50 p-2 md:p-3">
                   <Clock className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
@@ -99,7 +92,6 @@ export const GetInTouch: React.FC = () => {
                 </div>
               </div>
 
-              {/* Address */}
               <div className="flex items-start gap-3 md:gap-4">
                 <div className="rounded-lg bg-blue-50 p-2 md:p-3">
                   <MapPin className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
@@ -112,7 +104,6 @@ export const GetInTouch: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column - Contact Form */}
           <div>
             <h3 className="mb-4 text-xl font-bold text-gray-900 sm:text-2xl md:mb-6">
               Send us a message
@@ -122,7 +113,6 @@ export const GetInTouch: React.FC = () => {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-              {/* Name Fields */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="firstName" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
@@ -153,8 +143,6 @@ export const GetInTouch: React.FC = () => {
                   />
                 </div>
               </div>
-
-              {/* Email */}
               <div>
                 <label htmlFor="email" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
                   Email
@@ -169,8 +157,6 @@ export const GetInTouch: React.FC = () => {
                   placeholder="you@example.com"
                 />
               </div>
-
-              {/* Phone with Country Code */}
               <div>
                 <label htmlFor="phone" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
                   Phone
@@ -199,8 +185,6 @@ export const GetInTouch: React.FC = () => {
                   />
                 </div>
               </div>
-
-              {/* Message */}
               <div>
                 <label htmlFor="message" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
                   Message
@@ -215,8 +199,6 @@ export const GetInTouch: React.FC = () => {
                   placeholder="Leave us a message..."
                 />
               </div>
-
-              {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full rounded-md bg-[#1B4332] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#15362a] sm:px-8 sm:py-3 sm:text-base"
