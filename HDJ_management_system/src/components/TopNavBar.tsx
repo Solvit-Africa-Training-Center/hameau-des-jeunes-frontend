@@ -21,14 +21,9 @@ const navItems = [
 
 export const TopNavBar = () => {
   return (
-<<<<<<< HEAD
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       {/* Mobile / Tablet */}
       <div className="sticky flex md:hidden items-center justify-between px-4 py-4">
-=======
-    <header className="w-full border-b bg-background">
-      <div className="flex md:hidden items-center justify-between px-4 py-4">
->>>>>>> c82dab43488ba28025d754f6664a880ea39da58d
         <div>
           <img
             src={hdj_logo}
