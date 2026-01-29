@@ -8,12 +8,11 @@ import { Button } from "./ui/button";
 import { Heart, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import hdj_logo from "@/assets/hameau_des_jeunes_logo.png";
-// className="flex items-center justify-center px-5 py-5 space-x-4 shadow-sm"
 
 const navItems = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
-  { label: "Impact", to: "/impact" },
+  { label: "Impact", to: "/OurImpact" },
   { label: "Programs", to: "/programs" },
   { label: "International Internships", to: "/internships" },
   { label: "Gallery", to: "/gallery" },
@@ -22,9 +21,14 @@ const navItems = [
 
 export const TopNavBar = () => {
   return (
+<<<<<<< HEAD
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       {/* Mobile / Tablet */}
       <div className="sticky flex md:hidden items-center justify-between px-4 py-4">
+=======
+    <header className="w-full border-b bg-background">
+      <div className="flex md:hidden items-center justify-between px-4 py-4">
+>>>>>>> c82dab43488ba28025d754f6664a880ea39da58d
         <div>
           <img
             src={hdj_logo}
@@ -63,15 +67,13 @@ export const TopNavBar = () => {
           </SheetContent>
         </Sheet>
       </div>
-
-      {/* Desktop */}
       <div className="hidden md:flex justify-center">
         <NavigationMenu className="flex gap-30">
           <div>
             <img
               src={hdj_logo}
               alt="hameau_des_jeunes_logo"
-              className="h-[60px] w-[60px]"
+              className="h-15 w-15"
             />
           </div>
           <NavigationMenuList className="flex items-center justify-center gap-10 my-6">
