@@ -1,4 +1,4 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaHandsHelping, FaUsers } from "react-icons/fa";
 import { HiOutlineSparkles } from "react-icons/hi2";

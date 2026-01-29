@@ -14,10 +14,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const programs = [
   {
     id: 1,
+    slug: "residentialCare",
     title: "Residential Care Program",
     subtitle: "Safe Haven for Vulnerable Children",
     description:
@@ -28,6 +30,7 @@ const programs = [
   },
   {
     id: 2,
+    slug: "educationSupport",
     title: "Education Support Program",
     subtitle: "Empowering Through Learning",
     description:
@@ -38,6 +41,7 @@ const programs = [
   },
   {
     id: 3,
+    slug: "familyReunited",
     title: "85+ families reunited successfully",
     subtitle: "Rebuilding Family Bonds",
     description:
@@ -48,6 +52,7 @@ const programs = [
   },
   {
     id: 4,
+    slug: "ifasheTugufashe",
     title: "Ifashe Tugufashe — Family Support",
     subtitle: "Empowering Through Learning",
     description:
@@ -59,6 +64,8 @@ const programs = [
 ];
 
 export const Programs = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <TopNavBar />
@@ -101,6 +108,7 @@ export const Programs = () => {
             return (
               <Card
                 key={item.id}
+                onClick={() => navigate(`/programs/${item.slug}`)}
                 className="transition-transform duration-300 hover:scale-105 bg-white drop-shadow-gray-100 rounded-xl overflow-hidden md:w-[470px]"
               >
                 <img

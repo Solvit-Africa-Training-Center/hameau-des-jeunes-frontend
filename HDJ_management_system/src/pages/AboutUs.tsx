@@ -1,10 +1,11 @@
 import { TopNavBar } from "@/components/TopNavBar";
 import aboutImage from "@/assets/hameadu_des_jeunes_community.jpeg";
-import { OurStory } from "@/components/OurStory";
-import { MissionAndVision } from "@/components/MissionAndVision";
-import { OurCoreValues } from "@/components/OurCoreValues";
-import { MeetOurTeam } from "@/components/MeetOurTeam";
+
 import { Footer } from "@/components/Footer";
+import { OurStory } from "@/components/AboutUsComponents/OurStory";
+import { MissionAndVision } from "@/components/AboutUsComponents/MissionAndVision";
+import { OurCoreValues } from "@/components/AboutUsComponents/OurCoreValues";
+import { MeetOurTeam } from "@/components/AboutUsComponents/MeetOurTeam";
 
 export const AboutUs = () => {
   return (

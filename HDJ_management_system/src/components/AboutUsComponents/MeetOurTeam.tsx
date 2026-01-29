@@ -3,7 +3,7 @@ import comOutreachManager from "@/assets/com_outreach_manager.png";
 import executiveCoordo from "@/assets/executive_coordo.png";
 import executiveDirector from "@/assets/executive_director.png";
 import { MdNavigateNext } from "react-icons/md";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 export const MeetOurTeam = () => {
   const teamMembers = [
