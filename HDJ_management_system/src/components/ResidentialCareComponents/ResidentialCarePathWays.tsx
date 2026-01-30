@@ -37,10 +37,13 @@ export const ResidentialCarePathsWays = () => {
           </p>
         </div>
         <RotatedCards />
-        <h1 className="text-center">
-          Each step is designed to restore dignity, build confidence, and create
-          lasting pathways to stability and self-reliance.
-        </h1>
+        <div className="md:mx-54">
+          <h1 className="text-center font-semibold">
+            Each step is designed to restore dignity, build confidence, and
+            create lasting pathways
+            <br /> to stability and self-reliance.
+          </h1>
+        </div>
       </section>
     </>
   );

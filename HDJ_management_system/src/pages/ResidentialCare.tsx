@@ -2,6 +2,13 @@ import { TopNavBar } from "@/components/TopNavBar";
 import resdentialCarePageImg from "@/assets/residential_care_page_img.png";
 import { OurMissionInAction } from "@/components/ResidentialCareComponents/OurMissionInAction";
 import { ResidentialCarePathsWays } from "@/components/ResidentialCareComponents/ResidentialCarePathWays";
+import { StepProcess } from "@/components/ResidentialCareComponents/StepProcess";
+import { DayInTheLife } from "@/components/ResidentialCareComponents/DayInTheLife";
+import { VoicesOfTransformation } from "@/components/ResidentialCareComponents/VoicesOfTransformation";
+import { OurJourney } from "@/components/ResidentialCareComponents/OurJourney";
+import { OurCommunityInAction } from "@/components/ResidentialCareComponents/OurCommunityInAction";
+import { CallToDonate } from "@/components/ResidentialCareComponents/CallToDonateCard";
+import { Footer } from "@/components/Footer";
 
 export const ResidentialCare = () => {
   return (
@@ -26,6 +33,13 @@ export const ResidentialCare = () => {
       </header>
       <OurMissionInAction />
       <ResidentialCarePathsWays />
+      <StepProcess />
+      <DayInTheLife />
+      <VoicesOfTransformation />
+      <OurJourney />
+      <OurCommunityInAction />
+      <CallToDonate />
+      <Footer />
     </>
   );
 };
