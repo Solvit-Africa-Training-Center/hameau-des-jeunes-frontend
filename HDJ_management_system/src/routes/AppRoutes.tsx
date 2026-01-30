@@ -1,4 +1,5 @@
 import { AboutUs } from "@/pages/AboutUs";
+import Donate from "@/pages/Donate";
 import { Home } from "@/pages/Home";
 import OurImpact from "@/pages/OurImpact";
 import { Programs } from "@/pages/Programs";
@@ -13,6 +14,7 @@ export const AppRoutes = () => {
       <Route path="/programs" element={<Programs />} />
       <Route path="/programs/residentialCare" element={<ResidentialCare />} />
       <Route path="/OurImpact" element={<OurImpact />} />
+      <Route path="/donate" element={<Donate/>} />
     </Routes>
   );
 };

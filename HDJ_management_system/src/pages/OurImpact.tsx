@@ -246,7 +246,7 @@ const OurImpact = () => {
                         key={i}
                         className="flex items-start gap-3 text-gray-600"
                       >
-                        <span className="mt-2 h-2 w-2 rounded-full bg-[#1b82ff] "></span>
+                        <span className="mt-2 h-2 w-2 rounded-full bg-[#1b67ff] "></span>
                         <span className="leading-relaxed">{stat}</span>
                       </li>
                     ))}

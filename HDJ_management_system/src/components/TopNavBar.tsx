@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -17,9 +17,12 @@ const navItems = [
   { label: "International Internships", to: "/internships" },
   { label: "Gallery", to: "/gallery" },
   { label: "Contact", to: "/contact" },
+
 ];
 
 export const TopNavBar = () => {
+ const navigate = useNavigate();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       {/* Mobile / Tablet */}
@@ -52,12 +55,16 @@ export const TopNavBar = () => {
                 </Link>
               ))}
 
-              <Button className="bg-button-yellow mt-6 mx-5">
+             
+               <Button onClick={() => navigate("/donate")} className="bg-button-yellow mt-6 mx-5">
                 <div className="flex items-center gap-2">
                   <Heart size={18} />
                   Donate
                 </div>
-              </Button>
+               </Button>
+              
+
+             
             </nav>
           </SheetContent>
         </Sheet>
@@ -84,7 +91,7 @@ export const TopNavBar = () => {
             <NavigationMenuItem></NavigationMenuItem>
           </NavigationMenuList>
 
-          <Button className="bg-button-yellow">
+          <Button onClick={() => navigate("/donate")} className="bg-button-yellow">
             <div className="flex items-center gap-2">
               <Heart size={18} />
               Donate
