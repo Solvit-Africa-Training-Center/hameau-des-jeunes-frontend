@@ -5,7 +5,6 @@ import com_img_4 from "@/assets/communityInActionImg/com_img_4.jpg";
 import com_img_5 from "@/assets/communityInActionImg/com_img_5.jpg";
 import com_img_6 from "@/assets/communityInActionImg/com_img_6.jpg";
 import com_img_7 from "@/assets/communityInActionImg/com_img_7.jpg";
-import com_img_8 from "@/assets/communityInActionImg/com_img_8.jpg";
 
 const communityImages = [
   {
