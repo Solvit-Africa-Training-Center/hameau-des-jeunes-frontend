@@ -17,24 +17,25 @@ const navItems = [
   { label: "International Internships", to: "/internships" },
   { label: "Gallery", to: "/gallery" },
   { label: "Contact", to: "/contact" },
-
 ];
 
 export const TopNavBar = () => {
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
-      {/* Mobile / Tablet */}
-      <div className="sticky flex md:hidden items-center justify-between px-4 py-4">
-        <div>
+    <header className=" fixed block top-0 z-50 w-full h-[80px] border-b bg-background">
+      {/* ===== Mobile / Tablet ===== */}
+      <div className="flex md:hidden items-center justify-between px-4 h-full">
+        <div className="flex items-center gap-2">
           <img
             src={hdj_logo}
             alt="hameau_des_jeunes_logo"
-            className="h-15 w-15"
+            className="h-12 w-12 object-contain block shrink-0"
           />
+          <p className="font-heading text-lg font-bold leading-none whitespace-nowrap">
+            Hameau des Jeunes
+          </p>
         </div>
-        <p className="font-heading text-xl font-bold">Hameau des Jeunes</p>
 
         <Sheet>
           <SheetTrigger asChild>
@@ -43,42 +44,42 @@ export const TopNavBar = () => {
             </Button>
           </SheetTrigger>
 
-          <SheetContent side="right" className="w-70">
+          <SheetContent side="right" className="w-72">
             <nav className="flex flex-col gap-6 mt-10">
               {navItems.map((item) => (
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="font-heading text-lg text-center hover:bg-amber-200 hover:font-bold"
+                  className="font-heading text-lg text-center hover:bg-amber-200 rounded-md py-2"
                 >
                   {item.label}
                 </Link>
               ))}
 
-             
-               <Button onClick={() => navigate("/donate")} className="bg-button-yellow mt-6 mx-5">
+              <Button
+                onClick={() => navigate("/donate")}
+                className="bg-button-yellow mt-6 mx-5"
+              >
                 <div className="flex items-center gap-2">
                   <Heart size={18} />
                   Donate
                 </div>
-               </Button>
-              
-
-             
+              </Button>
             </nav>
           </SheetContent>
         </Sheet>
       </div>
-      <div className="hidden md:flex justify-center">
-        <NavigationMenu className="flex gap-30">
-          <div>
-            <img
-              src={hdj_logo}
-              alt="hameau_des_jeunes_logo"
-              className="h-15 w-15"
-            />
-          </div>
-          <NavigationMenuList className="flex items-center justify-center gap-10 my-6">
+
+      {/* ===== Desktop ===== */}
+      <div className="hidden md:flex justify-center h-full ">
+        <NavigationMenu className="flex items-center gap-10 h-[80px]">
+          <img
+            src={hdj_logo}
+            alt="hameau_des_jeunes_logo"
+            className="h-12 w-12"
+          />
+
+          <NavigationMenuList className="flex items-center gap-10">
             {navItems.map((item) => (
               <NavigationMenuItem
                 key={item.label}
@@ -87,11 +88,12 @@ export const TopNavBar = () => {
                 <Link to={item.to}>{item.label}</Link>
               </NavigationMenuItem>
             ))}
-
-            <NavigationMenuItem></NavigationMenuItem>
           </NavigationMenuList>
 
-          <Button onClick={() => navigate("/donate")} className="bg-button-yellow">
+          <Button
+            onClick={() => navigate("/donate")}
+            className="bg-button-yellow"
+          >
             <div className="flex items-center gap-2">
               <Heart size={18} />
               Donate
