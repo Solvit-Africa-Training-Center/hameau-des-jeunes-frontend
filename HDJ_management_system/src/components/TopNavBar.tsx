@@ -16,8 +16,7 @@ const navItems = [
   { label: "Programs", to: "/programs" },
   { label: "International Internships", to: "/internships" },
   { label: "Gallery", to: "/gallery" },
-  { label: "Contact", to: "/contact" },
-
+  { label: "Contact", to: "/contacts" },
 ];
 
 export const TopNavBar = () => {
