@@ -1,9 +1,9 @@
 import { AboutUs } from "@/pages/AboutUs";
 import { Contacts } from "@/pages/Contacts";
-import { Dashboard } from "@/pages/Dashboard";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
+import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
 import Donate from "@/pages/Donate";
 import { Home } from "@/pages/Home";
 import { IfasheTugufashe } from "@/pages/IfasheTugufashe";
@@ -31,7 +31,7 @@ export const AppRoutes = () => {
 
       <Route path="/adminLogin" element={<LoginPage />} />
       <Route path="/adminSignup" element={<SignupPage />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
 
       {/* MANAGERS ROUTES */}
