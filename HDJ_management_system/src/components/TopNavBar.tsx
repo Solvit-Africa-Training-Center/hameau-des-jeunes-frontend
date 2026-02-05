@@ -16,7 +16,11 @@ const navItems = [
   { label: "Programs", to: "/programs" },
   { label: "International Internships", to: "/internships" },
   { label: "Gallery", to: "/gallery" },
+<<<<<<< HEAD
   { label: "Contact", to: "/contact" },
+=======
+  { label: "Contact", to: "/contacts" },
+>>>>>>> 7f9dc234ea86bc7a300ae6b947c468a916e567cf
 ];
 
 export const TopNavBar = () => {
