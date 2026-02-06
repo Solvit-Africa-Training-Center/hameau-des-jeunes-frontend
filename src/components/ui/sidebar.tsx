@@ -1,21 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  BookOpen,
-  Bell,
-  MessageSquare,
-  Calendar,
-  Target,
-  Users,
-  ClipboardList,
-  GraduationCap,
-  LogOut,
-  Settings,
-  GraduationCapIcon,
-  TargetIcon,
-  ClipboardCheckIcon,
-} from "lucide-react";
+import { LayoutDashboard, ClipboardCheckIcon, LogOut } from "lucide-react";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/scholar" },
