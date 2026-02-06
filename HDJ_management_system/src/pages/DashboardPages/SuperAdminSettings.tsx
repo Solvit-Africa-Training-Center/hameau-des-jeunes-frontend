@@ -150,20 +150,20 @@ function SuperAdminSettings() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-1">Organization Profile</h2>
             <p className="text-sm text-gray-600 mb-6">Manage your organization profile settings</p>
 
-            <div className="flex gap-8 mt-6">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mt-6">
               {/* Organization Logo */}
               <div className="relative shrink-0">
-                <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
-                  <Building2 className="w-16 h-16 text-gray-400" />
+                <div className="w-24 h-24 sm:w-32 sm:h-32 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
+                  <Building2 className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400" />
                 </div>
-                <button className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-emerald-900 border-2 border-white flex items-center justify-center hover:bg-emerald-800 transition-colors">
-                  <Pencil className="w-4 h-4 text-white" />
+                <button className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-900 border-2 border-white flex items-center justify-center hover:bg-emerald-800 transition-colors">
+                  <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                 </button>
               </div>
 
               {/* Organization Form */}
               <div className="flex-1">
-                <div className="grid grid-cols-2 gap-5 mb-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-4 sm:mb-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Organization Name
@@ -198,7 +198,7 @@ function SuperAdminSettings() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Address
@@ -243,20 +243,20 @@ function SuperAdminSettings() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-1">Personal Profile</h2>
             <p className="text-sm text-gray-600 mb-6">Manage your personal profile settings</p>
 
-            <div className="flex gap-8 mt-6">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mt-6">
               {/* Personal Avatar */}
               <div className="relative shrink-0">
-                <div className="w-28 h-28 border-2 border-gray-300 rounded-full flex items-center justify-center bg-gray-50">
-                  <User className="w-14 h-14 text-gray-400" />
+                <div className="w-24 h-24 sm:w-28 sm:h-28 border-2 border-gray-300 rounded-full flex items-center justify-center bg-gray-50">
+                  <User className="w-12 h-12 sm:w-14 sm:h-14 text-gray-400" />
                 </div>
-                <button className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-emerald-900 border-2 border-white flex items-center justify-center hover:bg-emerald-800 transition-colors">
-                  <Pencil className="w-4 h-4 text-white" />
+                <button className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-900 border-2 border-white flex items-center justify-center hover:bg-emerald-800 transition-colors">
+                  <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                 </button>
               </div>
 
               {/* Personal Form */}
-              <div className="flex-1 ml-5">
-                <div className="grid grid-cols-2 gap-5">
+              <div className="flex-1 sm:ml-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Full Name
@@ -305,17 +305,17 @@ function SuperAdminSettings() {
               <label className="block text-sm font-medium text-gray-700 mb-4">
                 Interface Theme
               </label>
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 {/* Light Theme */}
                 <div
                   onClick={() => setTheme('light')}
                   className={`cursor-pointer border-2 ${
                     theme === 'light' ? 'border-emerald-900 bg-green-50' : 'border-gray-200'
-                  } rounded-xl p-5 transition-all hover:border-emerald-900`}
+                  } rounded-xl p-4 sm:p-5 transition-all hover:border-emerald-900`}
                 >
-                  <div className="w-full h-32 bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
+                  <div className="w-full h-28 sm:h-32 bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
                     <div className="h-10 bg-gray-100"></div>
-                    <div className="h-22 bg-white"></div>
+                    <div className="h-18 sm:h-22 bg-white"></div>
                   </div>
                   <span className="block text-sm font-medium text-gray-900 text-center">
                     Light Mode
@@ -327,11 +327,11 @@ function SuperAdminSettings() {
                   onClick={() => setTheme('dark')}
                   className={`cursor-pointer border-2 ${
                     theme === 'dark' ? 'border-emerald-900 bg-green-50' : 'border-gray-200'
-                  } rounded-xl p-5 transition-all hover:border-emerald-900`}
+                  } rounded-xl p-4 sm:p-5 transition-all hover:border-emerald-900`}
                 >
-                  <div className="w-full h-32 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-3">
+                  <div className="w-full h-28 sm:h-32 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden mb-3">
                     <div className="h-10 bg-gray-900"></div>
-                    <div className="h-22 bg-gray-800"></div>
+                    <div className="h-18 sm:h-22 bg-gray-800"></div>
                   </div>
                   <span className="block text-sm font-medium text-gray-900 text-center">
                     Dark Mode
@@ -348,18 +348,18 @@ function SuperAdminSettings() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-1">Appearance & Branding</h2>
             <p className="text-sm text-gray-600 mb-6">Manage your appearance & branding settings</p>
 
-            <div className="space-y-5 mt-6">
+            <div className="space-y-4 sm:space-y-5 mt-6">
               {/* Email Notifications */}
-              <div className="flex items-center justify-between p-5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                <div>
-                  <h3 className="text-base font-medium text-gray-900 mb-1">Email Notifications</h3>
-                  <p className="text-sm text-gray-600">Receive updates via email</p>
+              <div className="flex items-center justify-between p-4 sm:p-5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1">Email Notifications</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Receive updates via email</p>
                 </div>
                 <button
                   onClick={() =>
                     setNotifications({ ...notifications, emailNotifications: !notifications.emailNotifications })
                   }
-                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${
+                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors shrink-0 ${
                     notifications.emailNotifications ? 'bg-emerald-900' : 'bg-gray-300'
                   }`}
                 >
@@ -372,16 +372,16 @@ function SuperAdminSettings() {
               </div>
 
               {/* Desktop Alerts */}
-              <div className="flex items-center justify-between p-5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                <div>
-                  <h3 className="text-base font-medium text-gray-900 mb-1">Desktop Alerts</h3>
-                  <p className="text-sm text-gray-600">Show browser notifications</p>
+              <div className="flex items-center justify-between p-4 sm:p-5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1">Desktop Alerts</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Show browser notifications</p>
                 </div>
                 <button
                   onClick={() =>
                     setNotifications({ ...notifications, desktopAlerts: !notifications.desktopAlerts })
                   }
-                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${
+                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors shrink-0 ${
                     notifications.desktopAlerts ? 'bg-emerald-900' : 'bg-gray-300'
                   }`}
                 >
@@ -406,24 +406,24 @@ function SuperAdminSettings() {
               <label className="block text-sm font-medium text-gray-700 mb-4">
                 Current Session
               </label>
-              <div className="flex items-center justify-between p-5 border border-gray-200 rounded-xl mb-5">
-                <div className="flex items-center gap-4">
-                  <Monitor className="w-6 h-6 text-gray-700" />
-                  <div>
-                    <h3 className="text-base font-medium text-gray-900 mb-1">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 border border-gray-200 rounded-xl mb-4 sm:mb-5 gap-4">
+                <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1">
+                  <Monitor className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 shrink-0 mt-0.5 sm:mt-0" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1">
                       Macbook Pro - Kigali, RW
                     </h3>
-                    <p className="text-sm text-gray-600">Last active 2 minutes ago</p>
+                    <p className="text-xs sm:text-sm text-gray-600">Last active 2 minutes ago</p>
                   </div>
                 </div>
-                <button className="px-4 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors">
+                <button className="px-4 py-2 bg-red-100 text-red-600 rounded-lg text-xs sm:text-sm font-medium hover:bg-red-200 transition-colors self-start sm:self-auto">
                   Logout
                 </button>
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl">
-                <KeyRound className="w-5 h-5 text-blue-600" />
-                <a href="#" className="text-sm font-medium text-blue-600 hover:underline">
+              <div className="flex items-center gap-3 p-3 sm:p-4 bg-blue-50 rounded-xl">
+                <KeyRound className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
+                <a href="#" className="text-xs sm:text-sm font-medium text-blue-600 hover:underline">
                   Change Account Password
                 </a>
               </div>
@@ -438,7 +438,7 @@ function SuperAdminSettings() {
             <p className="text-sm text-gray-600 mb-6">Manage your localization settings</p>
 
             <div className="mt-6">
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     System Language
@@ -479,138 +479,127 @@ function SuperAdminSettings() {
   };
 
   return (
-    // Main container - takes full width and height with gray background
-    <div className="w-full h-screen bg-gray-50 overflow-y-auto">
+    // Main container
+    <div className="w-full min-h-screen bg-gray-50">
       {/* 
-        ==========================================
-        TODO: Add your TopBar/Navbar component here
-        ==========================================
         Example: <TopBar />
-        
-        Your TopBar component should go here if you have one.
-        This is where you would place your navigation header.
       */}
 
       <div className="flex w-full h-full">
         {/* 
-          ==========================================
-          TODO: Add your Sidebar component here
-          ==========================================
           Example: <Sidebar />
-          
-          Your Sidebar component should go here if you have one.
-          This is where you would place your side navigation menu.
         */}
 
-        {/* Settings Content Area - This is the main settings content */}
-        <div className="flex-1 p-8">
+        {/* Settings Content Area  */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-8">
           {/* Page Header */}
-          <div className="flex items-start justify-between mb-8">
+          <div className="flex flex-col sm:flex-row items-start justify-between mb-6 sm:mb-8 gap-4">
             <div>
-              <h1 className="text-3xl font-semibold text-gray-900 mb-2">System Settings</h1>
+              <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">System Settings</h1>
               <p className="text-sm text-gray-600">
                 Configure organization profile, system preferences, and security.
               </p>
             </div>
-            <button className="flex items-center gap-2 bg-emerald-900 text-white px-5 py-3 rounded-lg text-sm font-medium hover:bg-emerald-800 transition-colors">
-              <Download className="w-5 h-5" />
-              Export Financial Report
+            <button className="flex items-center gap-2 bg-emerald-900 text-white px-3 sm:px-5 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-medium hover:bg-emerald-800 transition-colors whitespace-nowrap self-start">
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Export Financial Report</span>
+              <span className="sm:hidden">Export</span>
             </button>
           </div>
 
           {/* Settings Card */}
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <div className="grid grid-cols-[400px_1fr] gap-6">
-              {/* Settings Menu - Left Side */}
-              <div className="flex flex-col gap-2">
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6">
+              {/* Settings Menu - Stacks vertically on mobile/tablet, sidebar on desktop */}
+              <div className="flex flex-col gap-2 lg:max-h-none">
                 <button
                   onClick={() => setActiveSection('organization')}
-                  className={`flex items-center justify-between px-4 py-3.5 rounded-lg border transition-all text-sm font-medium ${
+                  className={`flex items-center justify-between px-4 py-3 sm:py-3.5 rounded-lg border transition-all text-sm font-medium ${
                     activeSection === 'organization'
                       ? 'bg-emerald-900 border-emerald-900 text-white'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Building2 className="w-5 h-5" />
-                    Organization Profile
+                    <Building2 className="w-5 h-5 shrink-0" />
+                    <span className="text-left">Organization Profile</span>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 <button
                   onClick={() => setActiveSection('personal')}
-                  className={`flex items-center justify-between px-4 py-3.5 rounded-lg border transition-all text-sm font-medium ${
+                  className={`flex items-center justify-between px-4 py-3 sm:py-3.5 rounded-lg border transition-all text-sm font-medium ${
                     activeSection === 'personal'
                       ? 'bg-emerald-900 border-emerald-900 text-white'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <User className="w-5 h-5" />
-                    Personal Profile
+                    <User className="w-5 h-5 shrink-0" />
+                    <span className="text-left">Personal Profile</span>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 <button
                   onClick={() => setActiveSection('appearance')}
-                  className={`flex items-center justify-between px-4 py-3.5 rounded-lg border transition-all text-sm font-medium ${
+                  className={`flex items-center justify-between px-4 py-3 sm:py-3.5 rounded-lg border transition-all text-sm font-medium ${
                     activeSection === 'appearance'
                       ? 'bg-emerald-900 border-emerald-900 text-white'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Palette className="w-5 h-5" />
-                    Appearance & Branding
+                    <Palette className="w-5 h-5 shrink-0" />
+                    <span className="text-left">Appearance & Branding</span>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 <button
                   onClick={() => setActiveSection('notifications')}
-                  className={`flex items-center justify-between px-4 py-3.5 rounded-lg border transition-all text-sm font-medium ${
+                  className={`flex items-center justify-between px-4 py-3 sm:py-3.5 rounded-lg border transition-all text-sm font-medium ${
                     activeSection === 'notifications'
                       ? 'bg-emerald-900 border-emerald-900 text-white'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Bell className="w-5 h-5" />
-                    Notification Rules
+                    <Bell className="w-5 h-5 shrink-0" />
+                    <span className="text-left">Notification Rules</span>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 <button
                   onClick={() => setActiveSection('security')}
-                  className={`flex items-center justify-between px-4 py-3.5 rounded-lg border transition-all text-sm font-medium ${
+                  className={`flex items-center justify-between px-4 py-3 sm:py-3.5 rounded-lg border transition-all text-sm font-medium ${
                     activeSection === 'security'
                       ? 'bg-emerald-900 border-emerald-900 text-white'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Lock className="w-5 h-5" />
-                    Security & Access
+                    <Lock className="w-5 h-5 shrink-0" />
+                    <span className="text-left">Security & Access</span>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
 
                 <button
                   onClick={() => setActiveSection('localization')}
-                  className={`flex items-center justify-between px-4 py-3.5 rounded-lg border transition-all text-sm font-medium ${
+                  className={`flex items-center justify-between px-4 py-3 sm:py-3.5 rounded-lg border transition-all text-sm font-medium ${
                     activeSection === 'localization'
                       ? 'bg-emerald-900 border-emerald-900 text-white'
                       : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Globe className="w-5 h-5" />
-                    Localization
+                    <Globe className="w-5 h-5 shrink-0" />
+                    <span className="text-left">Localization</span>
                   </div>
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5 shrink-0" />
                 </button>
               </div>
 
@@ -620,23 +609,23 @@ function SuperAdminSettings() {
 
                 <button
                   onClick={handleSaveChanges}
-                  className="self-end px-8 py-3 bg-emerald-900 text-white rounded-lg text-sm font-medium hover:bg-emerald-800 transition-colors"
+                  className="w-full sm:w-auto sm:self-end px-6 sm:px-8 py-2.5 sm:py-3 bg-emerald-900 text-white rounded-lg text-sm font-medium hover:bg-emerald-800 transition-colors"
                 >
                   Save Changes
                 </button>
 
                 {/* System Preferences */}
-                <div className="bg-gray-50 rounded-xl p-6 mt-8">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-5">System Preferences</h3>
+                <div className="bg-gray-50 rounded-xl p-4 sm:p-6 mt-6 sm:mt-8">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-5">System Preferences</h3>
 
-                  <div className="space-y-5">
+                  <div className="space-y-4 sm:space-y-5">
                     {/* Two-Factor Authentication */}
-                    <div className="flex items-center justify-between py-5 border-b border-gray-200">
-                      <div>
-                        <h4 className="text-base font-medium text-gray-900 mb-1">
+                    <div className="flex items-center justify-between py-4 sm:py-5 border-b border-gray-200 gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-1">
                           Two-Factor Authentication
                         </h4>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-xs sm:text-sm text-gray-600">
                           Add an extra layer of security to your account
                         </p>
                       </div>
@@ -644,7 +633,7 @@ function SuperAdminSettings() {
                         onClick={() =>
                           setSystemPrefs({ ...systemPrefs, twoFactorAuth: !systemPrefs.twoFactorAuth })
                         }
-                        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${
+                        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors shrink-0 ${
                           systemPrefs.twoFactorAuth ? 'bg-emerald-900' : 'bg-gray-300'
                         }`}
                       >
@@ -657,12 +646,12 @@ function SuperAdminSettings() {
                     </div>
 
                     {/* Automatic Data Export */}
-                    <div className="flex items-center justify-between py-5">
-                      <div>
-                        <h4 className="text-base font-medium text-gray-900 mb-1">
+                    <div className="flex items-center justify-between py-4 sm:py-5 gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-1">
                           Automatic Data Export
                         </h4>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-xs sm:text-sm text-gray-600">
                           Daily backup of beneficiary data to secure storage
                         </p>
                       </div>
@@ -673,7 +662,7 @@ function SuperAdminSettings() {
                             automaticDataExport: !systemPrefs.automaticDataExport,
                           })
                         }
-                        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${
+                        className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors shrink-0 ${
                           systemPrefs.automaticDataExport ? 'bg-emerald-900' : 'bg-gray-300'
                         }`}
                       >

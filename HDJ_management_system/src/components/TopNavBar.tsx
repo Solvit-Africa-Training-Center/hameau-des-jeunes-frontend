@@ -72,7 +72,7 @@ export const TopNavBar = () => {
 
       {/* ===== Desktop ===== */}
       <div className="hidden md:flex justify-center h-full ">
-        <NavigationMenu className="flex items-center gap-10 h-[80px]">
+        <NavigationMenu className="flex items-center gap-10 h-20px">
           <img
             src={hdj_logo}
             alt="hameau_des_jeunes_logo"
