@@ -1,10 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Menu, Search } from "lucide-react";
 
-import { Heart, Menu, Search } from "lucide-react";
-
-import hdj_logo from "@/assets/hameau_des_jeunes_logo.png";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
-import { Button } from "../ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -19,32 +14,14 @@ interface DashboardTopNavBarProps {
   onMenuClick?: () => void;
 }
 
-// const navItems = [
-//   { label: "Home", to: "/" },
-//   { label: "About", to: "/about" },
-//   { label: "Impact", to: "/OurImpact" },
-//   { label: "Programs", to: "/programs" },
-//   { label: "International Internships", to: "/internships" },
-//   { label: "Gallery", to: "/gallery" },
-//   { label: "Contact", to: "/contacts" },
-// ];
-
 export const DashboardTopNavBar = ({
   onMenuClick,
 }: DashboardTopNavBarProps) => {
-  const navigate = useNavigate();
-
   return (
     <header className="fixed top-0 z-50 h-[80px] md:w-auto w-full  border-b bg-background">
       {/* ===== Mobile / Tablet ===== */}
       <div className="flex md:hidden items-center justify-between  px-4 h-full">
         <div className="flex items-center ">
-          {/* <img
-            src={hdj_logo}
-            alt="hameau_des_jeunes_logo"
-            className="h-12 w-12 object-contain block shrink-0"
-          /> */}
-
           <Field className="flex-1">
             <div className="relative max-w-xs">
               <Input
