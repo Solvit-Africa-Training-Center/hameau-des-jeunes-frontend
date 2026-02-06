@@ -1,7 +1,21 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardCheckIcon } from "lucide-react";
-import profilePic from "@/assets/profile_pic.jpg";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Bell,
+  MessageSquare,
+  Calendar,
+  Target,
+  Users,
+  ClipboardList,
+  GraduationCap,
+  LogOut,
+  Settings,
+  GraduationCapIcon,
+  TargetIcon,
+  ClipboardCheckIcon,
+} from "lucide-react";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/scholar" },
@@ -26,31 +40,16 @@ import { IoSettingsOutline } from "react-icons/io5";
 export function Sidebar({ className }: { className?: string }) {
   const { pathname } = useLocation();
 
-  const loggedInUserString = localStorage.getItem("user");
-  if (!loggedInUserString) {
-    // user not found in localStorage
-    console.error("No user in localStorage");
-    return;
-  }
-
-  const loggedInUser = JSON.parse(loggedInUserString);
-  const firstName = loggedInUser.first_name;
-  const lastName = loggedInUser.last_name;
-
   return (
     <aside
       className={cn(
-        "hidden md:flex flex-col h-screen w-64 shadow-xl text-white flex-shrink-0 fixed top-0 left-0",
+        "hidden md:flex flex-col h-screen w-64 bg-white text-white flex-shrink-0 sticky top-0",
         className,
       )}
     >
-      <div className="mt-5 flex-col space-y-0.5">
-        <img src={DashLogo} />
+      <img src={DashLogo} />
 
-        <h1 className="text-[#0F3D2E] text-center">Welcome Again!</h1>
-      </div>
-
-      <nav className="flex-1 px-4 space-y-[0.5px] overflow-y-auto no-scrollbar mt-5 ">
+      <nav className="flex-1 px-4 space-y-2 overflow-y-auto no-scrollbar">
         {sidebarItems.map((item) => {
           const isActive = pathname === item.href;
 
@@ -79,23 +78,18 @@ export function Sidebar({ className }: { className?: string }) {
         })}
       </nav>
 
-      <div className="h-[1px] w-full bg-gray-300"></div>
-
-      <div className="p-4 mt-auto flex gap-4">
-        <div className="h-12 w-12 rounded-full overflow-hidden">
-          <img
-            src={profilePic}
-            alt="profile_pic"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="flex-col">
-          <h1 className="text-button-yellow">Welcome back</h1>
-          <span className="text-[#0F3D2E] font-semibold">
-            {firstName} {lastName}
-          </span>
-        </div>
+      <div className="p-4 mt-auto">
+        <button className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-gray-300 hover:bg-[#3d262a] hover:text-white rounded-lg bg-[#3d262a]/50 transition-colors">
+          <LogOut className="h-5 w-5" />
+          <Typography
+            variant="p"
+            size="sm"
+            weight="medium"
+            className="text-inherit"
+          >
+            Logout
+          </Typography>
+        </button>
       </div>
     </aside>
   );

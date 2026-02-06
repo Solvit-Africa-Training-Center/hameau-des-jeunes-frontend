@@ -25,7 +25,7 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
       {/* Drawer */}
       <aside
         className={cn(
-          "absolute left-0 top-0 h-full w-64 bg-white transform transition-transform duration-300",
+          "absolute left-0 top-0 h-full w-64 bg-[#1a2e35] transform transition-transform duration-300",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
