@@ -4,6 +4,7 @@ import { Dashboard } from "@/pages/Dashboard";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
+import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
 import Donate from "@/pages/Donate";
 import Gallery from "@/pages/Gallery";
 import { Home } from "@/pages/Home";
@@ -28,6 +29,7 @@ export const AppRoutes = () => {
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/ifasheTugufashe" element={<IfasheTugufashe />} />
       <Route path="/gallery" element={<Gallery/>} />
+      <Route path="/settings" element={<SuperAdminSettings/>}/>
 
       {/* ADMIN PAGES ROUTES */}
 

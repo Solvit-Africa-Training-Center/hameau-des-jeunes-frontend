@@ -23,7 +23,7 @@ export const TopNavBar = () => {
   const navigate = useNavigate();
 
   return (
-    <header className=" fixed block top-0 z-50 w-full h-[80px] border-b bg-background">
+    <header className=" fixed block top-0 z-50 w-full h-20 border-b bg-background">
       {/* ===== Mobile / Tablet ===== */}
       <div className="flex md:hidden items-center justify-between px-4 h-full">
         <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ export const TopNavBar = () => {
 
       {/* ===== Desktop ===== */}
       <div className="hidden md:flex justify-center h-full ">
-        <NavigationMenu className="flex items-center gap-10 h-[80px]">
+        <NavigationMenu className="flex items-center gap-10 h-20">
           <img
             src={hdj_logo}
             alt="hameau_des_jeunes_logo"
