@@ -18,7 +18,7 @@ export const DashboardTopNavBar = ({
   onMenuClick,
 }: DashboardTopNavBarProps) => {
   return (
-    <header className="fixed top-0 z-50 h-[80px] md:w-auto w-full  border-b bg-background">
+    <header className="fixed top-0 z-50 h-[65px] md:w-auto w-full  border-b bg-background">
       {/* ===== Mobile / Tablet ===== */}
       <div className="flex md:hidden items-center justify-between  px-4 h-full">
         <div className="flex items-center ">
@@ -59,7 +59,7 @@ export const DashboardTopNavBar = ({
     hidden
     md:flex
     md:pl-[300px] md:justify-center md:items-center
-    lg:pl-[700px] lg:justify-end lg:items-center
+    lg:pl-[753px] lg:justify-end lg:items-center
     h-full shadow-sm px-4
   "
       >
@@ -86,21 +86,21 @@ export const DashboardTopNavBar = ({
 
             {/* settings icon */}
             <NavigationMenuItem>
-              <div className="h-10 w-10 text-[#718EBF] rounded-full bg-[#F5F7FA] flex items-center justify-center">
+              <div className="h-8 w-8 text-[#718EBF] rounded-full bg-[#F5F7FA] flex items-center justify-center">
                 <IoSettingsOutline size={20} />
               </div>
             </NavigationMenuItem>
 
             {/* notifications icon */}
             <NavigationMenuItem>
-              <div className="h-10 w-10 text-[#718EBF] rounded-full bg-[#F5F7FA] flex items-center justify-center">
+              <div className="h-8 w-8 text-[#718EBF] rounded-full bg-[#F5F7FA] flex items-center justify-center">
                 <IoNotificationsOutline size={20} />
               </div>
             </NavigationMenuItem>
 
             {/* profile picture */}
             <NavigationMenuItem>
-              <div className="h-14 w-14 rounded-full overflow-hidden">
+              <div className="h-12 w-12 rounded-full overflow-hidden">
                 <img
                   src={profilePic}
                   alt="profile_pic"
