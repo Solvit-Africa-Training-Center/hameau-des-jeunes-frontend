@@ -5,6 +5,7 @@ import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboar
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
 import Donate from "@/pages/Donate";
+import Gallery from "@/pages/Gallery";
 import { Home } from "@/pages/Home";
 import { IfasheTugufashe } from "@/pages/IfasheTugufashe";
 import Internship from "@/pages/Internship";
@@ -33,6 +34,7 @@ export const AppRoutes = () => {
       <Route path="/adminSignup" element={<SignupPage />} />
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
+      <Route path="/gallery" element={<Gallery />} />
 
       {/* MANAGERS ROUTES */}
       <Route
