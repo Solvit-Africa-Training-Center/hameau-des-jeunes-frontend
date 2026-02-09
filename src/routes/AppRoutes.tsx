@@ -29,7 +29,7 @@ export const AppRoutes = () => {
 
       {/* ADMIN PAGES ROUTES */}
 
-      <Route path="/adminLogin" element={<LoginPage />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/adminSignup" element={<SignupPage />} />
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
@@ -45,7 +45,7 @@ export const AppRoutes = () => {
         element={<IfasheTugufasheDashboard />}
       />
       <Route path="/donate" element={<Donate />} />
-      <Route path="/internships" element={<Internship />} />
+      <Route path="programs/internships" element={<Internship />} />
       <Route path="/contacts" element={<Contacts />} />
     </Routes>
   );

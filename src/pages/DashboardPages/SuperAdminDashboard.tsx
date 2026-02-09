@@ -1,3 +1,4 @@
+import { DashboardContent } from "@/components/DashboardsComponents/DashboardContent";
 import { DashboardTopNavBar } from "@/components/DashboardsComponents/DashboardTopNavBar";
 import { MobileSidebar } from "@/components/ui/MobileSidebar";
 import { Sidebar } from "@/components/ui/sidebar";
@@ -15,14 +16,15 @@ export const SuperAdminDashboard = () => {
       <Sidebar className="hidden md:flex" />
 
       {/* Main content */}
-      <div className="flex-1 md:ml-64 lg:ml-64">
+      <div className="flex-1 md:ml-54 lg:ml-54">
         {" "}
         {/* ml-64 = sidebar width */}
         {/* Top Navbar */}
         <DashboardTopNavBar onMenuClick={() => setSidebarOpen(true)} />
         {/* Page content below */}
-        <div className="pt-[80px] flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-6">
           {/* Your main dashboard content here */}
+          <DashboardContent />
         </div>
       </div>
     </>
