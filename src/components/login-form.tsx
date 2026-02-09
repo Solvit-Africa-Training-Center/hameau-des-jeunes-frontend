@@ -65,7 +65,7 @@ export function LoginForm({
 
                 switch (loggedInUser.role) {
                   case "SYSTEM_ADMIN":
-                    navigate("/Dashboard");
+                    navigate("/superAdminDashboard");
                     break;
 
                   case "RESIDENTIAL_MANAGER":

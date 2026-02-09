@@ -5,7 +5,6 @@ import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboar
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
 import Donate from "@/pages/Donate";
-import Gallery from "@/pages/Gallery";
 import { Home } from "@/pages/Home";
 import { IfasheTugufashe } from "@/pages/IfasheTugufashe";
 import Internship from "@/pages/Internship";
@@ -27,11 +26,10 @@ export const AppRoutes = () => {
       <Route path="/OurImpact" element={<OurImpact />} />
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/ifasheTugufashe" element={<IfasheTugufashe />} />
-      <Route path="/gallery" element={<Gallery/>} />
 
       {/* ADMIN PAGES ROUTES */}
 
-      <Route path="/adminLogin" element={<LoginPage />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/adminSignup" element={<SignupPage />} />
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
@@ -47,7 +45,7 @@ export const AppRoutes = () => {
         element={<IfasheTugufasheDashboard />}
       />
       <Route path="/donate" element={<Donate />} />
-      <Route path="/internships" element={<Internship />} />
+      <Route path="programs/internships" element={<Internship />} />
       <Route path="/contacts" element={<Contacts />} />
     </Routes>
   );
