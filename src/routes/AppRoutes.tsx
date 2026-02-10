@@ -3,6 +3,7 @@ import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
+import { SuperAdminActivityOverview } from "@/pages/DashboardPages/SuperAdminActivityOverview";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
 import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
@@ -40,6 +41,10 @@ export const AppRoutes = () => {
       <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/settings" element={<SuperAdminSettings />} />
+      <Route
+        path="/activityOverview"
+        element={<SuperAdminActivityOverview />}
+      />
 
       {/* MANAGERS ROUTES */}
       <Route
