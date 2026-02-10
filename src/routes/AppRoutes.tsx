@@ -9,6 +9,7 @@ import { Home } from "@/pages/Home";
 import { IfasheTugufashe } from "@/pages/IfasheTugufashe";
 import Internship from "@/pages/Internship";
 import { LoginPage } from "@/pages/Login";
+import NotFound from "@/pages/NotFound";
 import OurImpact from "@/pages/OurImpact";
 import { Programs } from "@/pages/Programs";
 import { ResetPassword } from "@/pages/ResetPassword";
@@ -47,6 +48,9 @@ export const AppRoutes = () => {
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/internships" element={<Internship />} />
       <Route path="/contacts" element={<Contacts />} />
+
+      {/* NOT FOUND */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
