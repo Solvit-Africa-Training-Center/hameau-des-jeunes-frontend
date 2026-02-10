@@ -4,7 +4,7 @@ import { MobileSidebar } from "@/components/ui/MobileSidebar";
 import { Sidebar } from "@/components/ui/sidebar";
 import { useState } from "react";
 
-export const SuperAdminDashboard = () => {
+export const SuperAdminAnalytics = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
