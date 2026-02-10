@@ -4,6 +4,7 @@ import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufashe
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
+import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
 import Donate from "@/pages/Donate";
 import Gallery from "@/pages/Gallery";
 import { Home } from "@/pages/Home";
@@ -28,6 +29,7 @@ export const AppRoutes = () => {
       <Route path="/OurImpact" element={<OurImpact />} />
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/ifasheTugufashe" element={<IfasheTugufashe />} />
+      
 
       {/* ADMIN PAGES ROUTES */}
 
@@ -36,6 +38,7 @@ export const AppRoutes = () => {
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
       <Route path="/gallery" element={<Gallery />} />
+      <Route path="/settings" element={<SuperAdminSettings/>}/>
 
       {/* MANAGERS ROUTES */}
       <Route
