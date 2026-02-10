@@ -3,14 +3,13 @@ import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
-import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
 import Donate from "@/pages/Donate";
-import Gallery from "@/pages/Gallery";
 import { Home } from "@/pages/Home";
 import { IfasheTugufashe } from "@/pages/IfasheTugufashe";
 import Internship from "@/pages/Internship";
 import { LoginPage } from "@/pages/Login";
+import NotFound from "@/pages/NotFound";
 import OurImpact from "@/pages/OurImpact";
 import { Programs } from "@/pages/Programs";
 import { ResetPassword } from "@/pages/ResetPassword";
@@ -28,12 +27,10 @@ export const AppRoutes = () => {
       <Route path="/OurImpact" element={<OurImpact />} />
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/ifasheTugufashe" element={<IfasheTugufashe />} />
-      <Route path="/gallery" element={<Gallery/>} />
-      <Route path="/settings" element={<SuperAdminSettings/>}/>
 
       {/* ADMIN PAGES ROUTES */}
 
-      <Route path="/adminLogin" element={<LoginPage />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/adminSignup" element={<SignupPage />} />
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
@@ -49,8 +46,11 @@ export const AppRoutes = () => {
         element={<IfasheTugufasheDashboard />}
       />
       <Route path="/donate" element={<Donate />} />
-      <Route path="/internships" element={<Internship />} />
+      <Route path="programs/internships" element={<Internship />} />
       <Route path="/contacts" element={<Contacts />} />
+
+      {/* NOT FOUND */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
