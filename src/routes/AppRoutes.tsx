@@ -5,6 +5,7 @@ import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboar
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
+import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
 import Donate from "@/pages/Donate";
 import Gallery from "@/pages/Gallery";
 import { Home } from "@/pages/Home";
@@ -37,6 +38,8 @@ export const AppRoutes = () => {
       <Route path="/resetPassword" element={<ResetPassword />} />
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
+      <Route path="/gallery" element={<Gallery />} />
+      <Route path="/settings" element={<SuperAdminSettings />} />
 
       {/* MANAGERS ROUTES */}
       <Route
