@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/store/api/authApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export function LoginForm({
   className,
@@ -52,6 +53,8 @@ export function LoginForm({
                 localStorage.setItem("accessToken", res.access);
                 localStorage.setItem("refreshToken", res.refresh);
                 localStorage.setItem("user", JSON.stringify(res.user));
+
+                toast.success("Logged in successfully!");
 
                 const loggedInUserString = localStorage.getItem("user");
 

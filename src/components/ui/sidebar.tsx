@@ -2,18 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, ClipboardCheckIcon } from "lucide-react";
 import profilePic from "@/assets/profile_pic.jpg";
-
-const sidebarItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/scholar" },
-  { icon: FaArrowTrendUp, label: "Analytics", href: "/analytics" },
-  { icon: GrOverview, label: "Activity Overview", href: "/activityOverview" },
-  { icon: ClipboardCheckIcon, label: "Programs", href: "/programs" },
-  { icon: GoPeople, label: "Users", href: "/users" },
-  { icon: VscFeedback, label: "Feedback", href: "/feedback" },
-  { icon: GiProgression, label: "Financials", href: "/financials" },
-  { icon: IoSettingsOutline, label: "Settings", href: "/settings" },
-];
-
 import DashLogo from "@/assets/dashboardLogo.png";
 import Typography from "./typography";
 import { FaArrowTrendUp } from "react-icons/fa6";
@@ -23,14 +11,24 @@ import { VscFeedback } from "react-icons/vsc";
 import { GiProgression } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
 
+const sidebarItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/superAdminDashboard" },
+  { icon: FaArrowTrendUp, label: "Analytics", href: "/superAdminAnalytics" },
+  { icon: GrOverview, label: "Activity Overview", href: "/activityOverview" },
+  { icon: ClipboardCheckIcon, label: "Programs", href: "/programs" },
+  { icon: GoPeople, label: "Users", href: "/users" },
+  { icon: VscFeedback, label: "Feedback", href: "/feedback" },
+  { icon: GiProgression, label: "Financials", href: "/financials" },
+  { icon: IoSettingsOutline, label: "Settings", href: "/settings" },
+];
+
 export function Sidebar({ className }: { className?: string }) {
   const { pathname } = useLocation();
 
   const loggedInUserString = localStorage.getItem("user");
   if (!loggedInUserString) {
-    // user not found in localStorage
     console.error("No user in localStorage");
-    return;
+    return null;
   }
 
   const loggedInUser = JSON.parse(loggedInUserString);
@@ -40,17 +38,19 @@ export function Sidebar({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        "hidden md:flex flex-col h-screen w-54 shadow-xl text-white flex-shrink-0 fixed top-0 left-0",
+        // Base styles
+        "flex flex-col h-screen w-54 shadow-xl bg-white flex-shrink-0",
+        // Desktop: fixed positioning
+        "md:fixed md:top-0 md:left-0",
         className,
       )}
     >
-      <div className="mt-5 flex-col space-y-0.5">
-        <img src={DashLogo} />
-
+      <div className="mt-5 flex flex-col space-y-0.5 px-4">
+        <img src={DashLogo} alt="Dashboard Logo" />
         <h1 className="text-[#0F3D2E] text-center">Welcome Again!</h1>
       </div>
 
-      <nav className="flex-1 px-4 space-y-[0.5px] overflow-y-auto no-scrollbar mt-5 ">
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto no-scrollbar mt-5">
         {sidebarItems.map((item) => {
           const isActive = pathname === item.href;
 
@@ -79,22 +79,21 @@ export function Sidebar({ className }: { className?: string }) {
         })}
       </nav>
 
-      <div className="h-[1px] w-full bg-gray-300"></div>
+      <div className="h-[1px] w-full bg-gray-300" />
 
-      <div className="p-4 mt-auto flex gap-4">
-        <div className="h-12 w-12 rounded-full overflow-hidden">
+      <div className="p-4 flex items-center gap-4">
+        <div className="h-12 w-12 rounded-full overflow-hidden flex-shrink-0">
           <img
             src={profilePic}
-            alt="profile_pic"
+            alt={`${firstName} ${lastName}`}
             className="w-full h-full object-cover"
           />
         </div>
-
-        <div className="flex-col">
-          <h1 className="text-button-yellow">Welcome back</h1>
-          <span className="text-[#0F3D2E] font-semibold">
+        <div className="flex flex-col min-w-0">
+          <p className="text-button-yellow text-sm">Welcome back</p>
+          <p className="text-[#0F3D2E] font-semibold truncate">
             {firstName} {lastName}
-          </span>
+          </p>
         </div>
       </div>
     </aside>

@@ -47,10 +47,10 @@ export const AnalyticsAndTables = () => {
   return (
     <>
       <section className="grid grid-cols-1 gap-3 md:grid-cols-[2fr_1.5fr] mt-5">
-        <div className="flex-col md:w-[700px]">
+        <div className="flex-col">
           <ChartLineMultiple />
 
-          <Card className="px-5 mt-3">
+          <Card className="px-5 mt-3 md:mx-0 mx-5">
             <CardTitle>
               <h1>Admin Activity Overview</h1>
             </CardTitle>
@@ -61,7 +61,7 @@ export const AnalyticsAndTables = () => {
         </div>
 
         <div className="flex-col space-y-3">
-          <Card className="px-5 bg-[#0F3D2E]">
+          <Card className="px-5 bg-[#0F3D2E] md:mx-0 mx-5">
             <CardTitle className="space-y-3">
               <h1 className="text-white font-bold">Quick Summary</h1>
               <span className="text-sm font-light text-white">
@@ -103,7 +103,7 @@ export const AnalyticsAndTables = () => {
 
           {/* RECENT ACTIVITIES CARD */}
 
-          <Card className="px-5">
+          <Card className="px-5 md:mx-0 mx-5">
             <CardTitle>
               <h1>Recent Activity</h1>
             </CardTitle>

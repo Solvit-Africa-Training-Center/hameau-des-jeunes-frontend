@@ -3,8 +3,10 @@ import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
+import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
 import Donate from "@/pages/Donate";
+import Gallery from "@/pages/Gallery";
 import { Home } from "@/pages/Home";
 import { IfasheTugufashe } from "@/pages/IfasheTugufashe";
 import Internship from "@/pages/Internship";
@@ -31,9 +33,10 @@ export const AppRoutes = () => {
       {/* ADMIN PAGES ROUTES */}
 
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/adminSignup" element={<SignupPage />} />
-      <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
+      <Route path="/managerRegistration" element={<SignupPage />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
+      <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
+      <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
 
       {/* MANAGERS ROUTES */}
       <Route
@@ -48,7 +51,7 @@ export const AppRoutes = () => {
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/internships" element={<Internship />} />
       <Route path="/contacts" element={<Contacts />} />
-
+      <Route path="/gallery" element={<Gallery />} />
       {/* NOT FOUND */}
       <Route path="*" element={<NotFound />} />
     </Routes>
