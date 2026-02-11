@@ -9,6 +9,9 @@ import {
 } from "../ui/table";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
+import { MdKeyboardArrowRight } from "react-icons/md";
+import { useState } from "react";
+import { AdminDetailsDrawer } from "./AdminDetailsDrawer";
 
 /* -------------------- Types -------------------- */
 
@@ -20,7 +23,7 @@ type AdminRole =
 
 type AdminStatus = "Up_to_date" | "Action_Required" | "Pending";
 
-interface Admin {
+export interface Admin {
   name: string;
   email: string;
   role: AdminRole;
@@ -69,84 +72,106 @@ const admins: Admin[] = [
 /* -------------------- Component -------------------- */
 
 export const AdminActivityDetailsTable: React.FC = () => {
+  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = (admin: Admin) => {
+    setSelectedAdmin(admin);
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setSelectedAdmin(null);
+  };
+
   return (
-    <div className="max-h-[225px] overflow-y-auto">
-      <Table className="w-full">
-        <TableHeader className="bg-[#F9FAFB]">
-          <TableRow className="border-none">
-            <TableHead>
-              <span className="px-5 font-normal text-[#838484] text-base">
+    <>
+      <div className="max-h-[225px] overflow-y-auto">
+        <Table className="w-full">
+          <TableHeader className="bg-[#F9FAFB]">
+            <TableRow className="border-none">
+              <TableHead className="px-5 font-normal text-[#838484] text-base">
                 Administrator
-              </span>
-            </TableHead>
-            <TableHead className="font-normal text-[#838484] text-base">
-              Assigned Program
-            </TableHead>
-
-            <TableHead className="font-normal text-[#838484] text-base">
-              Last Activity
-            </TableHead>
-
-            <TableHead className="font-normal text-[#838484] text-base">
-              7-Day Updates
-            </TableHead>
-
-            <TableHead className="font-normal text-[#838484] text-base">
-              Status
-            </TableHead>
-
-            <TableHead className="font-normal text-[#838484] text-base"></TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody className="bg-white">
-          {admins.map((admin) => (
-            <TableRow key={admin.name} className="border-b border-gray-200">
-              <TableCell className="px-5">
-                <div className="flex gap-2">
-                  <Avatar size="lg">
-                    <AvatarFallback>
-                      <IoPersonCircleOutline size={40} className="" />
-                    </AvatarFallback>
-                  </Avatar>
-
-                  <div className="grid gap-1">
-                    <span className="font-primary text-sm font-bold">
-                      {admin.name}
-                    </span>
-                    <span className="font-primary text-sm text-gray-500">
-                      {admin.email}
-                    </span>
-                  </div>
-                </div>
-              </TableCell>
-
-              <TableCell className="font-semibold">
-                <div className="grid gap-1">
-                  <span className="font-primary text-sm font-bold">
-                    {admin.role}
-                  </span>
-                  <span className="font-normal text-sm text-gray-500">
-                    PROGRAM ADMIN
-                  </span>
-                </div>
-              </TableCell>
-
-              <TableCell className="text-sm text-[#838484]">
-                {admin.lastLogin}
-              </TableCell>
-
-              <TableCell className="text-sm text-[#838484]">
-                {admin.updates}
-              </TableCell>
-
-              <TableCell>
-                <Badge text={admin.status} />
-              </TableCell>
+              </TableHead>
+              <TableHead className="font-normal text-[#838484] text-base">
+                Assigned Program
+              </TableHead>
+              <TableHead className="font-normal text-[#838484] text-base">
+                Last Activity
+              </TableHead>
+              <TableHead className="font-normal text-[#838484] text-base">
+                7-Day Updates
+              </TableHead>
+              <TableHead className="font-normal text-[#838484] text-base">
+                Status
+              </TableHead>
+              <TableHead />
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+
+          <TableBody className="bg-white">
+            {admins.map((admin) => (
+              <TableRow key={admin.name} className="border-b border-gray-200">
+                <TableCell className="px-5">
+                  <div className="flex gap-2">
+                    <Avatar size="lg">
+                      <AvatarFallback>
+                        <IoPersonCircleOutline size={40} />
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="grid gap-1">
+                      <span className="text-sm font-bold">{admin.name}</span>
+                      <span className="text-sm text-gray-500">
+                        {admin.email}
+                      </span>
+                    </div>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="grid gap-1">
+                    <span className="text-sm font-bold">{admin.role}</span>
+                    <span className="text-sm text-gray-500">PROGRAM ADMIN</span>
+                  </div>
+                </TableCell>
+
+                <TableCell className="text-sm text-[#838484]">
+                  {admin.lastLogin}
+                </TableCell>
+
+                <TableCell className="text-sm text-center text-[#838484]">
+                  {admin.updates}
+                </TableCell>
+
+                <TableCell>
+                  <Badge text={admin.status} />
+                </TableCell>
+
+                <TableCell>
+                  <button
+                    onClick={() => handleOpen(admin)}
+                    className="cursor-pointer"
+                  >
+                    <MdKeyboardArrowRight
+                      size={20}
+                      className="text-[#838484]"
+                    />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Changed from AdminActivityDetailsTable to AdminDetailsDrawer */}
+      <AdminDetailsDrawer
+        isOpen={isOpen}
+        admin={selectedAdmin}
+        onClose={handleClose}
+      />
+    </>
   );
 };

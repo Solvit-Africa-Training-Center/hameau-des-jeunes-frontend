@@ -1,5 +1,4 @@
 import { ActivityOverviewContent } from "@/components/SuperActivityOverviewComponents/ActivityOverviewContent";
-import { DashboardContent } from "@/components/SuperAdminDashboardComponents/DashboardContent";
 import { DashboardTopNavBar } from "@/components/SuperAdminDashboardComponents/DashboardTopNavBar";
 import { MobileSidebar } from "@/components/ui/MobileSidebar";
 import { Sidebar } from "@/components/ui/sidebar";

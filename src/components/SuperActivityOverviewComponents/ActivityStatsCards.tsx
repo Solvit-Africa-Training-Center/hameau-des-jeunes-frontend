@@ -1,7 +1,9 @@
 import { BsExclamationCircle } from "react-icons/bs";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { LuClock4 } from "react-icons/lu";
-import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
+import { Card, CardFooter, CardTitle } from "../ui/card";
+import { Field, FieldLabel } from "../ui/field";
+import { Progress } from "../ui/progress";
 
 const statsCards = [
   {
@@ -22,6 +24,7 @@ const statsCards = [
     id: 3,
     title: "Completion Rate",
     icon: IoMdCheckmarkCircleOutline,
+    percentage: "92",
   },
 ];
 
@@ -63,9 +66,27 @@ export const ActivityStatsCards = () => {
             </CardTitle>
 
             {/* Footer */}
-            <CardFooter className="pt-1 text-[#838484] text-sm font-light">
-              {item.footer}
-            </CardFooter>
+            {item.id === 1 || item.id === 2 ? (
+              <CardFooter className="pt-1 text-[#838484] text-sm font-light">
+                {item.footer}
+              </CardFooter>
+            ) : (
+              <Field className="w-full max-w-sm">
+                <FieldLabel htmlFor="progress-upload">
+                  <span className="text-sm font-light text-white">
+                    Overall Weekly Goal Progress
+                  </span>
+                  <span className="ml-auto text-button-yellow">
+                    {item.percentage}%
+                  </span>
+                </FieldLabel>
+                <Progress
+                  id="progress-upload"
+                  value={Number(item.percentage)}
+                  className="h-2 bg-white/20 [&>div]:bg-[#F4B400] "
+                />
+              </Field>
+            )}
           </Card>
         );
       })}

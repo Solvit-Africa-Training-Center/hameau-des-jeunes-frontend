@@ -1,5 +1,4 @@
 import { MdOutlineTune } from "react-icons/md";
-import { ProgramImpactMetrics } from "../SuperAdminAnalyticsComponents/ProgramImpactMetrics";
 import { Field } from "../ui/field";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
@@ -43,8 +42,6 @@ export const ActivityOverviewContent = () => {
         <Card className="mt-5">
           <AdminActivityDetailsTable />
         </Card>
-
-        <ProgramImpactMetrics />
       </section>
     </>
   );
