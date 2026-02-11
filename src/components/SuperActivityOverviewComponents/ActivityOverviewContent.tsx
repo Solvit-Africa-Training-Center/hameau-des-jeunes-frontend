@@ -1,13 +1,11 @@
 import { MdOutlineTune } from "react-icons/md";
-import { AnalyticsCharts } from "../SuperAdminAnalyticsComponents/AnalyticsCharts";
-
 import { ProgramImpactMetrics } from "../SuperAdminAnalyticsComponents/ProgramImpactMetrics";
 import { Field } from "../ui/field";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 import { ActivityStatsCards } from "./ActivityStatsCards";
-import { AdminActivityTable } from "../SuperAdminDashboardComponents/AdminActivityTable";
 import { Card } from "../ui/card";
+import { AdminActivityDetailsTable } from "./AdminActivityDetailsTable";
 
 export const ActivityOverviewContent = () => {
   return (
@@ -43,7 +41,7 @@ export const ActivityOverviewContent = () => {
         </div>
         <ActivityStatsCards />
         <Card className="mt-5">
-          <AdminActivityTable />
+          <AdminActivityDetailsTable />
         </Card>
 
         <ProgramImpactMetrics />

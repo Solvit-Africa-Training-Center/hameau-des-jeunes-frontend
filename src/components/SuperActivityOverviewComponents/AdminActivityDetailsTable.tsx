@@ -12,27 +12,29 @@ import { Badge } from "../ui/badge";
 
 /* -------------------- Types -------------------- */
 
-type UserRole =
+type AdminRole =
   | "Residential Care"
   | "Ifashe Tugufashe"
   | "Internship"
   | "Health Post";
 
-type UserStatus = "Up_to_date" | "Action_Required" | "Pending";
+type AdminStatus = "Up_to_date" | "Action_Required" | "Pending";
 
-interface User {
+interface Admin {
   name: string;
-  role: UserRole;
-  status: UserStatus;
+  email: string;
+  role: AdminRole;
+  status: AdminStatus;
   lastLogin: string;
   updates: string;
 }
 
 /* -------------------- Data -------------------- */
 
-const users: User[] = [
+const admins: Admin[] = [
   {
     name: "Jean-Paul Mugisha",
+    email: "jeanpaul@saintkizito.org",
     role: "Residential Care",
     status: "Up_to_date",
     lastLogin: "2 hours ago",
@@ -40,6 +42,7 @@ const users: User[] = [
   },
   {
     name: "Marie-Claire Umuhoza",
+    email: "marieclaire@saintkizito.org",
     role: "Ifashe Tugufashe",
     status: "Action_Required",
     lastLogin: "5 hours ago",
@@ -47,6 +50,7 @@ const users: User[] = [
   },
   {
     name: "Eric Gasana",
+    email: "eric@saintkizito.org",
     role: "Internship",
     status: "Pending",
     lastLogin: "1 day ago",
@@ -54,6 +58,7 @@ const users: User[] = [
   },
   {
     name: "Alice Mutoni",
+    email: "alicemutoni@saintkizito.org",
     role: "Health Post",
     status: "Up_to_date",
     lastLogin: "3 days ago",
@@ -63,34 +68,40 @@ const users: User[] = [
 
 /* -------------------- Component -------------------- */
 
-export const AdminActivityTable: React.FC = () => {
+export const AdminActivityDetailsTable: React.FC = () => {
   return (
     <div className="max-h-[225px] overflow-y-auto">
       <Table className="w-full">
         <TableHeader className="bg-[#F9FAFB]">
           <TableRow className="border-none">
             <TableHead>
-              <span className="px-5 font-primary text-[--secondaryBlack] font-bold text-sm">
-                Admin names
+              <span className="px-5 font-normal text-[#838484] text-base">
+                Administrator
               </span>
             </TableHead>
-            <TableHead className="font-primary text-[--secondaryBlack] font-bold text-sm">
-              ROLE
+            <TableHead className="font-normal text-[#838484] text-base">
+              Assigned Program
             </TableHead>
 
-            <TableHead className="font-primary text-[--secondaryBlack] font-bold text-sm">
-              Updates
+            <TableHead className="font-normal text-[#838484] text-base">
+              Last Activity
             </TableHead>
 
-            <TableHead className="font-primary text-[--secondaryBlack] font-bold text-sm">
+            <TableHead className="font-normal text-[#838484] text-base">
+              7-Day Updates
+            </TableHead>
+
+            <TableHead className="font-normal text-[#838484] text-base">
               Status
             </TableHead>
+
+            <TableHead className="font-normal text-[#838484] text-base"></TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody className="bg-white">
-          {users.map((user) => (
-            <TableRow key={user.name} className="border-b border-gray-200">
+          {admins.map((admin) => (
+            <TableRow key={admin.name} className="border-b border-gray-200">
               <TableCell className="px-5">
                 <div className="flex gap-2">
                   <Avatar size="lg">
@@ -101,23 +112,36 @@ export const AdminActivityTable: React.FC = () => {
 
                   <div className="grid gap-1">
                     <span className="font-primary text-sm font-bold">
-                      {user.name}
+                      {admin.name}
                     </span>
                     <span className="font-primary text-sm text-gray-500">
-                      Last actively {user.lastLogin}
+                      {admin.email}
                     </span>
                   </div>
                 </div>
               </TableCell>
 
-              <TableCell className="font-semibold">{user.role}</TableCell>
+              <TableCell className="font-semibold">
+                <div className="grid gap-1">
+                  <span className="font-primary text-sm font-bold">
+                    {admin.role}
+                  </span>
+                  <span className="font-normal text-sm text-gray-500">
+                    PROGRAM ADMIN
+                  </span>
+                </div>
+              </TableCell>
 
-              <TableCell className="text-sm text-[--secondaryBlack]">
-                {user.updates}
+              <TableCell className="text-sm text-[#838484]">
+                {admin.lastLogin}
+              </TableCell>
+
+              <TableCell className="text-sm text-[#838484]">
+                {admin.updates}
               </TableCell>
 
               <TableCell>
-                <Badge text={user.status} />
+                <Badge text={admin.status} />
               </TableCell>
             </TableRow>
           ))}

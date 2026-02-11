@@ -9,9 +9,9 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "bg-gray-200 text-[--primaryBlack]",
-        uptodate: "bg-[--secondaryGreen] text-[--primaryGreen]",
-        actionRequired: "bg-red-100 text-red-500",
-        pending: "bg-[--secondaryBlue] text-[--primaryBlue]",
+        Up_to_date: "bg-[#D3FBEE] text-[#0C9857]",
+        Action_Required: "bg-[#FEF8E6] text-[#F4B400]",
+        Pending: "bg-[#EDF6FF] text-[#4DA3FF]",
       },
     },
     defaultVariants: {
@@ -31,9 +31,9 @@ export type BadgeText =
   | "Internship"
   | "Health Post"
   // Statuses
-  | "uptodate"
-  | "actionRequired"
-  | "pending";
+  | "Up_to_date"
+  | "Action_Required"
+  | "Pending";
 
 /* -------------------- Props -------------------- */
 
@@ -47,25 +47,25 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 const mapTextToVariant = (text: BadgeText): BadgeVariant => {
   switch (text) {
     // Roles
-    case "Residential Care":
-    case "Health Post":
-      return "uptodate";
+    // case "Residential Care":
+    // case "Health Post":
+    //   return "Up_to_date";
 
-    case "Internship":
-      return "actionRequired";
+    // case "Internship":
+    //   return "Action_Required";
 
-    case "Ifashe Tugufashe":
-      return "pending";
+    // case "Ifashe Tugufashe":
+    //   return "pending";
 
     // Statuses
-    case "uptodate":
-      return "uptodate";
+    case "Up_to_date":
+      return "Up_to_date";
 
-    case "actionRequired":
-      return "actionRequired";
+    case "Action_Required":
+      return "Action_Required";
 
-    case "pending":
-      return "pending";
+    case "Pending":
+      return "Pending";
 
     default:
       return "default";
