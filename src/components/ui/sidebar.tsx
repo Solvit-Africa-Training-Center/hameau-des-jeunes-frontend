@@ -15,7 +15,7 @@ const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/superAdminDashboard" },
   { icon: FaArrowTrendUp, label: "Analytics", href: "/superAdminAnalytics" },
   { icon: GrOverview, label: "Activity Overview", href: "/activityOverview" },
-  { icon: ClipboardCheckIcon, label: "Programs", href: "/programs" },
+  { icon: ClipboardCheckIcon, label: "Programs", href: "/listOfprograms" },
   { icon: GoPeople, label: "Users", href: "/users" },
   { icon: VscFeedback, label: "Feedback", href: "/feedback" },
   { icon: GiProgression, label: "Financials", href: "/financials" },
