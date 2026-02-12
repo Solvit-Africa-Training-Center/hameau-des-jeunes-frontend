@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { HiOutlineUpload } from "react-icons/hi";
+import { FaPenClip } from "react-icons/fa6";
+import type { AdminRole } from "./AdminActivityDetailsTable";
+import { LuClock4 } from "react-icons/lu";
 
 type ActivityStatus = "completed" | "pending" | "needs_attention";
 
@@ -99,9 +102,16 @@ const activities: Activity[] = [
   },
 ];
 
+// props
+interface AdminActivityFeedProps {
+  adminRole: AdminRole | null;
+}
+
 // Component
 
-export const AdminActivityFeed: React.FC = () => {
+export const AdminActivityFeed: React.FC<AdminActivityFeedProps> = ({
+  adminRole,
+}) => {
   const [active, setActive] = useState<ActivityFilter>("all");
 
   const handleClick = (value: ActivityFilter) => {
@@ -119,8 +129,10 @@ export const AdminActivityFeed: React.FC = () => {
     switch (iconType) {
       case "document":
         return <IoDocumentTextOutline size={24} className="text-gray-600" />;
-      case "edit":
+      case "upload":
         return <HiOutlineUpload size={24} className="text-yellow-600" />;
+      case "edit":
+        return <FaPenClip size={20} className="text-gray-600" />;
     }
   };
 
@@ -129,19 +141,19 @@ export const AdminActivityFeed: React.FC = () => {
     switch (status) {
       case "completed":
         return (
-          <div className="bg-green-100 text-green-700 hover:bg-green-100">
+          <div className="bg-green-100 px-2 py-1 rounded-xl text-green-700 hover:bg-green-100">
             Completed
           </div>
         );
       case "pending":
         return (
-          <div className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
+          <div className="bg-yellow-100 px-2 py-1 rounded-xl text-yellow-700 hover:bg-yellow-100">
             Pending
           </div>
         );
       case "needs_attention":
         return (
-          <div className="bg-red-100 text-red-700 hover:bg-red-100">
+          <div className="bg-red-100 px-2 py-1 rounded-xl text-red-700 hover:bg-red-100">
             Needs Attention
           </div>
         );
@@ -170,51 +182,45 @@ export const AdminActivityFeed: React.FC = () => {
       </div>
 
       {/* Gray Container with Activity Cards */}
-      <div className="bg-gray-100 rounded-lg p-6 h-64 overflow-y-auto scrollbar-hide">
-        <div className="space-y-4">
+      <div className="bg-gray-100 rounded-lg p-6 h-175  md:h-64 overflow-y-auto scrollbar-hide">
+        <div className=" space-y-4">
           {filteredActivities.map((activity) => (
-            <div
-              key={activity.id}
-              className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
-            >
+            <div className="flex gap-2">
               {/* Icon */}
-              <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+              <div className="flex-shrink-0 w-12 h-12 bg-white rounded-lg flex items-center justify-center">
                 {getIcon(activity.icon)}
               </div>
+              <div
+                key={activity.id}
+                className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+              >
+                {/* Content */}
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-2 text-sm">
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      {activity.title}
+                    </h3>
+                    {getStatusBadge(activity.status)}
+                  </div>
 
-              {/* Content */}
-              <div className="flex-1">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {activity.title}
-                  </h3>
-                  {getStatusBadge(activity.status)}
-                </div>
+                  <p className="text-gray-600 mb-4 text-sm">
+                    {activity.description}
+                  </p>
 
-                <p className="text-gray-600 mb-4">{activity.description}</p>
+                  <div className="w-full h-[1px] m-3 bg-[#83848421]"></div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v$13 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    {activity.timestamp}
-                  </span>
+                  <div className="flex items-center justify-between gap-4 text-sm text-gray-500">
+                    <h1 className="mr-2">{adminRole}</h1>
+
+                    <div className="flex items-center gap-2">
+                      <LuClock4 />
+                      <h1>{activity.timestamp}</h1>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           ))}
-
           {/* Empty State */}
           {filteredActivities.length === 0 && (
             <div className="text-center py-12 text-gray-500">
@@ -224,10 +230,10 @@ export const AdminActivityFeed: React.FC = () => {
         </div>
 
         {/* Footer Note */}
-        <p>
+        <div className="text-sm bg-white w-full p-4 rounded-lg mt-6 text-center text-gray-500">
           *This overview is for executive review only. All actions are logged
           and verifiable for audit purpose.*
-        </p>
+        </div>
       </div>
     </div>
   );

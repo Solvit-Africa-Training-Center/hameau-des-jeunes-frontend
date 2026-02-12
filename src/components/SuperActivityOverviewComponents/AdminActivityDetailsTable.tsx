@@ -15,7 +15,7 @@ import { AdminDetailsDrawer } from "./AdminDetailsDrawer";
 
 /* -------------------- Types -------------------- */
 
-type AdminRole =
+export type AdminRole =
   | "Residential Care"
   | "Ifashe Tugufashe"
   | "Internship"

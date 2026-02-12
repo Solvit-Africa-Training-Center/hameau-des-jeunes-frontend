@@ -64,7 +64,7 @@ export const AdminDetailsDrawer: React.FC<AdminDetailsDrawerProps> = ({
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 h-full w-40/100 bg-white shadow-lg z-50 p-6 transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 h-full md:w-40/100 w-95/100 bg-white shadow-lg z-50 p-6 transition-transform duration-300 ease-in-out ${
           isAnimating ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -110,7 +110,7 @@ export const AdminDetailsDrawer: React.FC<AdminDetailsDrawerProps> = ({
           ))}
         </div>
         <div className="mt-10">
-          <AdminActivityFeed />
+          <AdminActivityFeed adminRole={admin?.role || null} />
         </div>
       </div>
     </>
