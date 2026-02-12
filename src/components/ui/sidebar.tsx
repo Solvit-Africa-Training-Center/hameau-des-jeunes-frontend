@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, ClipboardCheckIcon } from "lucide-react";
 import profilePic from "@/assets/profile_pic.jpg";
+
 import DashLogo from "@/assets/dashboardLogo.png";
 import Typography from "./typography";
 import { FaArrowTrendUp } from "react-icons/fa6";
