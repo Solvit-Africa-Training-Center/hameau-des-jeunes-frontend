@@ -40,6 +40,8 @@ export const AppRoutes = () => {
       <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/settings" element={<SuperAdminSettings />} />
+      <Route path="/settings" element={<SuperAdminSettings/>}/>
+      <Route path="/internships"element={<Internship/>}/>
 
       {/* MANAGERS ROUTES */}
       <Route
