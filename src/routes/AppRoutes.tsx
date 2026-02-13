@@ -2,10 +2,12 @@ import { AboutUs } from "@/pages/AboutUs";
 import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
+import { ManageResidentialCare } from "@/pages/DashboardPages/ManageResidentialCare";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
 import { SuperAdminActivityOverview } from "@/pages/DashboardPages/SuperAdminActivityOverview";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
+import { SuperAdminPrograms } from "@/pages/DashboardPages/SuperAdminPrograms";
 import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
 import Donate from "@/pages/Donate";
 import Gallery from "@/pages/Gallery";
@@ -39,6 +41,12 @@ export const AppRoutes = () => {
       <Route path="/resetPassword" element={<ResetPassword />} />
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
+      <Route path="/listOfprograms" element={<SuperAdminPrograms />} />
+      <Route
+        path="/manageResidentialCare"
+        element={<ManageResidentialCare />}
+      />
+
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/settings" element={<SuperAdminSettings />} />
       <Route
