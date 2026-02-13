@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, ClipboardCheckIcon } from "lucide-react";
 import profilePic from "@/assets/profile_pic.jpg";
+
 import DashLogo from "@/assets/dashboardLogo.png";
 import Typography from "./typography";
 import { FaArrowTrendUp } from "react-icons/fa6";
@@ -10,12 +11,13 @@ import { GoPeople } from "react-icons/go";
 import { VscFeedback } from "react-icons/vsc";
 import { GiProgression } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
+import { UserMenu } from "../UserMenu";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/superAdminDashboard" },
   { icon: FaArrowTrendUp, label: "Analytics", href: "/superAdminAnalytics" },
   { icon: GrOverview, label: "Activity Overview", href: "/activityOverview" },
-  { icon: ClipboardCheckIcon, label: "Programs", href: "/programs" },
+  { icon: ClipboardCheckIcon, label: "Programs", href: "/listOfprograms" },
   { icon: GoPeople, label: "Users", href: "/users" },
   { icon: VscFeedback, label: "Feedback", href: "/feedback" },
   { icon: GiProgression, label: "Financials", href: "/financials" },
@@ -95,6 +97,8 @@ export function Sidebar({ className }: { className?: string }) {
             {firstName} {lastName}
           </p>
         </div>
+
+        <UserMenu />
       </div>
     </aside>
   );

@@ -18,7 +18,7 @@ type UserRole =
   | "Internship"
   | "Health Post";
 
-type UserStatus = "uptodate" | "actionRequired" | "pending";
+type UserStatus = "Up_to_date" | "Action_Required" | "Pending";
 
 interface User {
   name: string;
@@ -34,28 +34,28 @@ const users: User[] = [
   {
     name: "Jean-Paul Mugisha",
     role: "Residential Care",
-    status: "uptodate",
+    status: "Up_to_date",
     lastLogin: "2 hours ago",
     updates: "45",
   },
   {
     name: "Marie-Claire Umuhoza",
     role: "Ifashe Tugufashe",
-    status: "actionRequired",
+    status: "Action_Required",
     lastLogin: "5 hours ago",
     updates: "54",
   },
   {
     name: "Eric Gasana",
     role: "Internship",
-    status: "pending",
+    status: "Pending",
     lastLogin: "1 day ago",
     updates: "34",
   },
   {
     name: "Alice Mutoni",
     role: "Health Post",
-    status: "uptodate",
+    status: "Up_to_date",
     lastLogin: "3 days ago",
     updates: "94",
   },
@@ -93,12 +93,9 @@ export const AdminActivityTable: React.FC = () => {
             <TableRow key={user.name} className="border-b border-gray-200">
               <TableCell className="px-5">
                 <div className="flex gap-2">
-                  <Avatar>
+                  <Avatar size="lg">
                     <AvatarFallback>
-                      <IoPersonCircleOutline
-                        size={40}
-                        className="text-[--secondaryBlack]"
-                      />
+                      <IoPersonCircleOutline size={40} className="" />
                     </AvatarFallback>
                   </Avatar>
 
@@ -113,9 +110,7 @@ export const AdminActivityTable: React.FC = () => {
                 </div>
               </TableCell>
 
-              <TableCell>
-                <Badge text={user.role} />
-              </TableCell>
+              <TableCell className="font-semibold">{user.role}</TableCell>
 
               <TableCell className="text-sm text-[--secondaryBlack]">
                 {user.updates}
