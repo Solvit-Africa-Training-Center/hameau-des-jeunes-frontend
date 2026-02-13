@@ -1,8 +1,15 @@
 import { AboutUs } from "@/pages/AboutUs";
+import Education from "@/pages/AdminResidentialCarePages/Education";
+import Financials from "@/pages/AdminResidentialCarePages/Financials";
+import HealthRecords from "@/pages/AdminResidentialCarePages/HealthRecords";
+import Reports from "@/pages/AdminResidentialCarePages/Reports";
+import ResidentialCareCareTakers from "@/pages/AdminResidentialCarePages/ResidentialCareCareTakers";
+import ResidentialCareChildren from "@/pages/AdminResidentialCarePages/ResidentialCareChildren";
+import ResidentialCareDashboard from "@/pages/AdminResidentialCarePages/ResidentialCareDashboard";
+import ResidentialCareSettings from "@/pages/AdminResidentialCarePages/ResidentialCareSettings";
 import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
-import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
 import { SuperAdminDashboard } from "@/pages/DashboardPages/SuperAdminDashboard";
 import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
@@ -38,21 +45,23 @@ export const AppRoutes = () => {
       <Route path="/resetPassword" element={<ResetPassword />} />
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
+      <Route path="/SuperAdminSettings" element={<SuperAdminSettings/>}/>
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/settings" element={<SuperAdminSettings />} />
       <Route path="/settings" element={<SuperAdminSettings/>}/>
       <Route path="/internships"element={<Internship/>}/>
+      <Route path="/residentialCareDashboard"  element={<ResidentialCareDashboard />} />
+      <Route path="/residentialCareCareTakers"  element={<ResidentialCareCareTakers />} />
+      <Route path="/residentialCareChildren"  element={<ResidentialCareChildren />} />
+      <Route path="/residentialCareSettings"  element={<ResidentialCareSettings />} />
+      <Route path="/education"  element={<Education/>} />
+      <Route path="/financials"  element={<Financials />} />
+      <Route path="/reports"  element={<Reports />} />
+      <Route path="/health records" element={<HealthRecords/>}/>
 
       {/* MANAGERS ROUTES */}
-      <Route
-        path="/residentialCareDashboard"
-        element={<ResidentialCareDashboard />}
-      />
       <Route path="/internshipsDashboard" element={<InternshipsDashboard />} />
-      <Route
-        path="/ifasheTugufasheDashboard"
-        element={<IfasheTugufasheDashboard />}
-      />
+      <Route  path="/ifasheTugufasheDashboard"  element={<IfasheTugufasheDashboard />} />
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/internships" element={<Internship />} />
       <Route path="/contacts" element={<Contacts />} />
