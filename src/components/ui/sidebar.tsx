@@ -11,6 +11,7 @@ import { GoPeople } from "react-icons/go";
 import { VscFeedback } from "react-icons/vsc";
 import { GiProgression } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
+import { UserMenu } from "../UserMenu";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/superAdminDashboard" },
@@ -96,6 +97,8 @@ export function Sidebar({ className }: { className?: string }) {
             {firstName} {lastName}
           </p>
         </div>
+
+        <UserMenu />
       </div>
     </aside>
   );

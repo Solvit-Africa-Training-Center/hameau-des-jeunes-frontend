@@ -43,6 +43,17 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+
+    logout: builder.mutation<void, void>({
+      query: () => {
+        const refreshToken = localStorage.getItem("refreshToken");
+        return {
+          url: "/managers/logout/",
+          method: "POST",
+          body: { refresh: refreshToken },
+        };
+      },
+    }),
   }),
 });
 
@@ -50,4 +61,5 @@ export const {
   useLoginMutation,
   useSignupMutation,
   useRequestPasswordResetMutation,
+  useLogoutMutation,
 } = authApi;

@@ -22,10 +22,12 @@ import { ResetPassword } from "@/pages/ResetPassword";
 import { ResidentialCare } from "@/pages/ResidentialCare";
 import { SignupPage } from "@/pages/Signup";
 import { Route, Routes } from "react-router-dom";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const AppRoutes = () => {
   return (
     <Routes>
+      {/* PUBLIC ROUTES */}
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<AboutUs />} />
       <Route path="/programs" element={<Programs />} />
@@ -33,41 +35,91 @@ export const AppRoutes = () => {
       <Route path="/OurImpact" element={<OurImpact />} />
       <Route path="/donate" element={<Donate />} />
       <Route path="programs/ifasheTugufashe" element={<IfasheTugufashe />} />
+      <Route path="programs/internships" element={<Internship />} />
+      <Route path="/gallery" element={<Gallery />} />
+      <Route path="/contacts" element={<Contacts />} />
 
-      {/* ADMIN PAGES ROUTES */}
-
+      {/* AUTH ROUTES */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/managerRegistration" element={<SignupPage />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
-      <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
-      <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
-      <Route path="/listOfprograms" element={<SuperAdminPrograms />} />
+
+      {/* SUPER ADMIN ROUTES */}
+      <Route
+        path="/superAdminDashboard"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/superAdminAnalytics"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminAnalytics />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/listOfprograms"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminPrograms />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/manageResidentialCare"
-        element={<ManageResidentialCare />}
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <ManageResidentialCare />
+          </ProtectedRoute>
+        }
       />
-
-      <Route path="/gallery" element={<Gallery />} />
-      <Route path="/settings" element={<SuperAdminSettings />} />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminSettings />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/activityOverview"
-        element={<SuperAdminActivityOverview />}
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminActivityOverview />
+          </ProtectedRoute>
+        }
       />
 
       {/* MANAGERS ROUTES */}
       <Route
         path="/residentialCareDashboard"
-        element={<ResidentialCareDashboard />}
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <ResidentialCareDashboard />
+          </ProtectedRoute>
+        }
       />
-      <Route path="/internshipsDashboard" element={<InternshipsDashboard />} />
+      <Route
+        path="/internshipsDashboard"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipsDashboard />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/ifasheTugufasheDashboard"
-        element={<IfasheTugufasheDashboard />}
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheDashboard />
+          </ProtectedRoute>
+        }
       />
-      <Route path="/donate" element={<Donate />} />
-      <Route path="programs/internships" element={<Internship />} />
-      <Route path="/contacts" element={<Contacts />} />
-      <Route path="/gallery" element={<Gallery />} />
+
       {/* NOT FOUND */}
       <Route path="*" element={<NotFound />} />
     </Routes>
