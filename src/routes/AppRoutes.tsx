@@ -2,6 +2,7 @@ import { AboutUs } from "@/pages/AboutUs";
 import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
+import { ManageResidentialCare } from "@/pages/DashboardPages/ManageResidentialCare";
 import { ResidentialCareDashboard } from "@/pages/DashboardPages/ResidentialCareDashboard";
 import { SuperAdminActivityOverview } from "@/pages/DashboardPages/SuperAdminActivityOverview";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
@@ -41,6 +42,10 @@ export const AppRoutes = () => {
       <Route path="/superAdminDashboard" element={<SuperAdminDashboard />} />
       <Route path="/superAdminAnalytics" element={<SuperAdminAnalytics />} />
       <Route path="/listOfprograms" element={<SuperAdminPrograms />} />
+      <Route
+        path="/manageResidentialCare"
+        element={<ManageResidentialCare />}
+      />
 
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/settings" element={<SuperAdminSettings />} />
