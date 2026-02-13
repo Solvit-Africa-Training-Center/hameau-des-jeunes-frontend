@@ -10,13 +10,13 @@ import { Input } from "../ui/input";
 import { IoNotificationsOutline, IoSettingsOutline } from "react-icons/io5";
 import profilePic from "@/assets/profile_pic.jpg";
 
-interface DashboardTopNavBarProps {
+interface ResidentialCareTopNavBar  {
   onMenuClick?: () => void;
 }
 
-export const DashboardTopNavBar = ({
+export const ResidentialCareTopNavBar = ({
   onMenuClick,
-}: DashboardTopNavBarProps) => {
+}: ResidentialCareTopNavBar ) => {
   return (
     <header className="fixed top-0 z-50 h-16.25 md:w-auto w-full  border-b bg-background">
       {/* ===== Mobile / Tablet ===== */}
