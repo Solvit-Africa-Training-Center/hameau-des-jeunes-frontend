@@ -43,7 +43,10 @@ export const StatsCards = () => {
         const Icon = item.icon;
 
         return (
-          <Card key={item.id} className="md:w-full mx-5 md:mx-0 px-3 py-4">
+          <Card
+            key={item.id}
+            className="md:w-full mx-5 md:mx-0 px-3 py-4 border border-none shadow-fuchsia-100"
+          >
             {/* Header */}
             <CardTitle className="flex items-center gap-3">
               <div
