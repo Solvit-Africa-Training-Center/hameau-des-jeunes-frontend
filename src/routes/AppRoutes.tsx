@@ -24,6 +24,7 @@ import { SignupPage } from "@/pages/Signup";
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { SuperAdminUsersMgt } from "@/pages/DashboardPages/SuperAdminUsersMgt";
+import { SuperAdminFeedback } from "@/pages/DashboardPages/SuperAdminFeedback";
 
 export const AppRoutes = () => {
   return (
@@ -99,6 +100,15 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
             <SuperAdminUsersMgt />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/feedback"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminFeedback />
           </ProtectedRoute>
         }
       />

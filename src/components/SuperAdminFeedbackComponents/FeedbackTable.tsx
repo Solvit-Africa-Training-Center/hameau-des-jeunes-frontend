@@ -10,14 +10,10 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { useState } from "react";
-import { FaPenClip } from "react-icons/fa6";
-import { IoMdTrash } from "react-icons/io";
-import { Field } from "../ui/field";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
-import { EditAdministratorModal } from "./EditAdministratorModal";
-import { DeleteAdminModal } from "./DeleteAdminModal";
-import { toast } from "react-toastify";
+import { ReplyModal } from "./ReplyModal";
+import { MdOutlineTune } from "react-icons/md";
 
 /* -------------------- Types -------------------- */
 
@@ -34,8 +30,8 @@ export interface Admin {
   email: string;
   role: AdminRole;
   status: AdminStatus;
-  lastLogin: string;
-  updates: string;
+  dateAndTime: string;
+  messagePreview: string;
 }
 
 /* -------------------- Data -------------------- */
@@ -46,124 +42,132 @@ const admins: Admin[] = [
     email: "jeanpaul@saintkizito.org",
     role: "Residential Care",
     status: "Up_to_date",
-    lastLogin: "2 hours ago",
-    updates: "45",
+    dateAndTime: "2024-06-15 14:30",
+    messagePreview: "I really appreciate the new features in the dashboard!",
+  },
+  {
+    name: "Marie-Claire Umuhoza",
+    email: "marieclaire@saintkizito.org",
+    role: "Residential Care",
+    status: "Up_to_date",
+    dateAndTime: "2024-06-15 15:45",
+    messagePreview: "The new dashboard is very user-friendly!",
   },
   {
     name: "Marie-Claire Umuhoza",
     email: "marieclaire@saintkizito.org",
     role: "Ifashe Tugufashe",
     status: "Action_Required",
-    lastLogin: "5 hours ago",
-    updates: "54",
+    dateAndTime: "5 hours ago",
+    messagePreview: "I have some concerns about the new features.",
   },
   {
     name: "Eric Gasana",
     email: "eric@saintkizito.org",
     role: "Internship",
     status: "Pending",
-    lastLogin: "1 day ago",
-    updates: "34",
+    dateAndTime: "1 day ago",
+    messagePreview: "The dashboard is great, but I have a suggestion.",
   },
   {
     name: "Alice Mutoni",
     email: "alicemutoni@saintkizito.org",
     role: "Health Post",
     status: "Up_to_date",
-    lastLogin: "3 days ago",
-    updates: "94",
+    dateAndTime: "3 days ago",
+    messagePreview: "The new features are very helpful!",
   },
 ];
 
 /* -------------------- Component -------------------- */
 
-export const UsersMgtTable: React.FC = () => {
+export const FeedbackTable: React.FC = () => {
+  const [adminsList] = useState<Admin[]>(admins);
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [adminsList, setAdminsList] = useState<Admin[]>(admins);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterProgram, setFilterProgram] = useState("");
 
-  const handleEditOpen = (admin: Admin) => {
+  const handleReplyClick = (admin: Admin) => {
     setSelectedAdmin(admin);
-    setIsEditOpen(true);
+    setIsReplyModalOpen(true);
   };
 
-  const handleEditClose = () => {
-    setIsEditOpen(false);
-    setSelectedAdmin(null);
+  const handleSaveReply = (response: string) => {
+    console.log("Reply to:", selectedAdmin?.name);
+    console.log("Response:", response);
+    // Here you would typically send the reply to your backend
   };
 
-  const handleSaveAdmin = (updatedAdmin: Admin) => {
-    setAdminsList((prev) =>
-      prev.map((admin) =>
-        admin.email === selectedAdmin?.email ? updatedAdmin : admin,
-      ),
-    );
-    toast.success("Administrator updated successfully!");
-  };
-
-  const handleDeleteOpen = (admin: Admin) => {
-    setSelectedAdmin(admin);
-    setIsDeleteOpen(true);
-  };
-
-  const handleDeleteClose = () => {
-    setIsDeleteOpen(false);
-    setSelectedAdmin(null);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (selectedAdmin) {
-      setAdminsList((prev) =>
-        prev.filter((admin) => admin.email !== selectedAdmin.email),
-      );
-      toast.success("Administrator deleted successfully!");
-    }
-  };
-
-  // Search filter logic
+  // Filter and search logic
   const filteredAdmins = adminsList.filter((admin) => {
+    // Search filter
     const matchesSearch =
       searchQuery === "" ||
       admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       admin.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       admin.role.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesSearch;
+    // Program filter
+    const matchesProgram =
+      filterProgram === "" ||
+      admin.role.toLowerCase().includes(filterProgram.toLowerCase());
+
+    return matchesSearch && matchesProgram;
   });
 
   return (
     <>
       <div className="max-h-[225px] overflow-y-auto">
+        {/* Search and Filter Fields - Outside Table */}
+        <div className="flex justify-between items-center w-full px-5 py-5 bg-white">
+          {/* Search Field - Left */}
+          <div className="relative w-full max-w-xs">
+            <Input
+              id="search_field"
+              type="text"
+              placeholder="Search by name, email or role"
+              className="border-none rounded-2xl bg-[#F5F7FA] text-[#718EBF] pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718EBF]"
+              size={18}
+            />
+          </div>
+
+          {/* Filter Field - Right */}
+          <div className="relative w-full max-w-xs">
+            <Input
+              id="filter_field"
+              type="text"
+              placeholder="Filter by program"
+              className="border-none rounded-2xl bg-[#F5F7FA] text-[#718EBF] pl-10"
+              value={filterProgram}
+              onChange={(e) => setFilterProgram(e.target.value)}
+            />
+            <MdOutlineTune
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718EBF]"
+              size={18}
+            />
+          </div>
+        </div>
+
         <Table className="w-full">
           <TableHeader className="bg-white">
-            {/* Search Field */}
-            <Field className="m-3 bg-white">
-              <div className="relative w-full max-w-xs">
-                <Input
-                  id="search_field"
-                  type="text"
-                  placeholder="Search by name, email or role"
-                  className="border-none rounded-2xl bg-[#F5F7FA] text-[#718EBF] pl-10"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718EBF]"
-                  size={18}
-                />
-              </div>
-            </Field>
             <TableRow className="border-none bg-[#F9FAFB]">
               <TableHead className="px-5 font-normal text-[#838484] text-base">
-                Administrator
+                Sender
               </TableHead>
               <TableHead className="font-normal text-[#838484] text-base">
-                Assigned Program
+                Program
               </TableHead>
               <TableHead className="font-normal text-[#838484] text-base">
-                Last Activity
+                Message Preview
+              </TableHead>
+              <TableHead className="font-normal text-[#838484] text-base">
+                Date & Time
               </TableHead>
               <TableHead className="font-normal text-[#838484] text-base">
                 Status
@@ -179,10 +183,10 @@ export const UsersMgtTable: React.FC = () => {
             {filteredAdmins.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="text-center py-8 text-gray-500"
                 >
-                  No administrators found matching your search criteria.
+                  No feedback messages found matching your search criteria.
                 </TableCell>
               </TableRow>
             ) : (
@@ -217,27 +221,22 @@ export const UsersMgtTable: React.FC = () => {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-sm text-[#838484]">
-                    {admin.lastLogin}
+                  <TableCell className="text-sm text-[#838484] truncate max-w-xs">
+                    {admin.messagePreview}
                   </TableCell>
+
+                  <TableCell>{admin.dateAndTime}</TableCell>
 
                   <TableCell>
                     <Badge text={admin.status} />
                   </TableCell>
 
-                  <TableCell className="flex items-center gap-5">
+                  <TableCell className="flex items-center justify-center mt-2 gap-5">
                     <button
-                      onClick={() => handleEditOpen(admin)}
+                      onClick={() => handleReplyClick(admin)}
                       className="cursor-pointer hover:opacity-70 transition-opacity"
                     >
-                      <FaPenClip size={15} className="text-[#838484]" />
-                    </button>
-
-                    <button
-                      onClick={() => handleDeleteOpen(admin)}
-                      className="cursor-pointer hover:opacity-70 transition-opacity"
-                    >
-                      <IoMdTrash size={20} className="text-red-600" />
+                      Reply
                     </button>
                   </TableCell>
                 </TableRow>
@@ -247,20 +246,12 @@ export const UsersMgtTable: React.FC = () => {
         </Table>
       </div>
 
-      {/* Edit Administrator Modal */}
-      <EditAdministratorModal
-        isOpen={isEditOpen}
+      {/* Reply Modal */}
+      <ReplyModal
+        isOpen={isReplyModalOpen}
         admin={selectedAdmin}
-        onClose={handleEditClose}
-        onSave={handleSaveAdmin}
-      />
-
-      {/* Delete Administrator Modal */}
-      <DeleteAdminModal
-        isOpen={isDeleteOpen}
-        admin={selectedAdmin}
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
+        onClose={() => setIsReplyModalOpen(false)}
+        onSave={handleSaveReply}
       />
     </>
   );
