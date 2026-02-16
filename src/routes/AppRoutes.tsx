@@ -32,11 +32,11 @@ import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { SuperAdminUsersMgt } from "@/pages/DashboardPages/SuperAdminUsersMgt";
 import { SuperAdminFeedback } from "@/pages/DashboardPages/SuperAdminFeedback";
+import SuperAdminFinancials from "@/pages/DashboardPages/SuperAdminFinancials";
 
 export const AppRoutes = () => {
   return (
     <Routes>
-
       {/* ================= PUBLIC ROUTES ================= */}
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<AboutUs />} />
@@ -118,6 +118,15 @@ export const AppRoutes = () => {
       />
 
       <Route
+        path="/allProgramsFinancials"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminFinancials />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/superAdminSettings"
         element={
           <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
@@ -135,9 +144,18 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/residentialCareChildren" element={<ResidentialCareChildren />} />
-      <Route path="/residentialCareCareTakers" element={<ResidentialCareCareTakers />} />
-      <Route path="/residentialCareSettings" element={<ResidentialCareSettings />} />
+      <Route
+        path="/residentialCareChildren"
+        element={<ResidentialCareChildren />}
+      />
+      <Route
+        path="/residentialCareCareTakers"
+        element={<ResidentialCareCareTakers />}
+      />
+      <Route
+        path="/residentialCareSettings"
+        element={<ResidentialCareSettings />}
+      />
       <Route path="/education" element={<Education />} />
       <Route path="/financials" element={<Financials />} />
       <Route path="/reports" element={<Reports />} />
@@ -164,7 +182,6 @@ export const AppRoutes = () => {
 
       {/* ================= NOT FOUND ================= */}
       <Route path="*" element={<NotFound />} />
-
     </Routes>
   );
 };
