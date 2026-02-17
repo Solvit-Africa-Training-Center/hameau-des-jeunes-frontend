@@ -44,6 +44,33 @@ export const authApi = createApi({
       }),
     }),
 
+    confirmPasswordReset: builder.mutation<
+      any,
+      {
+        email: string;
+        code: string;
+        new_password: string;
+        confirm_password: string;
+      }
+    >({
+      query: (data) => ({
+        url: "/managers/password-reset/confirm/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    changePassword: builder.mutation<
+      any,
+      { old_password: string; new_password: string; confirm_password: string }
+    >({
+      query: (data) => ({
+        url: "/managers/password-change/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     logout: builder.mutation<void, void>({
       query: () => {
         const refreshToken = localStorage.getItem("refreshToken");
@@ -61,5 +88,7 @@ export const {
   useLoginMutation,
   useSignupMutation,
   useRequestPasswordResetMutation,
+  useConfirmPasswordResetMutation,
+  useChangePasswordMutation,
   useLogoutMutation,
 } = authApi;

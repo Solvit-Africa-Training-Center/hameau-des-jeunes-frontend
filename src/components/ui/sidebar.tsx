@@ -18,9 +18,9 @@ const sidebarItems = [
   { icon: FaArrowTrendUp, label: "Analytics", href: "/superAdminAnalytics" },
   { icon: GrOverview, label: "Activity Overview", href: "/activityOverview" },
   { icon: ClipboardCheckIcon, label: "Programs", href: "/listOfprograms" },
-  { icon: GoPeople, label: "Users", href: "/users" },
+  { icon: GoPeople, label: "Users", href: "/usersManagement" },
   { icon: VscFeedback, label: "Feedback", href: "/feedback" },
-  { icon: GiProgression, label: "Financials", href: "/financials" },
+  { icon: GiProgression, label: "Financials", href: "/allProgramsFinancials" },
   { icon: IoSettingsOutline, label: "Settings", href: "/settings" },
 ];
 

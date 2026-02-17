@@ -37,7 +37,7 @@ export const ActivityStatsCards = () => {
         return (
           <Card
             key={item.id}
-            className={`md:w-full mx-5 md:mx-0 px-3 py-4
+            className={`md:w-full mx-5 md:mx-0 px-3 py-4 border border-none shadow-fuchsia-100
           ${item.id === 3 ? "bg-[#0F3D2E] text-white" : "bg-white"}`}
           >
             {/* Header */}

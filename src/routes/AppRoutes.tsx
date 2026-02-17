@@ -30,12 +30,16 @@ import { ResidentialCare } from "@/pages/ResidentialCare";
 import { SignupPage } from "@/pages/Signup";
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { SuperAdminUsersMgt } from "@/pages/DashboardPages/SuperAdminUsersMgt";
+import { SuperAdminFeedback } from "@/pages/DashboardPages/SuperAdminFeedback";
+import SuperAdminFinancials from "@/pages/DashboardPages/SuperAdminFinancials";
+import { NewPassword } from "@/pages/NewPassword";
+import { ChangePassword } from "@/pages/ChangePassword";
 
 
 export const AppRoutes = () => {
   return (
     <Routes>
-
       {/* ================= PUBLIC ROUTES ================= */}
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<AboutUs />} />
@@ -52,6 +56,8 @@ export const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
      
       <Route path="/resetPassword" element={<ResetPassword />} />
+      <Route path="/newPassword" element={<NewPassword />} />
+      <Route path="/changePassword" element={<ChangePassword />} />
 
       {/* ================= SUPER ADMIN ================= */}
 
@@ -107,6 +113,32 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/usersManagement"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminUsersMgt />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/feedback"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminFeedback />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/allProgramsFinancials"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminFinancials />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/superAdminSettings"
@@ -126,9 +158,18 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/residentialCareChildren" element={<ResidentialCareChildren />} />
-      <Route path="/residentialCareCareTakers" element={<ResidentialCareCareTakers />} />
-      <Route path="/residentialCareSettings" element={<ResidentialCareSettings />} />
+      <Route
+        path="/residentialCareChildren"
+        element={<ResidentialCareChildren />}
+      />
+      <Route
+        path="/residentialCareCareTakers"
+        element={<ResidentialCareCareTakers />}
+      />
+      <Route
+        path="/residentialCareSettings"
+        element={<ResidentialCareSettings />}
+      />
       <Route path="/education" element={<Education />} />
       <Route path="/financials" element={<Financials />} />
       <Route path="/reports" element={<Reports />} />
@@ -155,7 +196,6 @@ export const AppRoutes = () => {
 
       {/* ================= NOT FOUND ================= */}
       <Route path="*" element={<NotFound />} />
-
     </Routes>
   );
 };

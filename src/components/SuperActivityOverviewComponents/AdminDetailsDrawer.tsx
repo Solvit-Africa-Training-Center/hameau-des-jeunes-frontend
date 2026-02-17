@@ -56,7 +56,7 @@ export const AdminDetailsDrawer: React.FC<AdminDetailsDrawerProps> = ({
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 ${
           isAnimating ? "opacity-100" : "opacity-0"
         }`}
         onClick={onClose}

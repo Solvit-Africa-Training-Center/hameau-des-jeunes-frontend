@@ -18,6 +18,7 @@ import { useLoginMutation } from "@/store/api/authApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import hdj_logo_black from "@/assets/hdj_logo_black.png";
 
 export function LoginForm({
@@ -26,6 +27,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [login, { isLoading, error }] = useLoginMutation();
   const navigate = useNavigate();
@@ -69,7 +71,6 @@ export function LoginForm({
                 const loggedInUserString = localStorage.getItem("user");
 
                 if (!loggedInUserString) {
-                  // user not found in localStorage
                   console.error("No user in localStorage");
                   return;
                 }
@@ -120,16 +121,31 @@ export function LoginForm({
                     href="/resetPassword"
                     className="ml-auto inline-block text-[#0F3D2E] font-semibold text-sm underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    Want to reset your password?
                   </a>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible size={20} />
+                    ) : (
+                      <AiOutlineEye size={20} />
+                    )}
+                  </button>
+                </div>
               </Field>
               <Field>
                 <Button
