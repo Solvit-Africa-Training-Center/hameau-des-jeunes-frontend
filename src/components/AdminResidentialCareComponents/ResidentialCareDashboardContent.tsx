@@ -1,11 +1,31 @@
 import { useState } from "react";
-import { Download, X, Eye, Trash2, Plus, ChevronRight, FileText, TrendingUp, Info, User, Heart, GraduationCap, Wallet, BarChart3, Pencil, Clipboard, ArrowLeft } from "lucide-react";
+import {
+  Download,
+  X,
+  Eye,
+  Trash2,
+  Plus,
+  ChevronRight,
+  FileText,
+  TrendingUp,
+  Info,
+  User,
+  Heart,
+  GraduationCap,
+  Wallet,
+  BarChart3,
+  Pencil,
+  Clipboard,
+  ArrowLeft,
+} from "lucide-react";
 import { AiOutlineHome } from "react-icons/ai";
 import { GoPeople } from "react-icons/go";
 import { RiGraduationCapLine } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { CiCalendar } from "react-icons/ci";
+import { useRegisterChildMutation } from "@/store/api/childrenApi";
+import { toast } from "react-toastify";
 
 // Types
 interface Child {
@@ -43,13 +63,56 @@ interface Transaction {
 }
 
 type ViewMode = "dashboard" | "childDetail";
-type ActiveTab = "overview" | "personal" | "health" | "education" | "finance" | "progress";
+type ActiveTab =
+  | "overview"
+  | "personal"
+  | "health"
+  | "education"
+  | "finance"
+  | "progress";
+
+const EMPTY_FORM = {
+  first_name: "",
+  last_name: "",
+  date_of_birth: "",
+  gender: " MALE" as "MALE" | "FEMALE",
+  profile_image: "",
+  start_date: "",
+  special_needs: "",
+  vigilant_contact_name: "",
+  vigilant_contact_phone: "",
+  story: "",
+};
 
 export default function ResidentialCareDashboard() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("dashboard");
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
+  const [form, setForm] = useState(EMPTY_FORM);
+
+  const [registerChild, { isLoading: isRegistering }] =
+    useRegisterChildMutation();
+
+  const handleFormChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleRegisterChild = async () => {
+    try {
+      await registerChild(form).unwrap();
+      toast.success("Child registered successfully!");
+      setForm(EMPTY_FORM);
+      setShowRegisterModal(false);
+    } catch (err: any) {
+      console.error("Error registering child:", err);
+      toast.error(err?.data?.message || "Failed to register child");
+    }
+  };
 
   // Stats data from images
   const statsCards = [
@@ -231,7 +294,7 @@ export default function ResidentialCareDashboard() {
 
   // Register Modal Component
   const RegisterModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40  flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Register New Child</h2>
@@ -243,101 +306,156 @@ export default function ResidentialCareDashboard() {
           </button>
         </div>
 
-        <form className="p-6 space-y-4">
-          {/* Names and Gender */}
+        <form onSubmit={handleRegisterChild} className="p-6 space-y-4">
+          {/* First Name & Last Name */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Names</label>
-              <input
-                type="text"
-                placeholder="Enter Full names"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-              <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                <option>Male</option>
-                <option>Female</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Date of Birth and Age */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-              <input
-                type="date"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
-            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Age (Calculated)
+                First Name
               </label>
               <input
                 type="text"
-                disabled
-                placeholder="Auto calculated"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-              />
-            </div>
-          </div>
-
-          {/* Date Registered and Health Status */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date Registered
-              </label>
-              <input
-                type="date"
+                name="first_name"
+                value={form.first_name}
+                onChange={handleFormChange}
+                placeholder="Enter first name"
+                required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Health Status</label>
-              <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                <option>Good</option>
-                <option>Fair</option>
-                <option>Needs Attention</option>
-              </select>
-            </div>
-          </div>
 
-          {/* Disability and Education Status */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Disability</label>
-              <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                <option>None or Specify</option>
-                <option>Physical</option>
-                <option>Visual</option>
-                <option>Hearing</option>
-              </select>
-            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Education Status
+                Last Name
               </label>
-              <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                <option>Enrolled</option>
-                <option>Not Enrolled</option>
+              <input
+                type="text"
+                name="last_name"
+                value={form.last_name}
+                onChange={handleFormChange}
+                placeholder="Enter last name"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Date of Birth & Gender */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                name="date_of_birth"
+                value={form.date_of_birth}
+                onChange={handleFormChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Gender
+              </label>
+              <select
+                name="gender"
+                value={form.gender}
+                onChange={handleFormChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              >
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
               </select>
             </div>
           </div>
 
-          {/* Guardian Info */}
+          {/* Profile Image & Start Date */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Profile Image URL
+              </label>
+              <input
+                type="url"
+                name="profile_image"
+                value={form.profile_image}
+                onChange={handleFormChange}
+                placeholder="https://example.com/image.jpg"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Start Date
+              </label>
+              <input
+                type="date"
+                name="start_date"
+                value={form.start_date}
+                onChange={handleFormChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Special Needs */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Parents / Guardian Info
+              Special Needs
             </label>
             <input
               type="text"
-              placeholder="Parent name or contact"
+              name="special_needs"
+              value={form.special_needs}
+              onChange={handleFormChange}
+              placeholder="Specify if any"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
             />
+          </div>
+
+          {/* Vigilant Contact Info */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Vigilant Contact Name
+              </label>
+              <input
+                type="text"
+                name="vigilant_contact_name"
+                placeholder="Enter contact name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Vigilant Contact Phone
+              </label>
+              <input
+                type="tel"
+                name="vigilant_contact_phone"
+                placeholder="Enter phone number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Story */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Story
+            </label>
+            <textarea
+              name="story"
+              rows={4}
+              placeholder="Write the child's story..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            ></textarea>
           </div>
 
           {/* Action Buttons */}
@@ -349,6 +467,7 @@ export default function ResidentialCareDashboard() {
             >
               Cancel
             </button>
+
             <button
               type="submit"
               className="px-6 py-3 bg-emerald-900 text-white rounded-lg font-medium hover:bg-emerald-800 transition-colors"
@@ -397,14 +516,17 @@ export default function ResidentialCareDashboard() {
                 />
                 <div>
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-semibold">{selectedChild.name}</h2>
+                    <h2 className="text-2xl font-semibold">
+                      {selectedChild.name}
+                    </h2>
                     <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
                       Special Care
                     </span>
                   </div>
                   <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                     <span className="flex items-center gap-1">
-                      < CiCalendar className="w-4 h-4" /> {selectedChild.age} Years Old • Male
+                      <CiCalendar className="w-4 h-4" /> {selectedChild.age}{" "}
+                      Years Old • Male
                     </span>
                     <span className="flex items-center gap-1">
                       <User className="w-4 h-4" /> Caretaker: Mama Beatrice
@@ -466,7 +588,9 @@ export default function ResidentialCareDashboard() {
                         <span className="font-medium">Health Status</span>
                       </div>
                       <div className="text-2xl font-bold mb-1">Stable</div>
-                      <p className="text-sm text-gray-600">Last checkup: Feb 3, 2026</p>
+                      <p className="text-sm text-gray-600">
+                        Last checkup: Feb 3, 2026
+                      </p>
                     </div>
 
                     <div className="bg-white rounded-xl p-6">
@@ -515,13 +639,19 @@ export default function ResidentialCareDashboard() {
                       ].map((item, index) => (
                         <div key={index} className="flex gap-4">
                           <div className="flex flex-col items-center">
-                            <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
-                            {index < 3 && <div className="w-0.5 h-full bg-gray-200 mt-2"></div>}
+                            <div
+                              className={`w-3 h-3 rounded-full ${item.color}`}
+                            ></div>
+                            {index < 3 && (
+                              <div className="w-0.5 h-full bg-gray-200 mt-2"></div>
+                            )}
                           </div>
                           <div className="flex-1 pb-4">
                             <h4 className="font-medium">{item.title}</h4>
                             <p className="text-sm text-gray-600">{item.desc}</p>
-                            <p className="text-xs text-gray-500 mt-1">{item.date}</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {item.date}
+                            </p>
                           </div>
                         </div>
                       ))}
@@ -531,7 +661,9 @@ export default function ResidentialCareDashboard() {
 
                 {/* Right Column - Current Care Team */}
                 <div className="bg-white rounded-xl p-6">
-                  <h3 className="font-semibold text-lg mb-6">Current Care Team</h3>
+                  <h3 className="font-semibold text-lg mb-6">
+                    Current Care Team
+                  </h3>
                   <div className="flex items-start gap-4">
                     <img
                       src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mama"
@@ -540,15 +672,18 @@ export default function ResidentialCareDashboard() {
                     />
                     <div>
                       <h4 className="font-medium">Mama Beatrice</h4>
-                      <p className="text-sm text-gray-600">Primary House Mother</p>
+                      <p className="text-sm text-gray-600">
+                        Primary House Mother
+                      </p>
                     </div>
                   </div>
                   <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-700 italic">
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque placerat
-                      nec leo gravida convallis. Sed malesuada placerat tortor at placerat.
-                      Integer semper nulla ac blandit sollicitudin. Praesentium condimentum
-                      ultricies eros at ultricies purus aliquam ac."
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Quisque placerat nec leo gravida convallis. Sed malesuada
+                      placerat tortor at placerat. Integer semper nulla ac
+                      blandit sollicitudin. Praesentium condimentum ultricies
+                      eros at ultricies purus aliquam ac."
                     </p>
                   </div>
                 </div>
@@ -559,7 +694,9 @@ export default function ResidentialCareDashboard() {
             {activeTab === "personal" && (
               <div className="bg-white rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="font-semibold text-lg">Personal Information</h3>
+                  <h3 className="font-semibold text-lg">
+                    Personal Information
+                  </h3>
                   <p className="text-sm text-gray-500">
                     Last Updated: Jan 20, 2026 by Administrator
                   </p>
@@ -571,7 +708,9 @@ export default function ResidentialCareDashboard() {
                     <p className="font-medium mt-1">Samuel Kwizera</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Date of Admission</label>
+                    <label className="text-sm text-gray-600">
+                      Date of Admission
+                    </label>
                     <p className="font-medium mt-1">2024-05-12</p>
                   </div>
                   <div>
@@ -587,27 +726,36 @@ export default function ResidentialCareDashboard() {
                     <p className="font-medium mt-1">Full-time Residential</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Reason for Care</label>
+                    <label className="text-sm text-gray-600">
+                      Reason for Care
+                    </label>
                     <p className="font-medium mt-1">Orphaned</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Guardian / Relative</label>
+                    <label className="text-sm text-gray-600">
+                      Guardian / Relative
+                    </label>
                     <p className="font-medium mt-1">Mariya Mukamunga (Aunt)</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Guardian Contact</label>
+                    <label className="text-sm text-gray-600">
+                      Guardian Contact
+                    </label>
                     <p className="font-medium mt-1">+250 788 123 456</p>
                   </div>
                 </div>
 
                 <div className="mt-8">
-                  <label className="text-sm text-gray-600">Background Information</label>
+                  <label className="text-sm text-gray-600">
+                    Background Information
+                  </label>
                   <div className="mt-2 p-4 bg-gray-50 rounded-lg">
                     <p className="text-sm text-gray-700">
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque placerat
-                      nec leo gravida convallis. Sed malesuada placerat tortor at placerat.
-                      Integer semper nulla ac blandit sollicitudin. Praesent condimentum ultricies
-                      eros at ultricies purus aliquam ac."
+                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Quisque placerat nec leo gravida convallis. Sed malesuada
+                      placerat tortor at placerat. Integer semper nulla ac
+                      blandit sollicitudin. Praesent condimentum ultricies eros
+                      at ultricies purus aliquam ac."
                     </p>
                   </div>
                 </div>
@@ -618,7 +766,9 @@ export default function ResidentialCareDashboard() {
             {activeTab === "health" && (
               <div className="bg-white rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="font-semibold text-lg">Health Intake Records</h3>
+                  <h3 className="font-semibold text-lg">
+                    Health Intake Records
+                  </h3>
                   <button className="px-4 py-2 bg-emerald-900 text-white rounded-lg font-medium hover:bg-emerald-800 transition-colors flex items-center gap-2">
                     <Plus className="w-4 h-4" />
                     New Health Record
@@ -629,21 +779,32 @@ export default function ResidentialCareDashboard() {
                   <table className="w-full">
                     <thead className="border-b">
                       <tr className="text-left">
-                        <th className="pb-3 text-sm font-medium text-gray-600">Visit Date</th>
-                        <th className="pb-3 text-sm font-medium text-gray-600">Hospital</th>
-                        <th className="pb-3 text-sm font-medium text-gray-600">Doctor</th>
+                        <th className="pb-3 text-sm font-medium text-gray-600">
+                          Visit Date
+                        </th>
+                        <th className="pb-3 text-sm font-medium text-gray-600">
+                          Hospital
+                        </th>
+                        <th className="pb-3 text-sm font-medium text-gray-600">
+                          Doctor
+                        </th>
                         <th className="pb-3 text-sm font-medium text-gray-600">
                           Complaint / Intake Reason
                         </th>
                         <th className="pb-3 text-sm font-medium text-gray-600">
                           Prescribed Medicines
                         </th>
-                        <th className="pb-3 text-sm font-medium text-gray-600">Actions</th>
+                        <th className="pb-3 text-sm font-medium text-gray-600">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {healthRecords.map((record) => (
-                        <tr key={record.id} className="border-b hover:bg-gray-50">
+                        <tr
+                          key={record.id}
+                          className="border-b hover:bg-gray-50"
+                        >
                           <td className="py-4 text-sm">{record.visitDate}</td>
                           <td className="py-4 text-sm">{record.hospital}</td>
                           <td className="py-4 text-sm">{record.doctor}</td>
@@ -670,27 +831,43 @@ export default function ResidentialCareDashboard() {
                   <h3 className="font-semibold text-lg mb-6">Academic Info</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm text-gray-600">School Name</label>
-                      <p className="font-medium mt-1">St. Maria Primary School</p>
+                      <label className="text-sm text-gray-600">
+                        School Name
+                      </label>
+                      <p className="font-medium mt-1">
+                        St. Maria Primary School
+                      </p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Education Level</label>
+                      <label className="text-sm text-gray-600">
+                        Education Level
+                      </label>
                       <p className="font-medium mt-1">Primary Level 2</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Competency Status</label>
-                      <p className="font-medium mt-1 text-green-600">Excellent (96%)</p>
+                      <label className="text-sm text-gray-600">
+                        Competency Status
+                      </label>
+                      <p className="font-medium mt-1 text-green-600">
+                        Excellent (96%)
+                      </p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Current Progress</label>
-                      <p className="font-medium mt-1">Steady Improvement in Literacy</p>
+                      <label className="text-sm text-gray-600">
+                        Current Progress
+                      </label>
+                      <p className="font-medium mt-1">
+                        Steady Improvement in Literacy
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Documents & Reports */}
                 <div className="bg-white rounded-xl p-6">
-                  <h3 className="font-semibold text-lg mb-6">Documents & Reports</h3>
+                  <h3 className="font-semibold text-lg mb-6">
+                    Documents & Reports
+                  </h3>
                   <div className="space-y-3">
                     {[
                       { name: "Report Card - Term 3 2025.pdf" },
@@ -702,7 +879,9 @@ export default function ResidentialCareDashboard() {
                       >
                         <div className="flex items-center gap-3">
                           <FileText className="w-5 h-5 text-gray-600" />
-                          <span className="text-sm font-medium">{doc.name}</span>
+                          <span className="text-sm font-medium">
+                            {doc.name}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <button className="p-2 hover:bg-gray-100 rounded">
@@ -729,7 +908,9 @@ export default function ResidentialCareDashboard() {
                 {/* Top Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-emerald-900 text-white rounded-xl p-6">
-                    <h4 className="text-sm opacity-90 mb-2">Total Care Costs</h4>
+                    <h4 className="text-sm opacity-90 mb-2">
+                      Total Care Costs
+                    </h4>
                     <p className="text-3xl font-bold mb-4">92,000 RWF</p>
                     <button className="flex items-center gap-2 text-sm bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors">
                       <Plus className="w-4 h-4" />
@@ -738,7 +919,9 @@ export default function ResidentialCareDashboard() {
                   </div>
 
                   <div className="bg-white rounded-xl p-6 border">
-                    <h4 className="text-sm text-gray-600 mb-2">Last Month Spend</h4>
+                    <h4 className="text-sm text-gray-600 mb-2">
+                      Last Month Spend
+                    </h4>
                     <p className="text-3xl font-bold mb-2">85,400 RWF</p>
                     <div className="flex items-center gap-2 text-sm text-green-600">
                       <TrendingUp className="w-4 h-4" />
@@ -747,16 +930,22 @@ export default function ResidentialCareDashboard() {
                   </div>
 
                   <div className="bg-white rounded-xl p-6 border">
-                    <h4 className="text-sm text-gray-600 mb-2">Insurance Status</h4>
+                    <h4 className="text-sm text-gray-600 mb-2">
+                      Insurance Status
+                    </h4>
                     <p className="text-3xl font-bold mb-2">Active</p>
-                    <p className="text-sm text-gray-600">Expires: Dec 31, 2026</p>
+                    <p className="text-sm text-gray-600">
+                      Expires: Dec 31, 2026
+                    </p>
                   </div>
                 </div>
 
                 {/* Transaction History */}
                 <div className="bg-white rounded-xl p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="font-semibold text-lg">Transaction History</h3>
+                    <h3 className="font-semibold text-lg">
+                      Transaction History
+                    </h3>
                     <button className="text-sm text-blue-600 hover:text-blue-700">
                       View Monthly Analysis →
                     </button>
@@ -766,22 +955,35 @@ export default function ResidentialCareDashboard() {
                     <table className="w-full">
                       <thead className="border-b">
                         <tr className="text-left">
-                          <th className="pb-3 text-sm font-medium text-gray-600">Date</th>
-                          <th className="pb-3 text-sm font-medium text-gray-600">Category</th>
-                          <th className="pb-3 text-sm font-medium text-gray-600">Description</th>
-                          <th className="pb-3 text-sm font-medium text-gray-600">Actions</th>
+                          <th className="pb-3 text-sm font-medium text-gray-600">
+                            Date
+                          </th>
+                          <th className="pb-3 text-sm font-medium text-gray-600">
+                            Category
+                          </th>
+                          <th className="pb-3 text-sm font-medium text-gray-600">
+                            Description
+                          </th>
+                          <th className="pb-3 text-sm font-medium text-gray-600">
+                            Actions
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {transactions.map((transaction) => (
-                          <tr key={transaction.id} className="border-b hover:bg-gray-50">
+                          <tr
+                            key={transaction.id}
+                            className="border-b hover:bg-gray-50"
+                          >
                             <td className="py-4 text-sm">{transaction.date}</td>
                             <td className="py-4">
                               <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
                                 {transaction.category}
                               </span>
                             </td>
-                            <td className="py-4 text-sm">{transaction.description}</td>
+                            <td className="py-4 text-sm">
+                              {transaction.description}
+                            </td>
                             <td className="py-4">
                               <button className="text-emerald-900 hover:text-emerald-700">
                                 <ChevronRight className="w-5 h-5" />
@@ -803,11 +1005,14 @@ export default function ResidentialCareDashboard() {
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <FileText className="w-10 h-10 text-gray-600" />
                   </div>
-                  <h3 className="text-2xl font-semibold mb-4">Generate Child Progress Report</h3>
+                  <h3 className="text-2xl font-semibold mb-4">
+                    Generate Child Progress Report
+                  </h3>
                   <p className="text-gray-600 mb-8">
-                    This tool compiles all current data including health, education, behavioral
-                    notes, and finance into a single, professional PDF document ready for
-                    stakeholders or authorities.
+                    This tool compiles all current data including health,
+                    education, behavioral notes, and finance into a single,
+                    professional PDF document ready for stakeholders or
+                    authorities.
                   </p>
 
                   <div className="grid grid-cols-2 gap-4 mb-8">
@@ -869,10 +1074,14 @@ export default function ResidentialCareDashboard() {
               <div key={item.id} className="bg-white rounded-xl p-6 shadow-sm">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${item.bgColor}`}>
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${item.bgColor}`}
+                  >
                     <Icon className={`w-5 h-5 ${item.iconColor}`} />
                   </div>
-                  <h3 className="text-sm font-medium text-gray-600">{item.title}</h3>
+                  <h3 className="text-sm font-medium text-gray-600">
+                    {item.title}
+                  </h3>
                 </div>
 
                 {/* Main number */}
@@ -880,7 +1089,9 @@ export default function ResidentialCareDashboard() {
 
                 {/* Footer */}
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-green-600 font-medium">{item.footer}</span>
+                  <span className="text-green-600 font-medium">
+                    {item.footer}
+                  </span>
                   <span className="text-gray-500">from last month</span>
                 </div>
                 <div className="flex items-center gap-1 text-gray-600 text-sm mt-1">
@@ -909,12 +1120,24 @@ export default function ResidentialCareDashboard() {
                 <table className="w-full">
                   <thead className="border-b">
                     <tr className="text-left">
-                      <th className="pb-3 text-sm font-medium text-gray-600">Child</th>
-                      <th className="pb-3 text-sm font-medium text-gray-600">Age</th>
-                      <th className="pb-3 text-sm font-medium text-gray-600">Date</th>
-                      <th className="pb-3 text-sm font-medium text-gray-600">Care Status</th>
-                      <th className="pb-3 text-sm font-medium text-gray-600">Caretaker</th>
-                      <th className="pb-3 text-sm font-medium text-gray-600">Actions</th>
+                      <th className="pb-3 text-sm font-medium text-gray-600">
+                        Child
+                      </th>
+                      <th className="pb-3 text-sm font-medium text-gray-600">
+                        Age
+                      </th>
+                      <th className="pb-3 text-sm font-medium text-gray-600">
+                        Date
+                      </th>
+                      <th className="pb-3 text-sm font-medium text-gray-600">
+                        Care Status
+                      </th>
+                      <th className="pb-3 text-sm font-medium text-gray-600">
+                        Caretaker
+                      </th>
+                      <th className="pb-3 text-sm font-medium text-gray-600">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -927,7 +1150,9 @@ export default function ResidentialCareDashboard() {
                               alt={child.name}
                               className="w-10 h-10 rounded-full"
                             />
-                            <span className="font-medium text-sm">{child.name}</span>
+                            <span className="font-medium text-sm">
+                              {child.name}
+                            </span>
                           </div>
                         </td>
                         <td className="py-4 text-sm">{child.age} yrs</td>
@@ -979,9 +1204,14 @@ export default function ResidentialCareDashboard() {
                   { label: "Clothes", amount: "450,000 RWF" },
                   { label: "Health", amount: "450,000 RWF" },
                 ].map((item, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-4 text-center">
+                  <div
+                    key={index}
+                    className="bg-gray-50 rounded-lg p-4 text-center"
+                  >
                     <p className="text-sm text-gray-600 mb-2">{item.label}</p>
-                    <p className="text-xl font-bold text-amber-600">{item.amount}</p>
+                    <p className="text-xl font-bold text-amber-600">
+                      {item.amount}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -997,8 +1227,12 @@ export default function ResidentialCareDashboard() {
                   <div className="w-2 h-2 bg-emerald-900 rounded-full mt-2 flex-shrink-0"></div>
                   <div className="flex-1">
                     <h4 className="font-medium text-sm">{activity.title}</h4>
-                    <p className="text-xs text-gray-600 mt-1">{activity.description}</p>
-                    <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {activity.description}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {activity.time}
+                    </p>
                   </div>
                 </div>
               ))}
