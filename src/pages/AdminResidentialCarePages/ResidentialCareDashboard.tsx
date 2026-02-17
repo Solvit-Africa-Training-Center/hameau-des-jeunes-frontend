@@ -26,6 +26,8 @@ function ResidentialCareDashboard() {
           {/* Your main dashboard content here */}
           <ResidentialCareDashboardContent/>
         </div>
+
+        
       </div>
     </>
   );
