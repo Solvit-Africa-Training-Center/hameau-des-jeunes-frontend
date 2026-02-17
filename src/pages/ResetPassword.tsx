@@ -21,7 +21,7 @@ export const ResetPassword = () => {
       localStorage.setItem("requestingEmail", email);
       navigate("/newPassword");
     } catch (err) {
-      console.error("Failed to request reset:", err);
+      console.error("Failed to request reset:", JSON.stringify(err, null, 2));
       toast.error("Failed to request reset");
     }
   };

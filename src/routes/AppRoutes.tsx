@@ -33,6 +33,8 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { SuperAdminUsersMgt } from "@/pages/DashboardPages/SuperAdminUsersMgt";
 import { SuperAdminFeedback } from "@/pages/DashboardPages/SuperAdminFeedback";
 import SuperAdminFinancials from "@/pages/DashboardPages/SuperAdminFinancials";
+import { NewPassword } from "@/pages/NewPassword";
+import { ChangePassword } from "@/pages/ChangePassword";
 
 export const AppRoutes = () => {
   return (
@@ -53,6 +55,8 @@ export const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/managerRegistration" element={<SignupPage />} />
       <Route path="/resetPassword" element={<ResetPassword />} />
+      <Route path="/newPassword" element={<NewPassword />} />
+      <Route path="/changePassword" element={<ChangePassword />} />
 
       {/* ================= SUPER ADMIN ================= */}
       <Route

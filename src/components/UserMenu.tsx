@@ -9,6 +9,7 @@ import {
 import { useLogoutMutation } from "@/store/api/authApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { PiPasswordDuotone } from "react-icons/pi";
 
 export const UserMenu = () => {
   const userString = localStorage.getItem("user");
@@ -77,6 +78,19 @@ export const UserMenu = () => {
             className="w-full flex items-center gap-2 px-2 py-2 text-sm text-red-600 hover:bg-red-100 rounded transition-colors"
           >
             <FiLogOut size={16} />
+          </button>
+        </div>
+
+        {/* Change password button */}
+        <div className="p-1">
+          <button
+            className="w-full flex items-center gap-2 px-2 py-2 text-sm text-black hover:bg-red-100 rounded transition-colors"
+            onClick={() => navigate("/changePassword")}
+          >
+            <div className="flex items-center gap-2">
+              <PiPasswordDuotone size={16} />
+              <h1>Change Password</h1>
+            </div>
           </button>
         </div>
       </DropdownMenuContent>
