@@ -31,6 +31,7 @@ import { SignupPage } from "@/pages/Signup";
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 
+
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -49,10 +50,19 @@ export const AppRoutes = () => {
 
       {/* ================= AUTH ROUTES ================= */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/managerRegistration" element={<SignupPage />} />
+     
       <Route path="/resetPassword" element={<ResetPassword />} />
 
       {/* ================= SUPER ADMIN ================= */}
+
+      <Route 
+      path="/managerRegistration"
+      element={
+        <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+          <SignupPage/>
+        </ProtectedRoute>
+      }>
+      </Route>
       <Route
         path="/superAdminDashboard"
         element={
@@ -122,7 +132,7 @@ export const AppRoutes = () => {
       <Route path="/education" element={<Education />} />
       <Route path="/financials" element={<Financials />} />
       <Route path="/reports" element={<Reports />} />
-      <Route path="/health-records" element={<HealthRecords />} />
+      <Route path="/healthRecords" element={<HealthRecords/>} />
 
       {/* ================= OTHER MANAGERS ================= */}
       <Route

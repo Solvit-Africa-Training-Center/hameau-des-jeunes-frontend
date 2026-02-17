@@ -15,7 +15,7 @@ const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/residentialCareDashboard" },
   { icon: FaArrowTrendUp, label: "Children", href: "/residentialCareChildren" },
   { icon: GrOverview, label: "Care takers", href: "/residentialCareCareTakers" },
-  { icon: ClipboardCheckIcon, label: "Health Records", href: "/health records" },
+  { icon: ClipboardCheckIcon, label: "Health Records", href: "/healthRecords" },
   { icon: GoPeople, label: "Education", href: "/education" },
   { icon: VscFeedback, label: "Financials", href: "/financials" },
   { icon: GiProgression, label: "Reports", href: "/reports" },
