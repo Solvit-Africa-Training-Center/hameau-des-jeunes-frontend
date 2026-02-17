@@ -3,7 +3,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   useChangePasswordMutation,
-  useConfirmPasswordResetMutation,
+
 } from "@/store/api/authApi";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
