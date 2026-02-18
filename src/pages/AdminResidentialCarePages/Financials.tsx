@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ResidentialCareSideBar } from '@/components/AdminResidentialCareComponents/ResidentialCareSideBar';
 import { ResidentialMobileSidebar } from '@/components/AdminResidentialCareComponents/ResidentialMobileSideBar';
 import { ResidentialCareTopNavBar } from '@/components/AdminResidentialCareComponents/ResidentialCareTopNavBar';
-import FinancialsContent from '@/components/AdminResidentialCareComponents/FinancialsContent';
+import FinancialsContent from '@/components/AdminResidentialCareComponents/RCFinancialsContent/FinancialsContent';
 
 function Financials() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

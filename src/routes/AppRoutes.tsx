@@ -36,6 +36,7 @@ import SuperAdminFinancials from "@/pages/DashboardPages/SuperAdminFinancials";
 import { NewPassword } from "@/pages/NewPassword";
 import { ChangePassword } from "@/pages/ChangePassword";
 
+
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -53,12 +54,21 @@ export const AppRoutes = () => {
 
       {/* ================= AUTH ROUTES ================= */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/managerRegistration" element={<SignupPage />} />
+     
       <Route path="/resetPassword" element={<ResetPassword />} />
       <Route path="/newPassword" element={<NewPassword />} />
       <Route path="/changePassword" element={<ChangePassword />} />
 
       {/* ================= SUPER ADMIN ================= */}
+
+      <Route 
+      path="/managerRegistration"
+      element={
+        <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+          <SignupPage/>
+        </ProtectedRoute>
+      }>
+      </Route>
       <Route
         path="/superAdminDashboard"
         element={
@@ -163,7 +173,7 @@ export const AppRoutes = () => {
       <Route path="/education" element={<Education />} />
       <Route path="/financials" element={<Financials />} />
       <Route path="/reports" element={<Reports />} />
-      <Route path="/health-records" element={<HealthRecords />} />
+      <Route path="/healthRecords" element={<HealthRecords/>} />
 
       {/* ================= OTHER MANAGERS ================= */}
       <Route

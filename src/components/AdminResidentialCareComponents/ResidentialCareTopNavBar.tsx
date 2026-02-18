@@ -18,7 +18,7 @@ export const ResidentialCareTopNavBar = ({
   onMenuClick,
 }: ResidentialCareTopNavBar ) => {
   return (
-    <header className="fixed top-0 z-50 h-16.25 md:w-auto w-full  border-b bg-background">
+    <header className="fixed top-0 z-40 h-16.25 md:w-auto w-full  border-b bg-background">
       {/* ===== Mobile / Tablet ===== */}
       <div className="flex md:hidden items-center justify-between  px-4 h-full">
         <div className="flex items-center ">

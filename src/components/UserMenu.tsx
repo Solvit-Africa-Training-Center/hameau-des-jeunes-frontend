@@ -11,7 +11,10 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { PiPasswordDuotone } from "react-icons/pi";
 
-export const UserMenu = () => {
+export const UserMenu = ({open, setOpen,} : {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+}) => {
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
   const navigate = useNavigate();
@@ -43,14 +46,15 @@ export const UserMenu = () => {
   };
 
   return (
-    <DropdownMenu>
+ 
+          <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <div className="cursor-pointer hover:bg-gray-100 p-2 rounded transition-colors">
           <IoIosArrowForward size={20} />
         </div>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56" onClick={(e) => e.stopPropagation()}>
         {/* User Info Section */}
         {user && (
           <>

@@ -12,6 +12,7 @@ import { VscFeedback } from "react-icons/vsc";
 import { GiProgression } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { UserMenu } from "../UserMenu";
+import { useState } from "react";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/superAdminDashboard" },
@@ -26,6 +27,7 @@ const sidebarItems = [
 
 export function Sidebar({ className }: { className?: string }) {
   const { pathname } = useLocation();
+   const [menuOpen, setMenuOpen] = useState(false);
 
   const loggedInUserString = localStorage.getItem("user");
   if (!loggedInUserString) {
@@ -38,6 +40,7 @@ export function Sidebar({ className }: { className?: string }) {
   const lastName = loggedInUser.last_name;
 
   return (
+    <>
     <aside
       className={cn(
         // Base styles
@@ -97,9 +100,18 @@ export function Sidebar({ className }: { className?: string }) {
             {firstName} {lastName}
           </p>
         </div>
-
-        <UserMenu />
-      </div>
+        <div className="ml-auto relative z-60">
+            <UserMenu open={menuOpen} setOpen={setMenuOpen}/>
+          </div>   
+      </div> 
     </aside>
+        {menuOpen && (
+      <div
+        className="fixed inset-0 bg-black/40 z-50"
+        onClick={() => setMenuOpen(false)}
+      />
+    )}
+    </>
+    
   );
 }
