@@ -16,7 +16,7 @@ export const ChangePassword = () => {
   const [form, setForm] = useState({
     old_password: "",
     new_password: "",
-    confirm_password: "",
+    password_confirm: "",
   });
 
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -30,7 +30,7 @@ export const ChangePassword = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (form.new_password !== form.confirm_password) {
+    if (form.new_password !== form.password_confirm) {
       toast.error("Passwords do not match");
       return;
     }
@@ -118,14 +118,14 @@ export const ChangePassword = () => {
           </Field>
 
           <Field className="w-full">
-            <FieldLabel htmlFor="confirm_password">Confirm password</FieldLabel>
+            <FieldLabel htmlFor="password_confirm">Confirm password</FieldLabel>
             <div className="relative">
               <Input
                 className="rounded-2xl pr-10"
-                id="confirm_password"
+                id="password_confirm"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="••••••••"
-                value={form.confirm_password}
+                value={form.password_confirm}
                 onChange={handleChange}
                 required
               />

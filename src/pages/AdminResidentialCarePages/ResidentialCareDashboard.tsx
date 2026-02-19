@@ -1,16 +1,18 @@
-import { useState } from 'react';
-import { ResidentialCareSideBar } from '@/components/AdminResidentialCareComponents/ResidentialCareSideBar';
-import { ResidentialMobileSidebar } from '@/components/AdminResidentialCareComponents/ResidentialMobileSideBar';
-import { ResidentialCareTopNavBar } from '@/components/AdminResidentialCareComponents/ResidentialCareTopNavBar';
-import ResidentialCareDashboardContent from '@/components/AdminResidentialCareComponents/ResidentialCareDashboardContent';
+import { useState } from "react";
+import { ResidentialCareSideBar } from "@/components/AdminResidentialCareComponents/ResidentialCareSideBar";
+import { ResidentialMobileSidebar } from "@/components/AdminResidentialCareComponents/ResidentialMobileSideBar";
+import { ResidentialCareTopNavBar } from "@/components/AdminResidentialCareComponents/ResidentialCareTopNavBar";
+import ResidentialCareDashboardContent from "@/components/AdminResidentialCareComponents/RCDashboardContent/ResidentialCareDashboardContent";
 
 function ResidentialCareDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    
     <>
       {/* Mobile Sidebar */}
-      <ResidentialMobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <ResidentialMobileSidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       {/* Desktop Sidebar */}
       <ResidentialCareSideBar className="hidden md:flex" />
@@ -24,7 +26,7 @@ function ResidentialCareDashboard() {
         {/* Page content below */}
         <div className="flex flex-col items-center gap-6">
           {/* Your main dashboard content here */}
-          <ResidentialCareDashboardContent/>
+          <ResidentialCareDashboardContent />
         </div>
       </div>
     </>

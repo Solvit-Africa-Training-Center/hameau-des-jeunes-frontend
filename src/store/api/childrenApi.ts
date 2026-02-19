@@ -1,5 +1,32 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+export interface Child {
+  id: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  gender: "MALE" | "FEMALE";
+  date_of_birth: string;
+  age: number;
+  profile_image: string;
+  start_date: string;
+  end_date: string;
+  status: "ACTIVE" | "INACTIVE";
+  special_needs: string;
+  vigilant_contact_name: string;
+  vigilant_contact_phone: string;
+  story: string;
+  created_on: string;
+  updated_on: string;
+}
+
+interface PaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Child[];
+}
+
 export const childrenApi = createApi({
   reducerPath: "childrenApi",
   baseQuery: fetchBaseQuery({
@@ -12,29 +39,41 @@ export const childrenApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Children", "Child"],
   endpoints: (builder) => ({
-    registerChild: builder.mutation<
-      any,
-      {
-        first_name: string;
-        last_name: string;
-        date_of_birth: string;
-        gender: "MALE" | "FEMALE";
-        profile_image: string;
-        start_date: string;
-        special_needs: string;
-        vigilant_contact_name: string;
-        vigilant_contact_phone: string;
-        story: string;
-      }
-    >({
-      query: (data) => ({
-        url: "/children",
+    getChildren: builder.query<Child[], void>({
+      query: () => "/children/",
+      transformResponse: (response: PaginatedResponse | Child[]) => {
+        if (Array.isArray(response)) return response;
+        return response.results;
+      },
+      providesTags: ["Children"],
+    }),
+
+    getChildById: builder.query<Child, string>({
+      query: (id) => `/children/${id}/`,
+      providesTags: (_result, _error, id) => [{ type: "Child", id }],
+    }),
+
+    registerChild: builder.mutation<any, FormData>({
+      query: (formData) => ({
+        url: "/children/",
         method: "POST",
-        body: data,
+        body: formData,
       }),
+      invalidatesTags: ["Children"],
+    }),
+
+    deleteChild: builder.mutation<void, string>({
+      query: (id) => ({ url: `/children/${id}/`, method: "DELETE" }),
+      invalidatesTags: ["Children"],
     }),
   }),
 });
 
-export const { useRegisterChildMutation } = childrenApi;
+export const {
+  useGetChildrenQuery,
+  useGetChildByIdQuery,
+  useRegisterChildMutation,
+  useDeleteChildMutation,
+} = childrenApi;
