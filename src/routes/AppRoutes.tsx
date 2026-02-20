@@ -35,6 +35,11 @@ import { SuperAdminFeedback } from "@/pages/DashboardPages/SuperAdminFeedback";
 import SuperAdminFinancials from "@/pages/DashboardPages/SuperAdminFinancials";
 import { NewPassword } from "@/pages/NewPassword";
 import { ChangePassword } from "@/pages/ChangePassword";
+import InternshipDashboard from "@/pages/AdminInternshipPages/InternshipDashboard";
+import InternshipApplication from "@/pages/AdminInternshipPages/InternshipApplication";
+import InternshipManagement from "@/pages/AdminInternshipPages/InternshipManagement";
+import InternshipFeedBack from "@/pages/AdminInternshipPages/InternshipFeedback";
+import InternshipSettings from "@/pages/AdminInternshipPages/InternshipSettings";
 
 
 export const AppRoutes = () => {
@@ -174,6 +179,15 @@ export const AppRoutes = () => {
       <Route path="/financials" element={<Financials />} />
       <Route path="/reports" element={<Reports />} />
       <Route path="/healthRecords" element={<HealthRecords/>} />
+
+      {/* ================= Internship Program Managers */}
+
+      <Route path="/InternshipDashboard" element={<InternshipDashboard/>}/>
+      <Route path="/InternshipApplication" element={<InternshipApplication/>}/>
+      <Route path="/InternshipManagement" element={<InternshipManagement/>}/>
+      <Route path="/InternshipFeedbackContent" element={<InternshipFeedBack/>}/>
+      <Route path="/InternshipSettings" element={<InternshipSettings/>}/>
+
 
       {/* ================= OTHER MANAGERS ================= */}
       <Route
