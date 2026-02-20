@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Plus, ChevronRight, Eye, Trash2 } from "lucide-react";
 import {
   FaUserPlus,
@@ -8,6 +9,7 @@ import {
 import { LuBookOpenCheck } from "react-icons/lu";
 import { useGetChildrenQuery } from "@/store/api/childrenApi";
 import type { Child } from "@/store/api/childrenApi";
+import { useGetHealthRecordsQuery } from "@/store/api/healthRecordsApi";
 
 interface Activity {
   id: string;
@@ -22,13 +24,56 @@ interface DashboardViewProps {
   onDeleteChild: (childId: string) => void;
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function isCurrentMonth(dateStr: string | null | undefined): boolean {
+  if (!dateStr) return false;
+  const date = new Date(dateStr);
+  const now = new Date();
+  return (
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth()
+  );
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function DashboardView({
   onRegisterClick,
   onViewChild,
   onDeleteChild,
 }: DashboardViewProps) {
   const { data: children, isLoading, isError } = useGetChildrenQuery();
-  console.log("children data:", children);
+  const { data: healthRecords } = useGetHealthRecordsQuery();
+
+  // New admissions = children whose start_date falls in the current month
+  const newAdmissionsCount = useMemo(() => {
+    if (!children) return 0;
+    return children.filter((c) => isCurrentMonth(c.start_date)).length;
+  }, [children]);
+
+  // Released = children with INACTIVE status whose end_date falls in the current month
+  // (best proxy available without a dedicated deleted-records endpoint)
+  const releasedCount = useMemo(() => {
+    if (!children) return 0;
+    return children.filter(
+      (c) => c.status === "INACTIVE" && isCurrentMonth(c.end_date),
+    ).length;
+  }, [children]);
+
+  // Total health cost = sum of all health record costs
+  const totalHealthCost = useMemo(() => {
+    if (!healthRecords) return "—";
+    const total = healthRecords.reduce((sum, r) => {
+      return sum + (parseFloat(r.cost ?? "0") || 0);
+    }, 0);
+    return (
+      total.toLocaleString("en-RW", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }) + " RWF"
+    );
+  }, [healthRecords]);
 
   const statsCards = [
     {
@@ -44,8 +89,8 @@ export default function DashboardView({
       id: 2,
       title: "New Admissions",
       icon: FaUserPlus,
-      content: "30",
-      footer: "+5",
+      content: newAdmissionsCount.toString(),
+      footer: `This month`,
       bgColor: "bg-white-100",
       iconColor: "text-emerald-900",
     },
@@ -53,16 +98,16 @@ export default function DashboardView({
       id: 3,
       title: "Released",
       icon: FaUserMinus,
-      content: "10",
-      footer: "+1",
+      content: releasedCount.toString(),
+      footer: "This month",
       bgColor: "bg-white-100",
       iconColor: "text-emerald-900",
     },
     {
       id: 4,
-      title: "Health Attention",
+      title: "Health Records",
       icon: LuBookOpenCheck,
-      content: "3",
+      content: healthRecords?.length?.toString() ?? "—",
       footer: "+1",
       bgColor: "bg-white-100",
       iconColor: "text-emerald-900",
@@ -139,7 +184,9 @@ export default function DashboardView({
                   <span className="text-green-600 font-medium">
                     {item.footer}
                   </span>
-                  <span className="text-gray-500">from last month</span>
+                  {item.id !== 2 && item.id !== 3 && (
+                    <span className="text-gray-500">from last month</span>
+                  )}
                 </div>
                 <div className="flex items-center gap-1 text-gray-600 text-sm mt-1">
                   <FaArrowTrendUp className="w-3 h-3 text-emerald-900" />
@@ -161,28 +208,24 @@ export default function DashboardView({
                 </button>
               </div>
 
-              {/* Loading state */}
               {isLoading && (
                 <div className="py-12 text-center text-sm text-gray-500">
                   Loading children...
                 </div>
               )}
 
-              {/* Error state */}
               {isError && (
                 <div className="py-12 text-center text-sm text-red-500">
                   Failed to load children. Please try again.
                 </div>
               )}
 
-              {/* Empty state */}
               {!isLoading && !isError && children?.length === 0 && (
                 <div className="py-12 text-center text-sm text-gray-400">
                   No children registered yet.
                 </div>
               )}
 
-              {/* Table */}
               {!isLoading && !isError && children && children.length > 0 && (
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -284,7 +327,7 @@ export default function DashboardView({
                 {[
                   { label: "Food Costs", amount: "450,000 RWF" },
                   { label: "Clothes", amount: "450,000 RWF" },
-                  { label: "Health", amount: "450,000 RWF" },
+                  { label: "Health", amount: totalHealthCost },
                 ].map((item, index) => (
                   <div
                     key={index}

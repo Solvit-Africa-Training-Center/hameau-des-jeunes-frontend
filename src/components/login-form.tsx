@@ -87,7 +87,7 @@ export function LoginForm({
                     break;
 
                   case "INTERNSHIPS_MANAGER":
-                    navigate("/internshipsDashboard");
+                    navigate("/InternshipsDashboard");
                     break;
 
                   case "IFASHE_MANAGER":

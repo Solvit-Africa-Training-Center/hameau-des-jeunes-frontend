@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   ArrowLeft,
   Calendar,
@@ -17,9 +17,10 @@ import {
   Download,
   TrendingUp,
   Trash2,
+  Phone,
 } from "lucide-react";
-import caretaker1 from "@/assets/testimonial_2_img.png";
 import type { Child } from "@/store/api/childrenApi";
+import { useGetCaretakersQuery } from "@/store/api/caretakersApi";
 import {
   useDeleteHealthRecordMutation,
   useGetHealthRecordsByChildQuery,
@@ -71,6 +72,18 @@ export default function ChildDetailView({
   } = useGetHealthRecordsByChildQuery(child.id);
   const [deleteHealthRecord] = useDeleteHealthRecordMutation();
 
+  // Fetch all caretakers and match by full_name to child's vigilant_contact_name
+  const { data: caretakers = [] } = useGetCaretakersQuery();
+  const matchedCaretaker = useMemo(
+    () =>
+      caretakers.find(
+        (c) =>
+          c.full_name.toLowerCase().trim() ===
+          child.vigilant_contact_name.toLowerCase().trim(),
+      ) ?? null,
+    [caretakers, child.vigilant_contact_name],
+  );
+
   const handleDeleteRecord = async (id: string) => {
     if (!confirm("Are you sure you want to delete this health record?")) return;
     try {
@@ -115,6 +128,21 @@ export default function ChildDetailView({
     { id: "progress", label: "Progress & Reports", icon: BarChart3 },
   ];
 
+  // Derive caretaker initials for avatar fallback
+  const caretakerInitials = child.vigilant_contact_name
+    ? child.vigilant_contact_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "—";
+  // Use matched caretaker phone/email if available, fall back to child's vigilant fields
+  const caretakerPhone =
+    matchedCaretaker?.phone || child.vigilant_contact_phone;
+  const caretakerRole = matchedCaretaker?.role || "Guardian / Caretaker";
+  const caretakerEmail = matchedCaretaker?.email || null;
+
   return (
     <div className="w-full min-h-screen bg-gray-50">
       <div className="flex-1 p-4 sm:p-6 lg:p-8">
@@ -145,8 +173,8 @@ export default function ChildDetailView({
                 </div>
                 <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                   <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" /> {child.age} Years Old •
-                    Male
+                    <Calendar className="w-4 h-4" /> {child.age} Years Old •{" "}
+                    {child.gender}
                   </span>
                   <span className="flex items-center gap-1">
                     <User className="w-4 h-4" /> Caretaker:{" "}
@@ -154,7 +182,7 @@ export default function ChildDetailView({
                   </span>
                 </div>
                 <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                  Active
+                  {child.status}
                 </span>
               </div>
             </div>
@@ -197,7 +225,7 @@ export default function ChildDetailView({
           {/* Overview Tab */}
           {activeTab === "overview" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column - 2/3 width */}
+              {/* Left Column */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Health & Education Status */}
                 <div className="grid grid-cols-2 gap-4">
@@ -236,13 +264,13 @@ export default function ChildDetailView({
                       {
                         title: "Admission to Hameau",
                         desc: "Enrolled via social services referral",
-                        date: "May 12, 2024",
+                        date: child.start_date,
                         color: "bg-black",
                       },
                       {
-                        title: "Assigned to Mama Beatrice",
-                        desc: "Initial housing placement",
-                        date: "June 05, 2024",
+                        title: "Assigned Caretaker",
+                        desc: child.vigilant_contact_name,
+                        date: child.start_date,
                         color: "bg-blue-500",
                       },
                       {
@@ -283,30 +311,102 @@ export default function ChildDetailView({
               {/* Right Column - Current Care Team */}
               <div className="bg-white rounded-xl p-6">
                 <h3 className="font-semibold text-lg mb-6">
-                  Current Care Team
+                  Current Care Taker
                 </h3>
+
                 <div className="flex items-start gap-4">
-                  <img
-                    src={caretaker1}
-                    alt="Caretaker"
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                  <div>
-                    <h4 className="font-medium">Mama Beatrice</h4>
-                    <p className="text-sm text-gray-600">
-                      Primary House Mother
+                  {/* Avatar — initials since API has no caretaker photo */}
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                    <span className="text-emerald-800 font-semibold text-lg">
+                      {caretakerInitials}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="font-medium">
+                      {child.vigilant_contact_name || "—"}
+                    </h4>
+                    <p className="text-sm text-emerald-700 font-medium mt-0.5">
+                      {caretakerRole}
                     </p>
+                    {caretakerPhone && (
+                      <a
+                        href={`tel:${caretakerPhone}`}
+                        className="inline-flex items-center gap-1.5 mt-2 text-sm text-gray-600 hover:text-emerald-900 transition-colors"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        {caretakerPhone}
+                      </a>
+                    )}
+                    {caretakerEmail && (
+                      <a
+                        href={`mailto:${caretakerEmail}`}
+                        className="inline-flex items-center gap-1.5 mt-1 text-sm text-gray-600 hover:text-emerald-900 transition-colors truncate"
+                      >
+                        <svg
+                          className="w-3.5 h-3.5 shrink-0"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <rect x="2" y="4" width="20" height="16" rx="2" />
+                          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                        {caretakerEmail}
+                      </a>
+                    )}
                   </div>
                 </div>
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-700 italic">
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Quisque placerat nec leo gravida convallis. Sed malesuada
-                    placerat tortor at placerat. Integer semper nulla ac blandit
-                    sollicitudin. Praesentium condimentum ultricies eros at
-                    ultricies purus aliquam ac."
-                  </p>
+
+                {/* Divider */}
+                <div className="border-t my-5" />
+
+                {/* Child quick stats */}
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Child</span>
+                    <span className="font-medium">{child.full_name}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Gender</span>
+                    <span className="font-medium">{child.gender}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Age</span>
+                    <span className="font-medium">{child.age} yrs</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Admitted</span>
+                    <span className="font-medium">{child.start_date}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Status</span>
+                    <span
+                      className={`font-medium ${
+                        child.status === "ACTIVE"
+                          ? "text-emerald-700"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {child.status}
+                    </span>
+                  </div>
                 </div>
+
+                {/* Special needs note */}
+                {child.special_needs && (
+                  <>
+                    <div className="border-t my-5" />
+                    <div className="p-4 bg-amber-50 rounded-lg">
+                      <p className="text-xs font-semibold text-amber-700 mb-1 uppercase tracking-wide">
+                        Special Needs
+                      </p>
+                      <p className="text-sm text-amber-800">
+                        {child.special_needs}
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -393,28 +493,22 @@ export default function ChildDetailView({
                 </button>
               </div>
 
-              {/* Loading */}
               {healthLoading && (
                 <p className="text-sm text-center text-gray-400 py-10">
                   Loading health records...
                 </p>
               )}
-
-              {/* Error */}
               {healthError && (
                 <p className="text-sm text-center text-red-500 py-10">
                   Failed to load health records. Please try again.
                 </p>
               )}
-
-              {/* Empty */}
               {!healthLoading && !healthError && healthRecords.length === 0 && (
                 <p className="text-sm text-center text-gray-400 py-10">
                   No health records found for this child.
                 </p>
               )}
 
-              {/* Table */}
               {!healthLoading && !healthError && healthRecords.length > 0 && (
                 <Table>
                   <TableHeader>
@@ -486,7 +580,6 @@ export default function ChildDetailView({
           {/* Education Tab */}
           {activeTab === "education" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Academic Info */}
               <div className="bg-white rounded-xl p-6">
                 <h3 className="font-semibold text-lg mb-6">Academic Info</h3>
                 <div className="space-y-4">
@@ -519,7 +612,6 @@ export default function ChildDetailView({
                 </div>
               </div>
 
-              {/* Documents & Reports */}
               <div className="bg-white rounded-xl p-6">
                 <h3 className="font-semibold text-lg mb-6">
                   Documents & Reports
@@ -559,7 +651,6 @@ export default function ChildDetailView({
           {/* Finance Tab */}
           {activeTab === "finance" && (
             <div className="space-y-6">
-              {/* Top Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-emerald-900 text-white rounded-xl p-6">
                   <h4 className="text-sm opacity-90 mb-2">Total Care Costs</h4>
@@ -569,7 +660,6 @@ export default function ChildDetailView({
                     Record Child Expense
                   </button>
                 </div>
-
                 <div className="bg-white rounded-xl p-6 border">
                   <h4 className="text-sm text-gray-600 mb-2">
                     Last Month Spend
@@ -580,7 +670,6 @@ export default function ChildDetailView({
                     <span>+2.4% vs Previous</span>
                   </div>
                 </div>
-
                 <div className="bg-white rounded-xl p-6 border">
                   <h4 className="text-sm text-gray-600 mb-2">
                     Insurance Status
@@ -590,7 +679,6 @@ export default function ChildDetailView({
                 </div>
               </div>
 
-              {/* Transaction History */}
               <div className="bg-white rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-semibold text-lg">Transaction History</h3>
@@ -598,7 +686,6 @@ export default function ChildDetailView({
                     View Monthly Analysis →
                   </button>
                 </div>
-
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="border-b">
@@ -662,7 +749,6 @@ export default function ChildDetailView({
                   professional PDF document ready for stakeholders or
                   authorities.
                 </p>
-
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="p-4 border rounded-lg text-left">
                     <h4 className="font-medium mb-2">Quarterly Progress</h4>
@@ -677,7 +763,6 @@ export default function ChildDetailView({
                     </p>
                   </div>
                 </div>
-
                 <button className="px-6 py-3 bg-emerald-900 text-white rounded-lg font-medium hover:bg-emerald-800 transition-colors flex items-center gap-2 mx-auto">
                   <Download className="w-5 h-5" />
                   Preview & Download PDF

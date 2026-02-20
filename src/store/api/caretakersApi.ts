@@ -30,6 +30,26 @@ export interface CreateCaretakerPayload {
   is_active: boolean;
 }
 
+export interface BulkAssignPayload {
+  caretaker_id: string;
+  children_ids: string[];
+}
+
+export interface ChildCaretakerAssignmentRead {
+  id: string;
+  caretaker: string;
+  child: string;
+  assigned_on: string;
+  is_active: boolean;
+}
+
+interface BulkAssignResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ChildCaretakerAssignmentRead[];
+}
+
 interface PaginatedResponse {
   count: number;
   next: string | null;
@@ -49,14 +69,12 @@ export const caretakersApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Caretakers", "Caretaker"],
+  tagTypes: ["Caretakers", "Caretaker", "Assignments"],
   endpoints: (builder) => ({
     getCaretakers: builder.query<Caretaker[], void>({
       query: () => "/caretakers/",
       transformResponse: (response: PaginatedResponse | Caretaker[]) => {
-        if (Array.isArray(response)) {
-          return response;
-        }
+        if (Array.isArray(response)) return response;
         return response.results;
       },
       providesTags: ["Caretakers"],
@@ -75,8 +93,42 @@ export const caretakersApi = createApi({
       }),
       invalidatesTags: ["Caretakers"],
     }),
+
+    getAssignments: builder.query<ChildCaretakerAssignmentRead[], void>({
+      query: () => "/children-caretaker/",
+      transformResponse: (
+        response:
+          | {
+              count: number;
+              next: string | null;
+              previous: string | null;
+              results: ChildCaretakerAssignmentRead[];
+            }
+          | ChildCaretakerAssignmentRead[],
+      ) => {
+        if (Array.isArray(response)) return response;
+        return response.results;
+      },
+      providesTags: ["Assignments"],
+    }),
+
+    bulkAssignChildren: builder.mutation<BulkAssignResponse, BulkAssignPayload>(
+      {
+        query: (body) => ({
+          url: "/children-caretaker/bulk_assign/",
+          method: "POST",
+          body,
+        }),
+        invalidatesTags: ["Assignments", "Caretakers"],
+      },
+    ),
   }),
 });
 
-export const { useGetCaretakersQuery, useCreateCaretakerMutation } =
-  caretakersApi;
+export const {
+  useGetCaretakersQuery,
+  useGetCaretakerByIdQuery,
+  useCreateCaretakerMutation,
+  useGetAssignmentsQuery,
+  useBulkAssignChildrenMutation,
+} = caretakersApi;

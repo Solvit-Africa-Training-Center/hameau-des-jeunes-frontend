@@ -9,7 +9,7 @@ import ResidentialCareDashboard from "@/pages/AdminResidentialCarePages/Resident
 import ResidentialCareSettings from "@/pages/AdminResidentialCarePages/ResidentialCareSettings";
 import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
-import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
+
 import { ManageResidentialCare } from "@/pages/DashboardPages/ManageResidentialCare";
 import { SuperAdminActivityOverview } from "@/pages/DashboardPages/SuperAdminActivityOverview";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
@@ -41,7 +41,6 @@ import InternshipManagement from "@/pages/AdminInternshipPages/InternshipManagem
 import InternshipFeedBack from "@/pages/AdminInternshipPages/InternshipFeedback";
 import InternshipSettings from "@/pages/AdminInternshipPages/InternshipSettings";
 
-
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -59,21 +58,21 @@ export const AppRoutes = () => {
 
       {/* ================= AUTH ROUTES ================= */}
       <Route path="/login" element={<LoginPage />} />
-     
+
       <Route path="/resetPassword" element={<ResetPassword />} />
       <Route path="/newPassword" element={<NewPassword />} />
       <Route path="/changePassword" element={<ChangePassword />} />
 
       {/* ================= SUPER ADMIN ================= */}
 
-      <Route 
-      path="/managerRegistration"
-      element={
-        <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
-          <SignupPage/>
-        </ProtectedRoute>
-      }>
-      </Route>
+      <Route
+        path="/managerRegistration"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SignupPage />
+          </ProtectedRoute>
+        }
+      ></Route>
       <Route
         path="/superAdminDashboard"
         element={
@@ -178,23 +177,50 @@ export const AppRoutes = () => {
       <Route path="/education" element={<Education />} />
       <Route path="/financials" element={<Financials />} />
       <Route path="/reports" element={<Reports />} />
-      <Route path="/healthRecords" element={<HealthRecords/>} />
+      <Route path="/healthRecords" element={<HealthRecords />} />
+
+      {/* ================= OTHER MANAGERS ================= */}
 
       {/* ================= Internship Program Managers */}
 
-      <Route path="/InternshipDashboard" element={<InternshipDashboard/>}/>
-      <Route path="/InternshipApplication" element={<InternshipApplication/>}/>
-      <Route path="/InternshipManagement" element={<InternshipManagement/>}/>
-      <Route path="/InternshipFeedbackContent" element={<InternshipFeedBack/>}/>
-      <Route path="/InternshipSettings" element={<InternshipSettings/>}/>
-
-
-      {/* ================= OTHER MANAGERS ================= */}
       <Route
-        path="/internshipsDashboard"
+        path="/InternshipsDashboard"
         element={
           <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
-            <InternshipsDashboard />
+            <InternshipDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/InternshipApplication"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipApplication />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/InternshipManagement"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/InternshipFeedbackContent"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipFeedBack />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/InternshipSettings"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipSettings />
           </ProtectedRoute>
         }
       />
