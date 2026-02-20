@@ -46,7 +46,7 @@ export function InternshipSideBar({ className }: { className?: string }) {
     >
       <div className="mt-5 flex flex-col space-y-0.5 px-4">
         <img src={DashLogo} alt="Dashboard Logo" />
-        <h1 className="text-[#0F3D2E] text-center">Residential Care</h1>
+        <h1 className="text-[#0F3D2E] text-center">Internship Program</h1>
       </div>
 
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto no-scrollbar mt-5">
