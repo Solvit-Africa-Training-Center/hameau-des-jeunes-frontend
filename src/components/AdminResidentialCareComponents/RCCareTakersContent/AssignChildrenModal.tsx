@@ -9,12 +9,14 @@ interface AssignChildrenModalProps {
   isOpen: boolean;
   onClose: () => void;
   caretaker: Caretaker | null;
+  assignedChildIds?: Set<string>;
 }
 
 export default function AssignChildrenModal({
   isOpen,
   onClose,
   caretaker,
+  assignedChildIds = new Set(),
 }: AssignChildrenModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -25,9 +27,11 @@ export default function AssignChildrenModal({
 
   if (!isOpen || !caretaker) return null;
 
-  const filteredChildren = children.filter((child) =>
-    child.full_name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredChildren = children
+    .filter((child) => !assignedChildIds.has(child.id)) // exclude already assigned
+    .filter((child) =>
+      child.full_name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
   const toggleChild = (id: string) => {
     setSelectedIds((prev) =>
@@ -121,7 +125,10 @@ export default function AssignChildrenModal({
 
             {!isLoading && !isError && filteredChildren.length === 0 && (
               <p className="text-sm text-center text-gray-400 py-6">
-                No children found.
+                {children.filter((c) => !assignedChildIds.has(c.id)).length ===
+                0
+                  ? "All children are already assigned to this caretaker."
+                  : "No children found."}
               </p>
             )}
 
@@ -161,7 +168,6 @@ export default function AssignChildrenModal({
                       </div>
                     </div>
 
-                    {/* Checkbox */}
                     {selected ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" />
                     ) : (

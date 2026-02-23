@@ -20,7 +20,7 @@ export type { Caretaker };
 interface CaretakerViewProps {
   onAddCaretaker: () => void;
   onProfile: (caretaker: Caretaker) => void;
-  onAssign: (caretaker: Caretaker) => void;
+  onAssign: (caretaker: Caretaker, allAssignedChildIds: Set<string>) => void;
 }
 
 export default function CaretakerView({
@@ -31,8 +31,10 @@ export default function CaretakerView({
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: caretakers = [], isLoading, isError } = useGetCaretakersQuery();
-  const { data: assignments = [] } = useGetAssignmentsQuery();
-  const { data: children = [] } = useGetChildrenQuery();
+  const { data: assignments = [], isLoading: assignmentsLoading } =
+    useGetAssignmentsQuery();
+  const { data: children = [], isLoading: childrenLoading } =
+    useGetChildrenQuery();
 
   // child UUID → child object
   const childMap = useMemo(
@@ -44,24 +46,39 @@ export default function CaretakerView({
     [children],
   );
 
-  // caretaker UUID → array of their active assigned child objects
+  // caretaker_name (lowercased) → array of their active assigned child objects
   const assignmentMap = useMemo(() => {
     const map: Record<string, (typeof children)[0][]> = {};
+
     assignments
       .filter((a) => a.is_active)
       .forEach((a) => {
-        if (!map[a.caretaker]) map[a.caretaker] = [];
-        const child = childMap[a.child];
-        if (child) map[a.caretaker].push(child);
+        const key = a.caretaker_name?.trim().toLowerCase();
+        if (!key) return;
+        if (!map[key]) map[key] = [];
+        const child = childMap[String(a.child)];
+        if (child) map[key].push(child);
       });
+
     return map;
   }, [assignments, childMap]);
+
+  // Global set of ALL actively assigned child IDs across every caretaker
+  const allAssignedChildIds = useMemo(
+    () =>
+      new Set(
+        assignments.filter((a) => a.is_active).map((a) => String(a.child)),
+      ),
+    [assignments],
+  );
 
   const filteredCaretakers = caretakers.filter((c) =>
     `${c.first_name} ${c.last_name}`
       .toLowerCase()
       .includes(searchQuery.toLowerCase()),
   );
+
+  const isStillLoading = isLoading || assignmentsLoading || childrenLoading;
 
   return (
     <div className="w-full h-screen bg-gray-50 flex flex-col overflow-hidden">
@@ -108,7 +125,7 @@ export default function CaretakerView({
             <div>
               <p className="text-sm opacity-80">Total Staff</p>
               <p className="text-3xl font-bold mt-0.5">
-                {isLoading ? "—" : filteredCaretakers.length}
+                {isStillLoading ? "—" : filteredCaretakers.length}
               </p>
             </div>
             <Users className="w-8 h-8 opacity-60" />
@@ -116,7 +133,7 @@ export default function CaretakerView({
         </div>
 
         {/* Loading */}
-        {isLoading && (
+        {isStillLoading && (
           <div className="flex-1 flex items-center justify-center text-sm text-gray-500">
             Loading caretakers...
           </div>
@@ -130,18 +147,20 @@ export default function CaretakerView({
         )}
 
         {/* Empty */}
-        {!isLoading && !isError && filteredCaretakers.length === 0 && (
+        {!isStillLoading && !isError && filteredCaretakers.length === 0 && (
           <div className="flex-1 flex items-center justify-center text-sm text-gray-400">
             No caretakers found.
           </div>
         )}
 
         {/* Cards Grid */}
-        {!isLoading && !isError && filteredCaretakers.length > 0 && (
+        {!isStillLoading && !isError && filteredCaretakers.length > 0 && (
           <div className="flex-1 overflow-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 pb-4">
               {filteredCaretakers.map((caretaker) => {
-                const assignedChildren = assignmentMap[caretaker.id] ?? [];
+                const assignedChildren =
+                  assignmentMap[caretaker.full_name?.trim().toLowerCase()] ??
+                  [];
                 const visible = assignedChildren.slice(0, 4);
                 const extra = assignedChildren.length - visible.length;
 
@@ -252,7 +271,7 @@ export default function CaretakerView({
                       </button>
                       <div className="w-px bg-gray-200" />
                       <button
-                        onClick={() => onAssign(caretaker)}
+                        onClick={() => onAssign(caretaker, allAssignedChildIds)}
                         className="flex-1 flex items-center justify-center gap-1.5 text-sm text-gray-600 hover:text-emerald-900 transition-colors py-1"
                       >
                         <UserPlus className="w-4 h-4" />

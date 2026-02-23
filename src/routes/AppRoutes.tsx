@@ -9,7 +9,6 @@ import ResidentialCareDashboard from "@/pages/AdminResidentialCarePages/Resident
 import ResidentialCareSettings from "@/pages/AdminResidentialCarePages/ResidentialCareSettings";
 import { Contacts } from "@/pages/Contacts";
 import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
-
 import { ManageResidentialCare } from "@/pages/DashboardPages/ManageResidentialCare";
 import { SuperAdminActivityOverview } from "@/pages/DashboardPages/SuperAdminActivityOverview";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
@@ -40,6 +39,7 @@ import InternshipApplication from "@/pages/AdminInternshipPages/InternshipApplic
 import InternshipManagement from "@/pages/AdminInternshipPages/InternshipManagement";
 import InternshipFeedBack from "@/pages/AdminInternshipPages/InternshipFeedback";
 import InternshipSettings from "@/pages/AdminInternshipPages/InternshipSettings";
+import Institutions from "@/pages/AdminResidentialCarePages/Institutions";
 
 export const AppRoutes = () => {
   return (
@@ -164,20 +164,69 @@ export const AppRoutes = () => {
       />
       <Route
         path="/residentialCareChildren"
-        element={<ResidentialCareChildren />}
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <ResidentialCareChildren />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/residentialCareCareTakers"
-        element={<ResidentialCareCareTakers />}
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <ResidentialCareCareTakers />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/residentialCareSettings"
-        element={<ResidentialCareSettings />}
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <ResidentialCareSettings />
+          </ProtectedRoute>
+        }
       />
-      <Route path="/education" element={<Education />} />
-      <Route path="/financials" element={<Financials />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/healthRecords" element={<HealthRecords />} />
+      <Route
+        path="/education"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Education />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financials"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Financials />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/healthRecords"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <HealthRecords />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/educationalInstitutions"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Institutions />
+          </ProtectedRoute>
+        }
+      />
 
       {/* ================= OTHER MANAGERS ================= */}
 

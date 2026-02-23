@@ -9,15 +9,24 @@ export default function ResidentialCareCareTakersContent() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showProfilePanel, setShowProfilePanel] = useState(false);
-  const [selectedCaretaker, setSelectedCaretaker] = useState<Caretaker | null>(null);
+  const [selectedCaretaker, setSelectedCaretaker] = useState<Caretaker | null>(
+    null,
+  );
+  const [assignedChildIds, setAssignedChildIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   const handleProfile = (caretaker: Caretaker) => {
     setSelectedCaretaker(caretaker);
     setShowProfilePanel(true);
   };
 
-  const handleAssign = (caretaker: Caretaker) => {
+  const handleAssign = (
+    caretaker: Caretaker,
+    allAssignedChildIds: Set<string>,
+  ) => {
     setSelectedCaretaker(caretaker);
+    setAssignedChildIds(allAssignedChildIds);
     setShowAssignModal(true);
   };
 
@@ -38,6 +47,7 @@ export default function ResidentialCareCareTakersContent() {
         isOpen={showAssignModal}
         onClose={() => setShowAssignModal(false)}
         caretaker={selectedCaretaker}
+        assignedChildIds={assignedChildIds}
       />
 
       <CaretakerProfilePanel

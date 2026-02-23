@@ -35,12 +35,17 @@ export interface BulkAssignPayload {
   children_ids: string[];
 }
 
+// Updated to match what the API actually returns at runtime
 export interface ChildCaretakerAssignmentRead {
   id: string;
-  caretaker: string;
-  child: string;
-  assigned_on: string;
+  child: string; // child UUID
+  child_name: string; // child display name
+  caretaker: string; // caretaker UUID (may be missing in some API versions)
+  caretaker_name: string; // caretaker display name — always present
+  assigned_date: string;
+  end_date: string | null;
   is_active: boolean;
+  description: string;
 }
 
 interface BulkAssignResponse {
