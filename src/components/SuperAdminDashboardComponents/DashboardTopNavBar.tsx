@@ -18,10 +18,10 @@ export const DashboardTopNavBar = ({
   onMenuClick,
 }: DashboardTopNavBarProps) => {
   return (
-    <header className="fixed top-0 z-40 h-16.25 md:w-auto w-full  border-b bg-background">
+    <header className="fixed top-0 z-40 h-16.25 w-full md:left-54 md:w-[calc(100%-13.5rem)] border-b bg-background">
       {/* ===== Mobile / Tablet ===== */}
-      <div className="flex md:hidden items-center justify-between  px-4 h-full">
-        <div className="flex items-center ">
+      <div className="flex md:hidden items-center justify-between px-4 h-full">
+        <div className="flex items-center">
           <Field className="flex-1">
             <div className="relative max-w-xs">
               <Input
@@ -54,15 +54,7 @@ export const DashboardTopNavBar = ({
       </div>
 
       {/* ===== Desktop ===== */}
-      <div
-        className="
-    hidden
-    md:flex
-    md:pl-75 md:justify-center md:items-center
-    lg:pl-188.25 lg:justify-end lg:items-center
-    h-full shadow-sm px-4
-  "
-      >
+      <div className="hidden md:flex md:justify-end md:items-center h-full shadow-sm px-4">
         <NavigationMenu className="flex items-center gap-4 h-15">
           <NavigationMenuList className="flex items-center gap-4">
             {/* search bar */}
