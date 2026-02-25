@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, SlidersHorizontal, Eye, CheckCircle, Info, XCircle } from "lucide-react";
+import { useGetApplicationsQuery } from "@/store/api/internshipApi";
 
 export interface Application {
   id: string;
@@ -15,8 +16,8 @@ export interface Application {
   submissionDate: string;
   documents: {
     cv: { name: string; filename: string };
-    motivationLetter: { name: string; filename: string };
-    idDocument: { name: string; filename: string };
+    motivationLetter?: { name: string; filename: string };
+    idDocument?: { name: string; filename: string };
   };
 }
 
@@ -27,6 +28,14 @@ interface InternshipApplicationsViewProps {
   onApprove: (application: Application) => void;
 }
 
+const statusMap: Record<string, Application["status"]> = {
+  SUBMITTED: "Submitted",
+  UNDER_REVIEW: "Under Review",
+  MORE_INFO_NEEDED: "More Information Needed",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+};
+
 export default function InternshipApplicationsView({
   onViewApplication,
   onReject,
@@ -34,117 +43,38 @@ export default function InternshipApplicationsView({
   onApprove,
 }: InternshipApplicationsViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const { data, isLoading } = useGetApplicationsQuery({ search: searchQuery });
 
-  const applications: Application[] = [
-    {
-      id: "1",
-      applicantName: "Maria Santos",
-      applicantEmail: "maria.santos@email.com",
-      country: "Germany",
-      education: "Bachelor's Degree",
-      program: "Ifashe Tugufashe",
-      submitted: "Jan 14, 2026",
-      status: "Approved",
-      phone: "+49 912 345 678",
-      availability: "40 hours/week",
-      submissionDate: "January 14, 2026",
-      documents: {
-        cv: { name: "CV / Resume", filename: "maria_santos_cv.pdf" },
-        motivationLetter: { name: "Motivation Letter", filename: "motivation_letter.pdf" },
-        idDocument: { name: "ID Document", filename: "passport.pdf" },
-      },
-    },
-    {
-      id: "2",
-      applicantName: "Ahmed Hassan",
-      applicantEmail: "ahmed.hassan@email.com",
-      country: "Germany",
-      education: "Master's Degree",
-      program: "Residential Care",
-      submitted: "Jan 27, 2026",
-      status: "Under Review",
-      phone: "+49 156 789 012",
-      availability: "30 hours/week",
-      submissionDate: "January 27, 2026",
-      documents: {
-        cv: { name: "CV / Resume", filename: "ahmed_hassan_cv.pdf" },
-        motivationLetter: { name: "Motivation Letter", filename: "cover_letter.pdf" },
-        idDocument: { name: "ID Document", filename: "id_card.pdf" },
-      },
-    },
-    {
-      id: "3",
-      applicantName: "Sophie Dubois",
-      applicantEmail: "sophie.dubois@email.com",
-      country: "Italy",
-      education: "Bachelor's Degree",
-      program: "Agriculture & Farming",
-      submitted: "Jan 31, 2026",
-      status: "More Information Needed",
-      phone: "+39 345 678 901",
-      availability: "Full-time",
-      submissionDate: "January 31, 2026",
-      documents: {
-        cv: { name: "CV / Resume", filename: "sophie_cv.pdf" },
-        motivationLetter: { name: "Motivation Letter", filename: "motivation.pdf" },
-        idDocument: { name: "ID Document", filename: "passport.pdf" },
-      },
-    },
-    {
-      id: "4",
-      applicantName: "Yuki Tanaka",
-      applicantEmail: "yuki.tanaka@email.com",
-      country: "Italy",
-      education: "Master's Degree",
-      program: "Health Post Services",
-      submitted: "Jan 21, 2026",
-      status: "Rejected",
-      phone: "+39 234 567 890",
-      availability: "20 hours/week",
-      submissionDate: "January 21, 2026",
-      documents: {
-        cv: { name: "CV / Resume", filename: "yuki_resume.pdf" },
-        motivationLetter: { name: "Motivation Letter", filename: "letter.pdf" },
-        idDocument: { name: "ID Document", filename: "id.pdf" },
-      },
-    },
-    {
-      id: "5",
-      applicantName: "Carlos Rodriguez",
-      applicantEmail: "carlos.rodriguez@email.com",
-      country: "Germany",
-      education: "Bachelor's Degree",
-      program: "Tourism & Culture Visits",
-      submitted: "Jan 17, 2026",
-      status: "Approved",
-      phone: "+49 789 012 345",
-      availability: "40 hours/week",
-      submissionDate: "January 17, 2026",
-      documents: {
-        cv: { name: "CV / Resume", filename: "carlos_cv.pdf" },
-        motivationLetter: { name: "Motivation Letter", filename: "motivation.pdf" },
-        idDocument: { name: "ID Document", filename: "passport.pdf" },
-      },
-    },
-    {
-      id: "6",
-      applicantName: "Raj Patel",
-      applicantEmail: "raj.patel@email.com",
-      country: "Italy",
-      education: "Bachelor's Degree",
-      program: "Residential Care",
-      submitted: "Feb 8, 2026",
-      status: "Submitted",
-      phone: "+39 123 456 789",
-      availability: "35 hours/week",
-      submissionDate: "February 8, 2026",
-      documents: {
-        cv: { name: "CV / Resume", filename: "raj_patel_cv.pdf" },
-        motivationLetter: { name: "Motivation Letter", filename: "cover.pdf" },
-        idDocument: { name: "ID Document", filename: "id_document.pdf" },
-      },
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-900"></div>
+      </div>
+    );
+  }
+
+  const applications: Application[] = data?.results.map((app) => ({
+    id: app.id,
+    applicantName: app.full_name,
+    applicantEmail: app.email,
+    country: app.country || "N/A",
+    education: app.education_level || "N/A",
+    program: app.program || "N/A",
+    submitted: new Date(app.applied_on).toLocaleDateString(),
+    status: statusMap[app.status] || "Submitted",
+    phone: app.phone,
+    availability: app.availability_hours || "N/A",
+    submissionDate: new Date(app.applied_on).toLocaleDateString(),
+    documents: {
+      cv: { name: "CV / Resume", filename: app.cv_url || "" },
+      ...(app.motivation_letter && {
+        motivationLetter: { name: "Motivation Letter", filename: app.motivation_letter },
+      }),
+      ...(app.passport_id_url && {
+        idDocument: { name: "Passport / ID", filename: app.passport_id_url },
+      }),
+    }
+  })) || [];
 
   const filteredApplications = applications.filter((app) =>
     app.applicantName.toLowerCase().includes(searchQuery.toLowerCase())
