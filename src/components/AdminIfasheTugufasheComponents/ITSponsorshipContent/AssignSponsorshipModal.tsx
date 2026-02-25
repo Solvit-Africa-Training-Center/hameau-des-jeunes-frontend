@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useCreateIfasheSponsorshipMutation } from "@/store/api/ifasheSponsorshipsApi";
 
 interface AssignSponsorshipModalProps {
   isOpen: boolean;
@@ -17,12 +18,36 @@ export default function AssignSponsorshipModal({ isOpen, onClose }: AssignSponso
     status: "Active",
   });
 
+  const [createSponsorship, { isLoading }] = useCreateIfasheSponsorshipMutation();
+
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Assign sponsorship:", formData);
-    onClose();
+    try {
+      const payload = {
+        family: formData.selectFamily,
+        child: formData.selectChild,
+        sponsorship_type: formData.sponsorshipType,
+        sponsor_source: formData.sponsorSource,
+        start_date: formData.startDate,
+        expected_end_date: formData.expectedEndDate,
+        status: formData.status,
+      };
+      await createSponsorship(payload).unwrap();
+      setFormData({
+        selectFamily: "",
+        selectChild: "",
+        sponsorshipType: "",
+        sponsorSource: "",
+        startDate: "",
+        expectedEndDate: "",
+        status: "Active",
+      });
+      onClose();
+    } catch (error) {
+      console.error("Failed to assign sponsorship", error);
+    }
   };
 
   return (
@@ -177,9 +202,10 @@ export default function AssignSponsorshipModal({ isOpen, onClose }: AssignSponso
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors"
+              disabled={isLoading}
+              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Assign Sponsorship
+              {isLoading ? "Assigning..." : "Assign Sponsorship"}
             </button>
           </div>
         </form>

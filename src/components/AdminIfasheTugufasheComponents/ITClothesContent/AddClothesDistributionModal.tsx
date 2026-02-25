@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useCreateIfasheDressingMutation } from "@/store/api/ifasheDressingApi";
 
 interface AddClothesDistributionModalProps {
   isOpen: boolean;
@@ -17,12 +18,30 @@ export default function AddClothesDistributionModal({
     distributionDate: "",
   });
 
+  const [createDressing, { isLoading }] = useCreateIfasheDressingMutation();
+
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Add clothes distribution:", formData);
-    onClose();
+    try {
+      const payload = {
+        child_id: formData.selectChild,
+        items_provided: formData.itemsProvided,
+        quantity: formData.quantity ? parseInt(formData.quantity) : 0,
+        distribution_date: formData.distributionDate,
+      };
+      await createDressing(payload).unwrap();
+      setFormData({
+        selectChild: "",
+        itemsProvided: "",
+        quantity: "",
+        distributionDate: "",
+      });
+      onClose();
+    } catch (error) {
+      console.error("Failed to add clothes distribution", error);
+    }
   };
 
   return (
@@ -121,9 +140,10 @@ export default function AddClothesDistributionModal({
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors"
+              disabled={isLoading}
+              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Add Distribution
+              {isLoading ? "Adding..." : "Add Distribution"}
             </button>
           </div>
         </form>

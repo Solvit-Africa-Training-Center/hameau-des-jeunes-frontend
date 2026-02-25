@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useCreateIfasheSchoolSupportMutation } from "@/store/api/ifasheSchoolSupportApi";
 
 interface AddSchoolPaymentModalProps {
   isOpen: boolean;
@@ -14,12 +15,30 @@ export default function AddSchoolPaymentModal({ isOpen, onClose }: AddSchoolPaym
     learningMaterialsProvided: "",
   });
 
+  const [createPayment, { isLoading }] = useCreateIfasheSchoolSupportMutation();
+
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Add school payment:", formData);
-    onClose();
+    try {
+      const payload = {
+        selectChild: formData.selectChild,
+        schoolFeesPaid: formData.schoolFeesPaid ? parseInt(formData.schoolFeesPaid) : 0,
+        paymentDate: formData.paymentDate,
+        learningMaterialsProvided: formData.learningMaterialsProvided,
+      };
+      await createPayment(payload).unwrap();
+      setFormData({
+        selectChild: "",
+        schoolFeesPaid: "",
+        paymentDate: "",
+        learningMaterialsProvided: "",
+      });
+      onClose();
+    } catch (error) {
+      console.error("Failed to add school payment", error);
+    }
   };
 
   return (
@@ -120,9 +139,10 @@ export default function AddSchoolPaymentModal({ isOpen, onClose }: AddSchoolPaym
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors"
+              disabled={isLoading}
+              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Add Payment
+              {isLoading ? "Adding..." : "Add Payment"}
             </button>
           </div>
         </form>

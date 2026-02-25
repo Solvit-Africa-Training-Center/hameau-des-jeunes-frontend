@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Plus, Trash2 } from "lucide-react";
+import { useGetIfasheDressingsQuery, useDeleteIfasheDressingMutation } from "@/store/api/ifasheDressingApi";
 
 export interface ClothesDistribution {
   id: string;
@@ -20,80 +21,27 @@ export default function IfasheTugufasheClothesView({
 }: IfasheTugufasheClothesViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const distributions: ClothesDistribution[] = [
-    {
-      id: "1",
-      childName: "Ishimwe Marie",
-      itemsProvided: "School uniform, Shoes",
-      quantity: 2,
-      distributionDate: "1/19/2026",
-      selectChild: "Ishimwe Marie",
-    },
-    {
-      id: "2",
-      childName: "Mugisha Eric",
-      itemsProvided: "Jacket, Shoes",
-      quantity: 2,
-      distributionDate: "1/19/2026",
-      selectChild: "Mugisha Eric",
-    },
-    {
-      id: "3",
-      childName: "Uwase Serah",
-      itemsProvided: "Clothes set, Shoes",
-      quantity: 3,
-      distributionDate: "1/14/2026",
-      selectChild: "Uwase Serah",
-    },
-    {
-      id: "4",
-      childName: "Niyonzima Desire",
-      itemsProvided: "School uniform, Sweater",
-      quantity: 2,
-      distributionDate: "1/9/2026",
-      selectChild: "Niyonzima Desire",
-    },
-    {
-      id: "5",
-      childName: "Niyonzima Peace",
-      itemsProvided: "Dress, Shoes",
-      quantity: 2,
-      distributionDate: "1/9/2026",
-      selectChild: "Niyonzima Peace",
-    },
-    {
-      id: "6",
-      childName: "Niyonzima Diane",
-      itemsProvided: "Uniform, Socks",
-      quantity: 3,
-      distributionDate: "1/4/2026",
-      selectChild: "Niyonzima Diane",
-    },
-    {
-      id: "7",
-      childName: "Niyonzima Junior",
-      itemsProvided: "Clothes set",
-      quantity: 2,
-      distributionDate: "1/4/2026",
-      selectChild: "Niyonzima Junior",
-    },
-    {
-      id: "8",
-      childName: "Umutoni Ange",
-      itemsProvided: "School uniform, Jacket",
-      quantity: 2,
-      distributionDate: "12/30/2025",
-      selectChild: "Umutoni Ange",
-    },
-    {
-      id: "9",
-      childName: "Ingabire Faith",
-      itemsProvided: "Dress, Shoes, Sweater",
-      quantity: 3,
-      distributionDate: "12/30/2025",
-      selectChild: "Ingabire Faith",
-    },
-  ];
+  const { data: fetchedDistributions = [], isLoading, isError } = useGetIfasheDressingsQuery();
+  const [deleteDistribution] = useDeleteIfasheDressingMutation();
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this distribution?")) {
+      try {
+        await deleteDistribution(id).unwrap();
+      } catch (error) {
+        console.error("Failed to delete distribution", error);
+      }
+    }
+  };
+
+  const distributions: ClothesDistribution[] = fetchedDistributions.map((d: any) => ({
+    id: d.id || Math.random().toString(),
+    childName: d.childName || d.child_name || d.child || "Unknown",
+    itemsProvided: d.itemsProvided || d.items_provided || "None",
+    quantity: d.quantity || 0,
+    distributionDate: d.distributionDate || d.distribution_date || "Unknown",
+    selectChild: d.selectChild || d.select_child || d.childName || d.child_name || "",
+  }));
 
   const filteredDistributions = distributions.filter(
     (distribution) =>
@@ -138,12 +86,23 @@ export default function IfasheTugufasheClothesView({
 
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col flex-1 overflow-hidden">
-
-          {/* Desktop Table */}
-          <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b shrink-0">
-                <tr className="text-left">
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-gray-500">Loading distributions...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-red-500">Error loading distributions. Please try again.</p>
+            </div>
+          )}
+          {!isLoading && !isError && (
+            <>
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-auto flex-1">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 border-b sticky top-0 z-10">
+                <tr>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Child name
                   </th>
@@ -161,10 +120,7 @@ export default function IfasheTugufasheClothesView({
                   </th>
                 </tr>
               </thead>
-            </table>
-            <div className="overflow-auto flex-1">
-              <table className="w-full">
-                <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white divide-y divide-gray-100">
                   {filteredDistributions.map((distribution) => (
                     <tr key={distribution.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">
@@ -181,6 +137,7 @@ export default function IfasheTugufasheClothesView({
                       </td>
                       <td className="px-6 py-4">
                         <button
+                          onClick={() => handleDelete(distribution.id)}
                           className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete"
                         >
@@ -191,7 +148,6 @@ export default function IfasheTugufasheClothesView({
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
 
           {/* Mobile Cards */}
@@ -208,7 +164,10 @@ export default function IfasheTugufasheClothesView({
                     </h3>
                     <p className="text-xs text-gray-500">{distribution.itemsProvided}</p>
                   </div>
-                  <button className="p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                  <button
+                    onClick={() => handleDelete(distribution.id)}
+                    className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                  >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 </div>
@@ -229,11 +188,13 @@ export default function IfasheTugufasheClothesView({
             ))}
           </div>
 
-          {/* No Results */}
-          {filteredDistributions.length === 0 && (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-500 text-sm">No distributions found.</p>
-            </div>
+              {/* No Results */}
+              {filteredDistributions.length === 0 && (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-gray-500 text-sm">No distributions found.</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

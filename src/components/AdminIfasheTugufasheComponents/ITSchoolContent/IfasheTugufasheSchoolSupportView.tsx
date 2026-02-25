@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Plus, Trash2 } from "lucide-react";
+import { useGetIfasheSchoolSupportsQuery, useDeleteIfasheSchoolSupportMutation } from "@/store/api/ifasheSchoolSupportApi";
 
 export interface SchoolPayment {
   id: string;
@@ -23,6 +24,19 @@ export default function IfasheTugufasheSchoolSupportView({
 }: IfasheTugufasheSchoolSupportViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
+  const { data: fetchedPayments = [], isLoading, isError } = useGetIfasheSchoolSupportsQuery();
+  const [deletePayment] = useDeleteIfasheSchoolSupportMutation();
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this payment?")) {
+      try {
+        await deletePayment(id).unwrap();
+      } catch (error) {
+        console.error("Failed to delete payment", error);
+      }
+    }
+  };
+
   const overdueChildren = [
     "Uwase Sarah - Remera Nursery School",
     "Niyonzima Desire - Nyamirambo Primary School",
@@ -32,74 +46,17 @@ export default function IfasheTugufasheSchoolSupportView({
     "...and 8 more",
   ];
 
-  const payments: SchoolPayment[] = [
-    {
-      id: "1",
-      childName: "Ishimwe Marie",
-      school: "Remera Primary School",
-      amountPaid: "45,000 RWF",
-      materials: "Books, Uniform",
-      paymentDate: "1/28/2026",
-      childId: "Ishimwe Marie",
-      schoolFeesPaid: "45000",
-      learningMaterialsProvided: "Books, Uniform",
-    },
-    {
-      id: "2",
-      childName: "Mugisha Eric",
-      school: "Remera Primary School",
-      amountPaid: "40,000 RWF",
-      materials: "Books, Stationery",
-      paymentDate: "1/29/2026",
-      childId: "Mugisha Eric",
-      schoolFeesPaid: "40000",
-      learningMaterialsProvided: "Books, Stationery",
-    },
-    {
-      id: "3",
-      childName: "Niyonzima Desire",
-      school: "Nyamirambo Secondary School",
-      amountPaid: "80,000 RWF",
-      materials: "Uniform, Books, Calculator",
-      paymentDate: "1/26/2026",
-      childId: "Niyonzima Desire",
-      schoolFeesPaid: "80000",
-      learningMaterialsProvided: "Uniform, Books, Calculator",
-    },
-    {
-      id: "4",
-      childName: "Niyonzima Peace",
-      school: "Nyamirambo Primary School",
-      amountPaid: "45,000 RWF",
-      materials: "Books",
-      paymentDate: "1/24/2026",
-      childId: "Niyonzima Peace",
-      schoolFeesPaid: "45000",
-      learningMaterialsProvided: "Books",
-    },
-    {
-      id: "5",
-      childName: "Umutoni Ange",
-      school: "Gikondo Primary School",
-      amountPaid: "42,000 RWF",
-      materials: "Books, Stationery",
-      paymentDate: "1/19/2026",
-      childId: "Umutoni Ange",
-      schoolFeesPaid: "42000",
-      learningMaterialsProvided: "Books, Stationery",
-    },
-    {
-      id: "6",
-      childName: "Habimana Kevin",
-      school: "Kimironko Secondary School",
-      amountPaid: "75,000 RWF",
-      materials: "Uniform, Books",
-      paymentDate: "1/14/2026",
-      childId: "Habimana Kevin",
-      schoolFeesPaid: "75000",
-      learningMaterialsProvided: "Uniform, Books",
-    },
-  ];
+  const payments: SchoolPayment[] = fetchedPayments.map((p: any) => ({
+    id: p.id || Math.random().toString(),
+    childName: p.childName || p.child_name || p.selectChild || p.select_child || "Unknown",
+    school: p.school || "Unknown",
+    amountPaid: p.schoolFeesPaid || p.school_fees_paid || p.amountPaid || "0",
+    materials: p.learningMaterialsProvided || p.learning_materials_provided || p.materials || "None",
+    paymentDate: p.paymentDate || p.payment_date || "Unknown",
+    childId: p.childId || p.child_id || p.childName || p.child_name || "Unknown",
+    schoolFeesPaid: p.schoolFeesPaid || p.school_fees_paid || "0",
+    learningMaterialsProvided: p.learningMaterialsProvided || p.learning_materials_provided || p.materials || "",
+  }));
 
   const filteredPayments = payments.filter(
     (payment) =>
@@ -171,12 +128,23 @@ export default function IfasheTugufasheSchoolSupportView({
 
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col flex-1 overflow-hidden">
-
-          {/* Desktop Table */}
-          <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b shrink-0">
-                <tr className="text-left">
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-gray-500">Loading payments...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-red-500">Error loading payments. Please try again.</p>
+            </div>
+          )}
+          {!isLoading && !isError && (
+            <>
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-auto flex-1">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 border-b sticky top-0 z-10">
+                <tr>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Child name
                   </th>
@@ -197,10 +165,7 @@ export default function IfasheTugufasheSchoolSupportView({
                   </th>
                 </tr>
               </thead>
-            </table>
-            <div className="overflow-auto flex-1">
-              <table className="w-full">
-                <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white divide-y divide-gray-100">
                   {filteredPayments.map((payment) => (
                     <tr key={payment.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">{payment.childName}</td>
@@ -210,6 +175,7 @@ export default function IfasheTugufasheSchoolSupportView({
                       <td className="px-6 py-4 text-sm text-gray-700">{payment.paymentDate}</td>
                       <td className="px-6 py-4">
                         <button
+                          onClick={() => handleDelete(payment.id)}
                           className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete"
                         >
@@ -220,7 +186,6 @@ export default function IfasheTugufasheSchoolSupportView({
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
 
           {/* Mobile Cards */}
@@ -235,7 +200,10 @@ export default function IfasheTugufasheSchoolSupportView({
                     <h3 className="font-medium text-gray-900 text-sm">{payment.childName}</h3>
                     <p className="text-xs text-gray-500">{payment.school}</p>
                   </div>
-                  <button className="p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                  <button
+                    onClick={() => handleDelete(payment.id)}
+                    className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                  >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 </div>
@@ -258,11 +226,13 @@ export default function IfasheTugufasheSchoolSupportView({
             ))}
           </div>
 
-          {/* No Results */}
-          {filteredPayments.length === 0 && (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-500 text-sm">No payments found.</p>
-            </div>
+              {/* No Results */}
+              {filteredPayments.length === 0 && (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-gray-500 text-sm">No payments found.</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

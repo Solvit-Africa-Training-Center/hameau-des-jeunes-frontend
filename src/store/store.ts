@@ -5,6 +5,13 @@ import { caretakersApi } from "./api/caretakersApi";
 import { healthRecordsApi } from "./api/healthRecordsApi";
 import { educationApi } from "./api/educationApi";
 import { enrollmentApi } from "./api/enrollmentApi";
+import { ifasheFamiliesApi } from "./api/ifasheFamiliesApi";
+import { ifasheChildrenApi } from "./api/ifasheChildrenApi";
+import { ifasheSponsorshipsApi } from "./api/ifasheSponsorshipsApi";
+import { ifasheDressingApi } from "./api/ifasheDressingApi";
+import { ifasheParentsApi } from "./api/ifasheParentsApi";
+import { ifasheSchoolSupportApi } from "./api/ifasheSchoolSupportApi";
+import { ifasheReportsApi } from "./api/ifasheReportsApi";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +21,13 @@ export const store = configureStore({
     [healthRecordsApi.reducerPath]: healthRecordsApi.reducer,
     [educationApi.reducerPath]: educationApi.reducer,
     [enrollmentApi.reducerPath]: enrollmentApi.reducer,
+    [ifasheFamiliesApi.reducerPath]: ifasheFamiliesApi.reducer,
+    [ifasheChildrenApi.reducerPath]: ifasheChildrenApi.reducer,
+    [ifasheSponsorshipsApi.reducerPath]: ifasheSponsorshipsApi.reducer,
+    [ifasheDressingApi.reducerPath]: ifasheDressingApi.reducer,
+    [ifasheParentsApi.reducerPath]: ifasheParentsApi.reducer,
+    [ifasheSchoolSupportApi.reducerPath]: ifasheSchoolSupportApi.reducer,
+    [ifasheReportsApi.reducerPath]: ifasheReportsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -23,6 +37,13 @@ export const store = configureStore({
       healthRecordsApi.middleware,
       educationApi.middleware,
       enrollmentApi.middleware,
+      ifasheFamiliesApi.middleware,
+      ifasheChildrenApi.middleware,
+      ifasheSponsorshipsApi.middleware,
+      ifasheDressingApi.middleware,
+      ifasheParentsApi.middleware,
+      ifasheSchoolSupportApi.middleware,
+      ifasheReportsApi.middleware,
     ),
 });
 

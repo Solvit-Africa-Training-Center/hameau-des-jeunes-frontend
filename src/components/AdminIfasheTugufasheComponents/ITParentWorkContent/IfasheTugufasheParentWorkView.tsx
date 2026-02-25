@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, UserPlus, Edit, Trash2 } from "lucide-react";
+import { useGetIfasheParentContractsQuery, useDeleteIfasheParentContractMutation } from "@/store/api/ifasheParentsApi";
 
 export interface ParentWork {
   id: string;
@@ -22,80 +23,28 @@ export default function IfasheTugufasheParentWorkView({
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const parentWorks: ParentWork[] = [
-    {
-      id: "1",
-      parentName: "Mukamana Vestine",
-      department: "Kitchen",
-      supervisor: "Uwera Christine",
-      status: "Active",
-      performanceNotes: "Excellent performance. Very punctual and dedicated.",
-      assignedDepartment: "Kitchen",
-    },
-    {
-      id: "2",
-      parentName: "Niyonzima Jean Claude",
-      department: "Farm",
-      supervisor: "Mugisha John",
-      status: "Warning Issued",
-      performanceNotes: "Good worker but has been absent due to injury recently.",
-      assignedDepartment: "Farm",
-    },
-    {
-      id: "3",
-      parentName: "Uwihana Grace",
-      department: "Cleaning",
-      supervisor: "Mukamana Rose",
-      status: "Active",
-      performanceNotes: "Reliable and thorough. Takes pride in work.",
-      assignedDepartment: "Cleaning",
-    },
-    {
-      id: "4",
-      parentName: "Habimana Patrick",
-      department: "Maintenance",
-      supervisor: "Niyonzima Eric",
-      status: "Active",
-      performanceNotes: "Skilled in basic repairs. Good attendance.",
-      assignedDepartment: "Maintenance",
-    },
-    {
-      id: "5",
-      parentName: "Nyirahabimana Angelique",
-      department: "Admin Support",
-      supervisor: "Inakundwa Marie",
-      status: "Active",
-      performanceNotes: "Helps with filing and basic office tasks. Very organized.",
-      assignedDepartment: "Admin Support",
-    },
-    {
-      id: "6",
-      parentName: "Ndayisaba Emmanuel",
-      department: "IT Support",
-      supervisor: "Kayitezi Alice",
-      status: "Active",
-      performanceNotes: "Uses accounting background to help with data entry. Excellent",
-      assignedDepartment: "IT Support",
-    },
-    {
-      id: "7",
-      parentName: "Mukamazimpaka Claudine",
-      department: "Kitchen",
-      supervisor: "Uwera Christine",
-      status: "Active",
-      performanceNotes: "Good worker, learning quickly.",
-      assignedDepartment: "Kitchen",
-    },
-    {
-      id: "8",
-      parentName: "Bizimana Joseph",
-      department: "Farm",
-      supervisor: "Mugisha John",
-      status: "Suspended",
-      performanceNotes: "Multiple absences without notice. Needs improvement.",
-      assignedDepartment: "Farm",
-    },
-  ];
+  const { data: fetchedContracts = [], isLoading, isError } = useGetIfasheParentContractsQuery();
+  const [deleteContract] = useDeleteIfasheParentContractMutation();
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this assignment?")) {
+      try {
+        await deleteContract(id).unwrap();
+      } catch (error) {
+        console.error("Failed to delete assignment", error);
+      }
+    }
+  };
+
+  const parentWorks: ParentWork[] = fetchedContracts.map((c: any) => ({
+    id: c.id || Math.random().toString(),
+    parentName: c.parentName || c.parent_name || c.selectParent || c.select_parent || "Unknown",
+    department: c.assignedDepartment || c.assigned_department || c.department || "Unassigned",
+    supervisor: c.supervisor || "None",
+    status: c.status || "Active",
+    performanceNotes: c.performanceNotes || c.performance_notes || "",
+    assignedDepartment: c.assignedDepartment || c.assigned_department || c.department || "",
+  }));
 
   const filteredParentWorks = parentWorks.filter((work) => {
     const matchesSearch =
@@ -192,12 +141,23 @@ export default function IfasheTugufasheParentWorkView({
 
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col flex-1 overflow-hidden">
-
-          {/* Desktop Table */}
-          <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b shrink-0">
-                <tr className="text-left">
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-gray-500">Loading assignments...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-red-500">Error loading assignments. Please try again.</p>
+            </div>
+          )}
+          {!isLoading && !isError && (
+            <>
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-auto flex-1">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 border-b sticky top-0 z-10">
+                <tr>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Parent Name
                   </th>
@@ -218,10 +178,7 @@ export default function IfasheTugufasheParentWorkView({
                   </th>
                 </tr>
               </thead>
-            </table>
-            <div className="overflow-auto flex-1">
-              <table className="w-full">
-                <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white divide-y divide-gray-100">
                   {filteredParentWorks.map((work) => (
                     <tr key={work.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">{work.parentName}</td>
@@ -246,6 +203,7 @@ export default function IfasheTugufasheParentWorkView({
                             <Edit className="w-4 h-4 text-blue-500" />
                           </button>
                           <button
+                            onClick={() => handleDelete(work.id)}
                             className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete"
                           >
@@ -257,7 +215,6 @@ export default function IfasheTugufasheParentWorkView({
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
 
           {/* Mobile Cards */}
@@ -296,7 +253,10 @@ export default function IfasheTugufasheParentWorkView({
                   <button className="p-2 border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors">
                     <Edit className="w-4 h-4 text-blue-500" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-red-50 transition-colors">
+                  <button
+                    onClick={() => handleDelete(work.id)}
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-red-50 transition-colors"
+                  >
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 </div>
@@ -304,11 +264,13 @@ export default function IfasheTugufasheParentWorkView({
             ))}
           </div>
 
-          {/* No Results */}
-          {filteredParentWorks.length === 0 && (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-500 text-sm">No parent work assignments found.</p>
-            </div>
+              {/* No Results */}
+              {filteredParentWorks.length === 0 && (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-gray-500 text-sm">No parent work assignments found.</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

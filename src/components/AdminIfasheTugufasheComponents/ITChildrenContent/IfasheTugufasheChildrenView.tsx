@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { Search, Download, Eye, Pencil, UserPlus, Users } from "lucide-react";
+import { useGetIfasheChildrenQuery } from "@/store/api/ifasheChildrenApi";
+import { toast } from "react-toastify";
+import ViewChildModal from "./ViewChildModal";
+import EditChildModal from "./EditChildModal";
+import ManageChildModal from "./ManageChildModal";
 
 export interface Child {
   id: string;
@@ -30,136 +35,44 @@ export default function IfasheTugufasheChildrenView({
   const [statusFilter, setStatusFilter] = useState("all");
   const [schoolFilter, setSchoolFilter] = useState("all");
 
-  const children: Child[] = [
-    {
-      id: "1",
-      childId: "#2001",
-      name: "Ishimwe Marie",
-      family: "Mukamana Vestine",
-      school: "Remera Primary School",
-      educationLevel: "Primary 5",
-      status: "Active",
-      linkedFamily: "Mukamana Vestine",
-      fullName: "Ishimwe Marie",
-      dateOfBirth: "2014-03-15",
-      gender: "Female",
-      schoolName: "Remera Primary School",
-      supportStatus: "Active",
-      healthConditions: "None",
-    },
-    {
-      id: "2",
-      childId: "#2002",
-      name: "Mugisha Eric",
-      family: "Mukamana Vestine",
-      school: "Remera Primary School",
-      educationLevel: "Primary 3",
-      status: "Active",
-      linkedFamily: "Mukamana Vestine",
-      fullName: "Mugisha Eric",
-      dateOfBirth: "2016-07-22",
-      gender: "Male",
-      schoolName: "Remera Primary School",
-      supportStatus: "Active",
-      healthConditions: "Asthma - requires inhaler",
-    },
-    {
-      id: "3",
-      childId: "#2003",
-      name: "Uwase Serah",
-      family: "Mukamana Vestine",
-      school: "Remera Primary School",
-      educationLevel: "Nursery",
-      status: "Active",
-      linkedFamily: "Mukamana Vestine",
-      fullName: "Uwase Serah",
-      dateOfBirth: "2019-11-10",
-      gender: "Female",
-      schoolName: "Remera Primary School",
-      supportStatus: "Active",
-      healthConditions: "None",
-    },
-    {
-      id: "4",
-      childId: "#2004",
-      name: "Niyonzima Desire",
-      family: "Niyonzima Jean Claude",
-      school: "Nyamirambo Secondary School",
-      educationLevel: "Secondary 2",
-      status: "Active",
-      linkedFamily: "Niyonzima Jean Claude",
-      fullName: "Niyonzima Desire",
-      dateOfBirth: "2010-05-18",
-      gender: "Male",
-      schoolName: "Nyamirambo Secondary School",
-      supportStatus: "Active",
-      healthConditions: "None",
-    },
-    {
-      id: "5",
-      childId: "#2005",
-      name: "Niyonzima Peace",
-      family: "Niyonzima Jean Claude",
-      school: "Nyamirambo Primary School",
-      educationLevel: "Primary 5",
-      status: "Active",
-      linkedFamily: "Niyonzima Jean Claude",
-      fullName: "Niyonzima Peace",
-      dateOfBirth: "2013-09-25",
-      gender: "Female",
-      schoolName: "Nyamirambo Primary School",
-      supportStatus: "Active",
-      healthConditions: "Allergic to peanuts",
-    },
-    {
-      id: "6",
-      childId: "#2006",
-      name: "Niyonzima Diane",
-      family: "Niyonzima Jean Claude",
-      school: "Nyamirambo Primary School",
-      educationLevel: "Primary 2",
-      status: "Active",
-      linkedFamily: "Niyonzima Jean Claude",
-      fullName: "Niyonzima Diane",
-      dateOfBirth: "2016-02-14",
-      gender: "Female",
-      schoolName: "Nyamirambo Primary School",
-      supportStatus: "Active",
-      healthConditions: "None",
-    },
-    {
-      id: "7",
-      childId: "#2007",
-      name: "Niyonzima Junior",
-      family: "Niyonzima Jean Claude",
-      school: "Nyamirambo Primary School",
-      educationLevel: "Primary 1",
-      status: "Active",
-      linkedFamily: "Niyonzima Jean Claude",
-      fullName: "Niyonzima Junior",
-      dateOfBirth: "2017-06-30",
-      gender: "Male",
-      schoolName: "Nyamirambo Primary School",
-      supportStatus: "Active",
-      healthConditions: "None",
-    },
-    {
-      id: "8",
-      childId: "#2008",
-      name: "Umutoni Ange",
-      family: "Uwihana Grace",
-      school: "Gikondo Primary School",
-      educationLevel: "Primary 4",
-      status: "Active",
-      linkedFamily: "Uwihana Grace",
-      fullName: "Umutoni Ange",
-      dateOfBirth: "2014-12-05",
-      gender: "Female",
-      schoolName: "Gikondo Primary School",
-      supportStatus: "Active",
-      healthConditions: "Vision impairment - wears glasses",
-    },
-  ];
+  const [childToView, setChildToView] = useState<Child | null>(null);
+  const [childToEdit, setChildToEdit] = useState<Child | null>(null);
+  const [childToManage, setChildToManage] = useState<Child | null>(null);
+
+  const { data: fetchedChildren = [], isLoading, isError } = useGetIfasheChildrenQuery();
+
+  const children: Child[] = fetchedChildren.map((c: any) => {
+    const childFullName = c.first_name 
+      ? `${c.first_name} ${c.last_name || ""}`.trim() 
+      : (c.name || c.fullName || c.full_name || "Unknown");
+
+    const familyName = typeof c.family === 'object' && c.family !== null
+      ? (c.family.family_name || c.family.name || "Unknown")
+      : (c.family_name || c.linkedFamily || c.linked_family || c.family || "Unknown");
+
+    const statusValue = c.support_status || c.status || "ACTIVE";
+    const mappedStatus = statusValue.toUpperCase() === "ACTIVE" ? "Active" 
+      : statusValue.toUpperCase() === "INACTIVE" ? "Inactive"
+      : statusValue.toUpperCase() === "EXITED" ? "Graduated" 
+      : "Active";
+
+    return {
+      id: String(c.id || Math.random().toString()),
+      childId: String(c.childId || c.child_id || c.id || "N/A").substring(0, 8),
+      name: String(childFullName),
+      family: String(familyName),
+      school: String(c.school_name || c.schoolName || c.school || "Unknown"),
+      educationLevel: String(c.school_level || c.educationLevel || c.education_level || "Unknown"),
+      status: mappedStatus as Child["status"],
+      linkedFamily: String(familyName),
+      fullName: String(childFullName),
+      dateOfBirth: String(c.date_of_birth || c.dateOfBirth || c.dob || ""),
+      gender: String(c.gender || ""),
+      schoolName: String(c.school_name || c.schoolName || c.school || ""),
+      supportStatus: String(statusValue),
+      healthConditions: String(c.health_conditions || c.healthConditions || ""),
+    };
+  });
 
   const filteredChildren = children.filter((child) => {
     const matchesSearch =
@@ -190,6 +103,27 @@ export default function IfasheTugufasheChildrenView({
       default:
         return "bg-gray-100 text-gray-700";
     }
+  };
+
+  const handleExportCSV = () => {
+    if (filteredChildren.length === 0) return;
+    const headers = ["Child ID", "Name", "Family", "School", "Education Level", "Status"];
+    const csvContent = [
+      headers.join(","),
+      ...filteredChildren.map(c => 
+        [c.childId, c.name, c.family, c.school, c.educationLevel, c.status].map(val => `"${val}"`).join(",")
+      )
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "children_records.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -249,7 +183,10 @@ export default function IfasheTugufasheChildrenView({
             </select>
           </div>
 
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors whitespace-nowrap">
+          <button 
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors whitespace-nowrap"
+          >
             <Download className="w-4 h-4" />
             Export to CSV
           </button>
@@ -257,12 +194,23 @@ export default function IfasheTugufasheChildrenView({
 
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col flex-1 overflow-hidden">
-
-          {/* Desktop Table */}
-          <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b shrink-0">
-                <tr className="text-left">
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-gray-500">Loading children...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-red-500">Error loading children. Please try again.</p>
+            </div>
+          )}
+          {!isLoading && !isError && (
+            <>
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-auto flex-1">
+                <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 border-b sticky top-0 z-10">
+                <tr>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Child ID
                   </th>
@@ -286,10 +234,7 @@ export default function IfasheTugufasheChildrenView({
                   </th>
                 </tr>
               </thead>
-            </table>
-            <div className="overflow-auto flex-1">
-              <table className="w-full">
-                <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white divide-y divide-gray-100">
                   {filteredChildren.map((child) => (
                     <tr key={child.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">{child.childId}</td>
@@ -309,18 +254,21 @@ export default function IfasheTugufasheChildrenView({
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => setChildToView(child)}
                             className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4 text-blue-500" />
                           </button>
                           <button
+                            onClick={() => setChildToEdit(child)}
                             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Edit"
                           >
                             <Pencil className="w-4 h-4 text-gray-500" />
                           </button>
                           <button
+                            onClick={() => setChildToManage(child)}
                             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Manage"
                           >
@@ -332,7 +280,6 @@ export default function IfasheTugufasheChildrenView({
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
 
           {/* Mobile Cards */}
@@ -369,14 +316,14 @@ export default function IfasheTugufasheChildrenView({
                 </div>
 
                 <div className="flex items-center gap-2 pt-3 border-t">
-                  <button className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
+                  <button onClick={() => setChildToView(child)} className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
                     <Eye className="w-3.5 h-3.5" />
                     View
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button onClick={() => setChildToEdit(child)} className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     <Pencil className="w-4 h-4 text-gray-500" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button onClick={() => setChildToManage(child)} className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     <Users className="w-4 h-4 text-gray-500" />
                   </button>
                 </div>
@@ -385,13 +332,33 @@ export default function IfasheTugufasheChildrenView({
           </div>
 
           {/* No Results */}
-          {filteredChildren.length === 0 && (
+          {!isLoading && !isError && filteredChildren.length === 0 && (
             <div className="flex-1 flex items-center justify-center">
               <p className="text-gray-500 text-sm">No children found.</p>
             </div>
           )}
+            </>
+          )}
         </div>
       </div>
+
+      {/* Action Modals */}
+      <ViewChildModal
+        isOpen={!!childToView}
+        onClose={() => setChildToView(null)}
+        child={childToView}
+      />
+      <EditChildModal
+        isOpen={!!childToEdit}
+        onClose={() => setChildToEdit(null)}
+        child={childToEdit}
+      />
+      <ManageChildModal
+        isOpen={!!childToManage}
+        onClose={() => setChildToManage(null)}
+        child={childToManage}
+      />
+
     </div>
   );
 }

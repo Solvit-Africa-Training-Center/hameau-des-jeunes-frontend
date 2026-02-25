@@ -1,5 +1,6 @@
 import { Users, UserPlus, Award, GraduationCap, Baby, Heart } from "lucide-react";
 import { FaArrowTrendUp } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 interface Activity {
   id: string;
@@ -8,6 +9,8 @@ interface Activity {
 }
 
 export default function IfasheTugufasheDashboardContent() {
+  const navigate = useNavigate();
+
   const statsCards = [
     {
       id: 1,
@@ -54,6 +57,7 @@ export default function IfasheTugufasheDashboardContent() {
       icon: Users,
       iconBg: "bg-blue-100",
       iconColor: "text-blue-500",
+      link: "/IfasheTugufasheFamily#new",
     },
     {
       id: 2,
@@ -61,6 +65,7 @@ export default function IfasheTugufasheDashboardContent() {
       icon: UserPlus,
       iconBg: "bg-blue-100",
       iconColor: "text-blue-500",
+      link: "/IfasheTugufasheChildren#new",
     },
     {
       id: 3,
@@ -68,6 +73,7 @@ export default function IfasheTugufasheDashboardContent() {
       icon: Heart,
       iconBg: "bg-blue-100",
       iconColor: "text-blue-500",
+      link: "/IfasheTugufasheSponsorship#new",
     },
   ];
 
@@ -154,6 +160,7 @@ export default function IfasheTugufasheDashboardContent() {
                 return (
                   <button
                     key={action.id}
+                    onClick={() => navigate(action.link)}
                     className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors text-left"
                   >
                     <div className={`w-10 h-10 ${action.iconBg} rounded-lg flex items-center justify-center shrink-0`}>

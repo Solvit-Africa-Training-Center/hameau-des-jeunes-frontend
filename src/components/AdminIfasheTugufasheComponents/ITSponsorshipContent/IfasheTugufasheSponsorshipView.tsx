@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Eye, Pencil, Users, UserPlus } from "lucide-react";
+import { useGetIfasheSponsorshipsQuery } from "@/store/api/ifasheSponsorshipsApi";
 
 export interface Sponsorship {
   id: string;
@@ -30,152 +31,24 @@ export default function IrasheTugufasheSponsorshipView({
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const sponsorships: Sponsorship[] = [
-    {
-      id: "1",
-      childId: "#3001",
-      beneficiaryName: "Ishimwe Marie",
-      beneficiaryFamily: "Chidi",
-      type: "Education-only",
-      sponsorSource: "Global Education Fund",
-      startDate: "8/22/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Mukamana Vestine",
-      selectChild: "Ishimwe Marie",
-      sponsorshipType: "Education-only",
-      startDateFull: "2025-08-22",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "2",
-      childId: "#3002",
-      beneficiaryName: "Mukamana Vestine",
-      beneficiaryFamily: "Family",
-      type: "Partial",
-      sponsorSource: "Individual - Sarah Johnson",
-      startDate: "9/1/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Mukamana Vestine",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Partial",
-      startDateFull: "2025-09-01",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "3",
-      childId: "#3003",
-      beneficiaryName: "Niyonzima Desire",
-      beneficiaryFamily: "Chidi",
-      type: "Full",
-      sponsorSource: "Hope for Rwanda Foundation",
-      startDate: "9/18/2025",
-      endDate: "9/18/2025",
-      status: "Active",
-      selectFamily: "Niyonzima Jean Claude",
-      selectChild: "Niyonzima Desire",
-      sponsorshipType: "Full",
-      startDateFull: "2025-09-18",
-      expectedEndDate: "2029-09-18",
-    },
-    {
-      id: "4",
-      childId: "#3004",
-      beneficiaryName: "Uwihana Grace",
-      beneficiaryFamily: "Family",
-      type: "Full",
-      sponsorSource: "United Relief Organization",
-      startDate: "10/10/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Uwihana Grace",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Full",
-      startDateFull: "2025-10-10",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "5",
-      childId: "#3005",
-      beneficiaryName: "Habimana Kevin",
-      beneficiaryFamily: "Chidi",
-      type: "Education-only",
-      sponsorSource: "Individual - Michael Brown",
-      startDate: "11/15/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Habimana Patrick",
-      selectChild: "Habimana Kevin",
-      sponsorshipType: "Education-only",
-      startDateFull: "2025-11-15",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "6",
-      childId: "#3006",
-      beneficiaryName: "Nyirahabimana Angelique",
-      beneficiaryFamily: "Family",
-      type: "Partial",
-      sponsorSource: "Community Church Group",
-      startDate: "12/15/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Nyirahabimana Angelique",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Partial",
-      startDateFull: "2025-12-15",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "7",
-      childId: "#3007",
-      beneficiaryName: "Ndayisaba Dylan",
-      beneficiaryFamily: "Chidi",
-      type: "Education-only",
-      sponsorSource: "Individual - Emma Wilson",
-      startDate: "12/30/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Ndayisaba Emmanuel",
-      selectChild: "Ndayisaba Dylan",
-      sponsorshipType: "Education-only",
-      startDateFull: "2025-12-30",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "8",
-      childId: "#3008",
-      beneficiaryName: "Bizimana Joseph",
-      beneficiaryFamily: "Family",
-      type: "Full",
-      sponsorSource: "Rwanda Development Trust",
-      startDate: "1/5/2026",
-      endDate: "1/5/2030",
-      status: "Active",
-      selectFamily: "Bizimana Joseph",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Full",
-      startDateFull: "2026-01-05",
-      expectedEndDate: "2030-01-05",
-    },
-    {
-      id: "9",
-      childId: "#3009",
-      beneficiaryName: "Mukamazimpaka Eric",
-      beneficiaryFamily: "Chidi",
-      type: "Partial",
-      sponsorSource: "Individual - David Kim",
-      startDate: "1/20/2026",
-      endDate: "1/20/2029",
-      status: "Suspended",
-      selectFamily: "Mukamazimpaka Claudine",
-      selectChild: "Mukamazimpaka Eric",
-      sponsorshipType: "Partial",
-      startDateFull: "2026-01-20",
-      expectedEndDate: "2029-01-20",
-    },
-  ];
+  const { data: fetchedSponsorships = [], isLoading, isError } = useGetIfasheSponsorshipsQuery();
+
+  const sponsorships: Sponsorship[] = fetchedSponsorships.map((s: any) => ({
+    id: s.id || Math.random().toString(),
+    childId: s.childId || s.child_id || "N/A",
+    beneficiaryName: s.beneficiaryName || s.beneficiary_name || s.childName || s.child_name || "Unknown",
+    beneficiaryFamily: s.beneficiaryFamily || s.beneficiary_family || s.familyName || s.family_name || "Unknown",
+    type: s.type || s.sponsorshipType || "Education-only",
+    sponsorSource: s.sponsorSource || s.sponsor_source || s.sponsor || "Unknown",
+    startDate: s.startDate || s.start_date || "Unknown",
+    endDate: s.endDate || s.end_date || s.expectedEndDate || s.expected_end_date || "Unknown",
+    status: s.status || "Active",
+    selectFamily: s.selectFamily || s.select_family || s.beneficiaryFamily || s.beneficiary_family || "",
+    selectChild: s.selectChild || s.select_child || s.beneficiaryName || s.beneficiary_name || "",
+    sponsorshipType: s.sponsorshipType || s.sponsorship_type || s.type || "",
+    startDateFull: s.startDateFull || s.start_date_full || s.startDate || s.start_date || "",
+    expectedEndDate: s.expectedEndDate || s.expected_end_date || s.endDate || s.end_date || "",
+  }));
 
   const filteredSponsorships = sponsorships.filter((sponsorship) => {
     const matchesSearch =
@@ -213,22 +86,22 @@ export default function IrasheTugufasheSponsorshipView({
     {
       id: 1,
       title: "Total Sponsorships",
-      value: "9",
+      value: sponsorships.length.toString(),
     },
     {
       id: 2,
       title: "Active",
-      value: "8",
+      value: sponsorships.filter((s) => s.status === "Active").length.toString(),
     },
     {
       id: 3,
       title: "Suspended",
-      value: "1",
+      value: sponsorships.filter((s) => s.status === "Suspended").length.toString(),
     },
     {
       id: 4,
       title: "Completed",
-      value: "0",
+      value: sponsorships.filter((s) => s.status === "Completed").length.toString(),
     },
   ];
 
@@ -305,12 +178,23 @@ export default function IrasheTugufasheSponsorshipView({
 
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col flex-1 overflow-hidden">
-
-          {/* Desktop Table */}
-          <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b shrink-0">
-                <tr className="text-left">
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-gray-500">Loading sponsorships...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-red-500">Error loading sponsorships. Please try again.</p>
+            </div>
+          )}
+          {!isLoading && !isError && (
+            <>
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-auto flex-1">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 border-b sticky top-0 z-10">
+                <tr>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Child ID
                   </th>
@@ -334,10 +218,7 @@ export default function IrasheTugufasheSponsorshipView({
                   </th>
                 </tr>
               </thead>
-            </table>
-            <div className="overflow-auto flex-1">
-              <table className="w-full">
-                <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white divide-y divide-gray-100">
                   {filteredSponsorships.map((sponsorship) => (
                     <tr key={sponsorship.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">{sponsorship.childId}</td>
@@ -391,7 +272,6 @@ export default function IrasheTugufasheSponsorshipView({
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
 
           {/* Mobile Cards */}
@@ -456,6 +336,8 @@ export default function IrasheTugufasheSponsorshipView({
             <div className="flex-1 flex items-center justify-center">
               <p className="text-gray-500 text-sm">No sponsorships found.</p>
             </div>
+          )}
+          </>
           )}
         </div>
       </div>
