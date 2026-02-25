@@ -2,9 +2,10 @@ import { useState } from "react";
 import { ResidentialCareSideBar } from "@/components/AdminResidentialCareComponents/ResidentialCareSideBar";
 import { ResidentialMobileSidebar } from "@/components/AdminResidentialCareComponents/ResidentialMobileSideBar";
 import { ResidentialCareTopNavBar } from "@/components/AdminResidentialCareComponents/ResidentialCareTopNavBar";
-import { EducationContent } from "@/components/AdminResidentialCareComponents/EducationContent";
 
-function Education() {
+import { InstitutionsContent } from "@/components/AdminResidentialCareComponents/RCEducationContent/InstitutionsContent";
+
+function Institutions() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <>
@@ -26,11 +27,11 @@ function Education() {
         {/* Page content below */}
         <div className="flex flex-col items-center gap-6">
           {/* Your main dashboard content here */}
-          <EducationContent />
+          <InstitutionsContent />
         </div>
       </div>
     </>
   );
 }
 
-export default Education;
+export default Institutions;

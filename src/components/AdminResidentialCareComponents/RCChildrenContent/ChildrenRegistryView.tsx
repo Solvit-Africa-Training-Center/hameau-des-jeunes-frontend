@@ -13,6 +13,7 @@ import {
 } from "@/store/api/childrenApi";
 import type { Child } from "@/store/api/childrenApi";
 import { toast } from "react-toastify";
+import EditChildModal from "./EditChildmodal";
 
 interface ChildrenRegistryViewProps {
   onRegisterClick: () => void;
@@ -24,6 +25,7 @@ export default function ChildrenRegistryView({
   onViewChild,
 }: ChildrenRegistryViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingChild, setEditingChild] = useState<Child | null>(null);
 
   const { data: children = [], isLoading, isError } = useGetChildrenQuery();
   const [deleteChild] = useDeleteChildMutation();
@@ -118,7 +120,7 @@ export default function ChildrenRegistryView({
             </div>
           )}
 
-          {/* Table - Desktop View */}
+          {/* Table — Desktop */}
           {!isLoading && !isError && filteredChildren.length > 0 && (
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
@@ -212,6 +214,7 @@ export default function ChildrenRegistryView({
                             <Eye className="w-4 h-4 text-gray-600" />
                           </button>
                           <button
+                            onClick={() => setEditingChild(child)}
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Edit"
                           >
@@ -233,7 +236,7 @@ export default function ChildrenRegistryView({
             </div>
           )}
 
-          {/* Cards - Mobile/Tablet View */}
+          {/* Cards — Mobile */}
           {!isLoading && !isError && filteredChildren.length > 0 && (
             <div className="lg:hidden p-4 space-y-4">
               {filteredChildren.map((child) => (
@@ -303,12 +306,17 @@ export default function ChildrenRegistryView({
                       <Eye className="w-4 h-4" />
                       View
                     </button>
-                    <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <button
+                      onClick={() => setEditingChild(child)}
+                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      title="Edit"
+                    >
                       <Pencil className="w-4 h-4 text-gray-600" />
                     </button>
                     <button
                       onClick={() => handleDelete(child.id)}
                       className="p-2 border border-gray-300 rounded-lg hover:bg-red-50 transition-colors"
+                      title="Remove"
                     >
                       <UserMinus className="w-4 h-4 text-red-500" />
                     </button>
@@ -319,6 +327,13 @@ export default function ChildrenRegistryView({
           )}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <EditChildModal
+        isOpen={editingChild !== null}
+        onClose={() => setEditingChild(null)}
+        child={editingChild}
+      />
     </div>
   );
 }

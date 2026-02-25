@@ -20,6 +20,19 @@ export interface Child {
   updated_on: string;
 }
 
+export interface UpdateChildPayload {
+  first_name: string;
+  last_name: string;
+  date_of_birth: string;
+  gender: "MALE" | "FEMALE";
+  profile_image?: string;
+  start_date: string;
+  special_needs?: string;
+  vigilant_contact_name?: string;
+  vigilant_contact_phone?: string;
+  story?: string | null;
+}
+
 interface PaginatedResponse {
   count: number;
   next: string | null;
@@ -64,6 +77,18 @@ export const childrenApi = createApi({
       invalidatesTags: ["Children"],
     }),
 
+    updateChild: builder.mutation<Child, { id: string; data: FormData }>({
+      query: ({ id, data }) => ({
+        url: `/children/${id}/`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        "Children",
+        { type: "Child", id },
+      ],
+    }),
+
     deleteChild: builder.mutation<void, string>({
       query: (id) => ({ url: `/children/${id}/`, method: "DELETE" }),
       invalidatesTags: ["Children"],
@@ -75,5 +100,6 @@ export const {
   useGetChildrenQuery,
   useGetChildByIdQuery,
   useRegisterChildMutation,
+  useUpdateChildMutation,
   useDeleteChildMutation,
 } = childrenApi;

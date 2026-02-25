@@ -87,7 +87,7 @@ export function LoginForm({
                     break;
 
                   case "INTERNSHIPS_MANAGER":
-                    navigate("/internshipsDashboard");
+                    navigate("/InternshipsDashboard");
                     break;
 
                   case "IFASHE_MANAGER":
@@ -157,7 +157,7 @@ export function LoginForm({
                 </Button>
 
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/adminSignup">Sign up</a>
+                  {/* Don&apos;t have an account? <a href="/adminSignup">Sign up</a> */}
                 </FieldDescription>
               </Field>
             </FieldGroup>

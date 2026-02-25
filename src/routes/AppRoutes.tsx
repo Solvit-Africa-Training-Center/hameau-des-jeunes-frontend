@@ -8,8 +8,6 @@ import ResidentialCareChildren from "@/pages/AdminResidentialCarePages/Residenti
 import ResidentialCareDashboard from "@/pages/AdminResidentialCarePages/ResidentialCareDashboard";
 import ResidentialCareSettings from "@/pages/AdminResidentialCarePages/ResidentialCareSettings";
 import { Contacts } from "@/pages/Contacts";
-
-import { InternshipsDashboard } from "@/pages/DashboardPages/InternshipsDashboard";
 import { ManageResidentialCare } from "@/pages/DashboardPages/ManageResidentialCare";
 import { SuperAdminActivityOverview } from "@/pages/DashboardPages/SuperAdminActivityOverview";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
@@ -50,6 +48,8 @@ import IfasheTugufasheParentWork from "@/pages/AdminIfasheTugufashePages/IfasheT
 import IfasheTugufasheReport from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheReport";
 
 
+import Institutions from "@/pages/AdminResidentialCarePages/Institutions";
+
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -67,21 +67,21 @@ export const AppRoutes = () => {
 
       {/* ================= AUTH ROUTES ================= */}
       <Route path="/login" element={<LoginPage />} />
-     
+
       <Route path="/resetPassword" element={<ResetPassword />} />
       <Route path="/newPassword" element={<NewPassword />} />
       <Route path="/changePassword" element={<ChangePassword />} />
 
       {/* ================= SUPER ADMIN ================= */}
 
-      <Route 
-      path="/managerRegistration"
-      element={
-        <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
-          <SignupPage/>
-        </ProtectedRoute>
-      }>
-      </Route>
+      <Route
+        path="/managerRegistration"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SignupPage />
+          </ProtectedRoute>
+        }
+      ></Route>
       <Route
         path="/superAdminDashboard"
         element={
@@ -173,36 +173,112 @@ export const AppRoutes = () => {
       />
       <Route
         path="/residentialCareChildren"
-        element={<ResidentialCareChildren />}
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <ResidentialCareChildren />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/residentialCareCareTakers"
-        element={<ResidentialCareCareTakers />}
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <ResidentialCareCareTakers />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/residentialCareSettings"
-        element={<ResidentialCareSettings />}
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <ResidentialCareSettings />
+          </ProtectedRoute>
+        }
       />
-      <Route path="/education" element={<Education />} />
-      <Route path="/financials" element={<Financials />} />
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/healthRecords" element={<HealthRecords/>} />
+      <Route
+        path="/education"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Education />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financials"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Financials />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/healthRecords"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <HealthRecords />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/educationalInstitutions"
+        element={
+          <ProtectedRoute allowedRoles={["RESIDENTIAL_MANAGER"]}>
+            <Institutions />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= OTHER MANAGERS ================= */}
 
       {/* ================= Internship Program Managers */}
 
-      <Route path="/InternshipDashboard" element={<InternshipDashboard/>}/>
-      <Route path="/InternshipApplication" element={<InternshipApplication/>}/>
-      <Route path="/InternshipManagement" element={<InternshipManagement/>}/>
-      <Route path="/InternshipFeedbackContent" element={<InternshipFeedBack/>}/>
-      <Route path="/InternshipSettings" element={<InternshipSettings/>}/>
-
-
-      {/* ================= OTHER MANAGERS ================= */}
       <Route
-        path="/internshipsDashboard"
+        path="/InternshipsDashboard"
         element={
           <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
-            <InternshipsDashboard />
+            <InternshipDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/InternshipApplication"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipApplication />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/InternshipManagement"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/InternshipFeedbackContent"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipFeedBack />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/InternshipSettings"
+        element={
+          <ProtectedRoute allowedRoles={["INTERNSHIPS_MANAGER"]}>
+            <InternshipSettings />
           </ProtectedRoute>
         }
       />
