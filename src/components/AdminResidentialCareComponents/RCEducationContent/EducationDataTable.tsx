@@ -10,123 +10,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { Search, SlidersHorizontal, ChevronDown, Loader2 } from "lucide-react";
+import { useGetEnrollmentsQuery } from "@/store/api/enrollmentApi";
 
 /* -------------------- Types -------------------- */
 
-type EducationStatus = "Active" | "Inactive" | "Completed";
-
-export interface EducationRecord {
-  id: number;
-  childName: string;
-  avatarUrl?: string;
-  institution: string;
-  levelOfStudy: string;
-  startDate: string;
-  endDate: string;
-  cost: string;
-  status: EducationStatus;
-}
-
-/* -------------------- Data -------------------- */
-
-const educationRecords: EducationRecord[] = [
-  {
-    id: 1,
-    childName: "Samuel Kwizera",
-    institution: "APADE",
-    levelOfStudy: "Primary 5",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-  {
-    id: 2,
-    childName: "Samuel Kwizera",
-    institution: "Lycee de Nyaza",
-    levelOfStudy: "Primary 3",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-  {
-    id: 3,
-    childName: "Samuel Kwizera",
-    institution: "Remera HS",
-    levelOfStudy: "Secondary 2",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-  {
-    id: 4,
-    childName: "Samuel Kwizera",
-    institution: "Gikondo HS",
-    levelOfStudy: "Secondary 3",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-  {
-    id: 5,
-    childName: "Samuel Kwizera",
-    institution: "St Joseph",
-    levelOfStudy: "Secondary 1",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-  {
-    id: 6,
-    childName: "Samuel Kwizera",
-    institution: "St Joseph",
-    levelOfStudy: "Secondary 1",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-  {
-    id: 7,
-    childName: "Samuel Kwizera",
-    institution: "St Joseph",
-    levelOfStudy: "Primary 3",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-  {
-    id: 8,
-    childName: "Samuel Kwizera",
-    institution: "Lycee de Nyaza",
-    levelOfStudy: "Secondary",
-    startDate: "26/09/2026",
-    endDate: "26/09/2029",
-    cost: "180,000 Rwf",
-    status: "Active",
-  },
-];
+type EducationStatus = "ACTIVE" | "COMPLETED" | "DISCONTINUED";
 
 /* -------------------- Status Badge -------------------- */
 
 const StatusBadge: React.FC<{ status: EducationStatus }> = ({ status }) => {
   const styles: Record<EducationStatus, string> = {
-    Active: "bg-emerald-100 text-emerald-700",
-    Inactive: "bg-gray-100 text-gray-600",
-    Completed: "bg-blue-100 text-blue-700",
+    ACTIVE: "bg-emerald-100 text-emerald-700",
+    DISCONTINUED: "bg-gray-100 text-gray-600",
+    COMPLETED: "bg-blue-100 text-blue-700",
   };
-
+  const labels: Record<EducationStatus, string> = {
+    ACTIVE: "Active",
+    DISCONTINUED: "Inactive",
+    COMPLETED: "Completed",
+  };
   return (
     <span
       className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${styles[status]}`}
     >
-      {status}
+      {labels[status]}
     </span>
   );
 };
@@ -184,27 +92,36 @@ const FilterDropdown: React.FC<{
 /* -------------------- Component -------------------- */
 
 export const EducationDataTable: React.FC = () => {
+  const { data, isLoading, isError } = useGetEnrollmentsQuery();
+
+  const records = data?.results ?? [];
+
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [levelFilter, setLevelFilter] = useState("");
 
-  const allStatuses = Array.from(
-    new Set(educationRecords.map((r) => r.status)),
+  const allStatuses = useMemo(
+    () => Array.from(new Set(records.map((r) => r.status))),
+    [records],
   );
-  const allLevels = Array.from(
-    new Set(educationRecords.map((r) => r.levelOfStudy)),
+
+  const allLevels = useMemo(
+    () => Array.from(new Set(records.map((r) => r.level).filter(Boolean))),
+    [records],
   );
 
   const filtered = useMemo(() => {
-    return educationRecords.filter((r) => {
+    return records.filter((r) => {
+      const childName = r.child?.full_name ?? "";
+      const institution = r.program?.institution?.name ?? "";
       const matchesSearch =
-        r.childName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.institution.toLowerCase().includes(searchQuery.toLowerCase());
+        childName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        institution.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = !statusFilter || r.status === statusFilter;
-      const matchesLevel = !levelFilter || r.levelOfStudy === levelFilter;
+      const matchesLevel = !levelFilter || r.level === levelFilter;
       return matchesSearch && matchesStatus && matchesLevel;
     });
-  }, [searchQuery, statusFilter, levelFilter]);
+  }, [records, searchQuery, statusFilter, levelFilter]);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -243,13 +160,16 @@ export const EducationDataTable: React.FC = () => {
           <TableHeader className="bg-[#F9FAFB] sticky top-0 z-10">
             <TableRow className="border-none">
               <TableHead className="px-6 font-medium text-[#838484] text-sm">
-                Child Names
+                Child Name
               </TableHead>
               <TableHead className="font-medium text-[#838484] text-sm">
                 Institution
               </TableHead>
               <TableHead className="font-medium text-[#838484] text-sm">
-                Level of Study
+                Program
+              </TableHead>
+              <TableHead className="font-medium text-[#838484] text-sm">
+                Level
               </TableHead>
               <TableHead className="font-medium text-[#838484] text-sm">
                 Start Date
@@ -268,10 +188,28 @@ export const EducationDataTable: React.FC = () => {
           </TableHeader>
 
           <TableBody className="bg-white">
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-10">
+                  <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Loading enrollments...
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : isError ? (
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={9}
+                  className="text-center py-10 text-sm text-red-500"
+                >
+                  Failed to load enrollments.
+                </TableCell>
+              </TableRow>
+            ) : filtered.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={9}
                   className="text-center py-10 text-sm text-gray-400"
                 >
                   No records found.
@@ -287,8 +225,8 @@ export const EducationDataTable: React.FC = () => {
                   <TableCell className="px-6 py-3">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-9 h-9">
-                        {record.avatarUrl ? (
-                          <AvatarImage src={record.avatarUrl} />
+                        {record.child?.profile_image ? (
+                          <AvatarImage src={record.child.profile_image} />
                         ) : (
                           <AvatarFallback className="bg-teal-100">
                             <IoPersonCircleOutline
@@ -299,47 +237,41 @@ export const EducationDataTable: React.FC = () => {
                         )}
                       </Avatar>
                       <span className="text-sm font-medium text-gray-800">
-                        {record.childName}
+                        {record.child?.full_name ?? "—"}
                       </span>
                     </div>
                   </TableCell>
 
-                  {/* Institution */}
                   <TableCell className="text-sm text-gray-700">
-                    {record.institution}
+                    {record.program?.institution?.name ?? "—"}
                   </TableCell>
 
-                  {/* Level of Study */}
                   <TableCell className="text-sm text-gray-700">
-                    {record.levelOfStudy}
+                    {record.program?.program_name ?? "—"}
                   </TableCell>
 
-                  {/* Start Date */}
+                  <TableCell className="text-sm text-gray-700">
+                    {record.level ?? "—"}
+                  </TableCell>
+
                   <TableCell className="text-sm text-gray-500">
-                    {record.startDate}
+                    {record.start_date}
                   </TableCell>
 
-                  {/* End Date */}
                   <TableCell className="text-sm text-gray-500">
-                    {record.endDate}
+                    {record.end_date}
                   </TableCell>
 
-                  {/* Cost */}
                   <TableCell className="text-sm text-gray-700">
                     {record.cost}
                   </TableCell>
 
-                  {/* Status */}
                   <TableCell>
                     <StatusBadge status={record.status} />
                   </TableCell>
 
-                  {/* Arrow */}
                   <TableCell>
-                    <button
-                      onClick={() => {}}
-                      className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors"
-                    >
+                    <button className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors">
                       <MdKeyboardArrowRight size={20} />
                     </button>
                   </TableCell>
@@ -352,7 +284,7 @@ export const EducationDataTable: React.FC = () => {
 
       {/* Result count */}
       <div className="px-6 py-3 border-t border-gray-100 text-xs text-gray-400">
-        Showing {filtered.length} of {educationRecords.length} records
+        Showing {filtered.length} of {records.length} records
       </div>
     </div>
   );

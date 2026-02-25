@@ -1,5 +1,7 @@
-import { Plus, X } from "lucide-react";
+import { useCreateInstitutionMutation } from "@/store/api/educationApi";
+import { Loader2, Plus, X } from "lucide-react";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 interface AddInstitutionModalProps {
   isOpen: boolean;
@@ -27,7 +29,6 @@ const SUGGESTED_PROGRAMS = [
 export default function AddInstitutionModal({
   isOpen,
   onClose,
-  onSave,
 }: AddInstitutionModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,6 +36,8 @@ export default function AddInstitutionModal({
   const [address, setAddress] = useState("");
   const [programs, setPrograms] = useState<string[]>([...SUGGESTED_PROGRAMS]);
   const [programInput, setProgramInput] = useState("");
+
+  const [createInstitution, { isLoading }] = useCreateInstitutionMutation();
 
   if (!isOpen) return null;
 
@@ -57,9 +60,32 @@ export default function AddInstitutionModal({
     }
   };
 
-  const handleSave = () => {
-    onSave?.({ name, email, phone, programs, address });
-    onClose();
+  const handleSave = async () => {
+    if (!name || !email || !phone || !address) {
+      toast.error("Please fill all required fiels.");
+    }
+
+    try {
+      await createInstitution({
+        name,
+        email,
+        phone,
+        address,
+        programs: programs.map((p) => ({
+          program_name: p,
+        })),
+      }).unwrap();
+
+      toast.success("Institution registered successfully!");
+
+      handleClose();
+    } catch (err: any) {
+      console.error("Institution creation failed:", err);
+      toast.error(
+        err?.data?.detail ||
+          "Failed to register institution. Please try again.",
+      );
+    }
   };
 
   const handleClose = () => {
@@ -97,7 +123,7 @@ export default function AddInstitutionModal({
           {/* Institution Name */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-800">
-              Institution Names
+              Institution Name
             </label>
             <input
               type="text"
@@ -189,15 +215,24 @@ export default function AddInstitutionModal({
           <div className="grid grid-cols-2 gap-3 pt-1">
             <button
               onClick={handleClose}
+              disabled={isLoading}
               className="px-6 py-3.5 border border-gray-300 rounded-2xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
+              disabled={isLoading}
               className="px-6 py-3.5 bg-emerald-900 text-white rounded-2xl text-sm font-medium hover:bg-emerald-800 transition-colors"
             >
-              Save Changes
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Institution"
+              )}
             </button>
           </div>
         </div>
