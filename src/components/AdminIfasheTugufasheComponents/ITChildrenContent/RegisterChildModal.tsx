@@ -2,6 +2,7 @@ import { X, Save } from "lucide-react";
 import { useState } from "react";
 import { useCreateIfasheChildMutation } from "@/store/api/ifasheChildrenApi";
 import { useGetIfasheFamiliesQuery } from "@/store/api/ifasheFamiliesApi";
+import { useGetInstitutionsQuery } from "@/store/api/educationApi";
 import { toast } from "react-toastify";
 
 interface RegisterChildModalProps {
@@ -11,7 +12,7 @@ interface RegisterChildModalProps {
 
 export default function RegisterChildModal({ isOpen, onClose }: RegisterChildModalProps) {
   const [formData, setFormData] = useState({
-    linkedFamily: "",
+    linkedFamilyId: "",
     fullName: "",
     dateOfBirth: "",
     gender: "",
@@ -20,6 +21,8 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
     supportStatus: "Active",
     healthConditions: "",
   });
+
+  const { data: institutions = [] } = useGetInstitutionsQuery();
 
   const { data: fetchedFamilies = [] } = useGetIfasheFamiliesQuery();
   const [createChild, { isLoading }] = useCreateIfasheChildMutation();
@@ -33,36 +36,26 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
       const first_name = names[0] || "Unknown";
       const last_name = names.slice(1).join(" ") || "Unknown";
 
-      // Try to find the actual family ID from the selected linkedFamily string
-      const matchedFamily = fetchedFamilies.find(
-        (f: any) => 
-          (f.parents?.[0]?.first_name && f.parents?.[0]?.first_name.includes(formData.linkedFamily.split(" ")[0])) ||
-          f.family_name === formData.linkedFamily ||
-          f.id === formData.linkedFamily ||
-          f.parents?.[0]?.id === formData.linkedFamily
-      );
-
-      // Map the "Graduated" status to "EXITED" for the backend
+      // Map the "Graduated" / "Transferred" status to "EXITED" for the backend
       let parsedStatus = formData.supportStatus.toUpperCase();
-      if (parsedStatus === "GRADUATED") parsedStatus = "EXITED";
-      if (parsedStatus === "TRANSFERRED") parsedStatus = "EXITED";
+      if (parsedStatus === "GRADUATED" || parsedStatus === "TRANSFERRED") parsedStatus = "EXITED";
 
-      const payload = {
-        first_name: first_name,
-        last_name: last_name,
+      const payload: Record<string, any> = {
+        first_name,
+        last_name,
         date_of_birth: formData.dateOfBirth || null,
         gender: formData.gender ? formData.gender.toUpperCase() : "MALE",
         school_name: formData.schoolName,
         school_level: formData.educationLevel,
         support_status: parsedStatus,
         health_conditions: formData.healthConditions,
-        ...(matchedFamily && { family_id: matchedFamily.id })
       };
+      if (formData.linkedFamilyId) payload.family_id = formData.linkedFamilyId;
       
       await createChild(payload).unwrap();
       toast.success("Child registered successfully!");
       setFormData({
-        linkedFamily: "",
+        linkedFamilyId: "",
         fullName: "",
         dateOfBirth: "",
         gender: "",
@@ -79,7 +72,7 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl max-h-[90vh] flex flex-col">
 
         {/* Header */}
@@ -108,8 +101,8 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
                 Linked Family *
               </label>
               <select
-                value={formData.linkedFamily}
-                onChange={(e) => setFormData({ ...formData, linkedFamily: e.target.value })}
+                value={formData.linkedFamilyId}
+                onChange={(e) => setFormData({ ...formData, linkedFamilyId: e.target.value })}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
               >
                 <option value="">Select Family</option>
@@ -118,7 +111,7 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
                     ? `${f.parents[0].first_name} ${f.parents[0].last_name || ""}`.trim() 
                     : (f.family_name || "Unknown Family");
                     return (
-                        <option key={f.id} value={parentName}>
+                        <option key={f.id} value={f.id}>
                             {parentName}
                         </option>
                     )
@@ -173,15 +166,32 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                School Name*
+                School *
               </label>
-              <input
-                type="text"
+              <select
                 value={formData.schoolName}
                 onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
-                placeholder="Enter School name"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                required
+              >
+                <option value="">— Select School —</option>
+                {institutions.length > 0 && (
+                  <optgroup label="Educational Institutions">
+                    {institutions.map((inst) => (
+                      <option key={inst.id} value={inst.name}>{inst.name}{inst.address ? ` — ${inst.address}` : ""}</option>
+                    ))}
+                  </optgroup>
+                )}
+                <option value="Other">Other (specify below)</option>
+              </select>
+              {formData.schoolName === "Other" && (
+                <input
+                  type="text"
+                  placeholder="Enter school name..."
+                  className="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
+                />
+              )}
             </div>
           </div>
 

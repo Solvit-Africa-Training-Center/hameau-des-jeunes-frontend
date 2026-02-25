@@ -80,6 +80,14 @@ export const ifasheParentsApi = createApi({
       query: (data) => ({ url: "/ifashe-parent-attendance/", method: "POST", body: data }),
       invalidatesTags: ["ParentAttendance"],
     }),
+    updateIfasheParentAttendance: builder.mutation<IfasheParentAttendance, { id: string; data: any }>({
+      query: ({ id, data }) => ({ url: `/ifashe-parent-attendance/${id}/`, method: "PATCH", body: data }),
+      invalidatesTags: ["ParentAttendance"],
+    }),
+    deleteIfasheParentAttendance: builder.mutation<void, string>({
+      query: (id) => ({ url: `/ifashe-parent-attendance/${id}/`, method: "DELETE" }),
+      invalidatesTags: ["ParentAttendance"],
+    }),
 
     // Contracts
     getIfasheParentContracts: builder.query<IfasheParentContract[], void>({
@@ -127,6 +135,8 @@ export const {
   useDeleteIfasheParentMutation,
   useGetIfasheParentAttendancesQuery,
   useCreateIfasheParentAttendanceMutation,
+  useUpdateIfasheParentAttendanceMutation,
+  useDeleteIfasheParentAttendanceMutation,
   useGetIfasheParentContractsQuery,
   useCreateIfasheParentContractMutation,
   useUpdateIfasheParentContractMutation,

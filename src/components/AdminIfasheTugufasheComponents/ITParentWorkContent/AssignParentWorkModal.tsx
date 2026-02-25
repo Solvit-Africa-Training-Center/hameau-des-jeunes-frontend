@@ -1,185 +1,178 @@
-import { X } from "lucide-react";
+import { X, UserPlus, User, Briefcase, CalendarDays } from "lucide-react";
 import { useState } from "react";
 import { useCreateIfasheParentContractMutation } from "@/store/api/ifasheParentsApi";
+import { useGetIfasheParentsQuery } from "@/store/api/ifasheParentsApi";
+import { toast } from "react-toastify";
+import { parseApiError } from "@/utils/apiErrorParser";
 
 interface AssignParentWorkModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function AssignParentWorkModal({
-  isOpen,
-  onClose,
-}: AssignParentWorkModalProps) {
+const JOB_ROLES = [
+  "Kitchen", "Cleaning", "Farm / Agriculture", "Administration",
+  "Security", "Childcare Assistant", "Laundry", "Construction / Maintenance",
+  "Transport", "Other"
+];
+
+export default function AssignParentWorkModal({ isOpen, onClose }: AssignParentWorkModalProps) {
   const [formData, setFormData] = useState({
-    selectParent: "",
-    assignedDepartment: "",
-    supervisor: "",
-    status: "Active",
-    performanceNotes: "",
+    parent: "",
+    job_role: "",
+    status: "ACTIVE",
+    contract_start_date: new Date().toISOString().split("T")[0],
+    contract_end_date: "",
   });
 
+  const { data: parents = [] } = useGetIfasheParentsQuery();
   const [createContract, { isLoading }] = useCreateIfasheParentContractMutation();
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.parent || !formData.job_role) {
+      toast.error("Parent and Job Role are required.");
+      return;
+    }
     try {
-      const payload = {
-        parent: formData.selectParent,
-        job_role: formData.assignedDepartment,
-        supervisor: formData.supervisor,
+      await createContract({
+        parent: formData.parent,
+        job_role: formData.job_role,
         status: formData.status,
-        performanceNotes: formData.performanceNotes,
-        contract_start_date: new Date().toISOString().split("T")[0],
-      };
-      await createContract(payload).unwrap();
+        contract_start_date: formData.contract_start_date,
+        ...(formData.contract_end_date ? { contract_end_date: formData.contract_end_date } : {}),
+      }).unwrap();
+      toast.success("Parent work assignment created!");
       setFormData({
-        selectParent: "",
-        assignedDepartment: "",
-        supervisor: "",
-        status: "Active",
-        performanceNotes: "",
+        parent: "",
+        job_role: "",
+        status: "ACTIVE",
+        contract_start_date: new Date().toISOString().split("T")[0],
+        contract_end_date: "",
       });
       onClose();
-    } catch (error) {
-      console.error("Failed to assign parent work", error);
+    } catch (err) {
+      toast.error(parseApiError(err, "Failed to assign parent work."));
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 bg-opacity-40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl max-h-[90vh] flex flex-col">
+
         {/* Header */}
-        <div className="px-6 py-5 border-b flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Assign Parent Work
-          </h2>
+        <div className="px-6 py-5 border-b flex items-center justify-between shrink-0 bg-emerald-900 rounded-t-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-emerald-800 rounded-xl flex items-center justify-center">
+              <UserPlus className="w-5 h-5 text-emerald-300" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-white">Assign Parent Work</h2>
+              <p className="text-emerald-200 text-xs mt-0.5">Create a new work contract for a parent</p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors shrink-0"
+            className="w-8 h-8 rounded-full bg-emerald-800 hover:bg-emerald-700 flex items-center justify-center transition-colors"
           >
-            <X className="w-4 h-4 text-gray-600" />
+            <X className="w-4 h-4 text-white" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          {/* Select Parent/Family & Assigned Department */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+          <div className="px-6 py-5 space-y-5">
+
+            {/* Parent */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Parent/Family *
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <span className="flex items-center gap-1.5"><User className="w-4 h-4 text-emerald-600" />Parent *</span>
               </label>
               <select
-                value={formData.selectParent}
-                onChange={(e) =>
-                  setFormData({ ...formData, selectParent: e.target.value })
-                }
+                value={formData.parent}
+                onChange={(e) => setFormData({ ...formData, parent: e.target.value })}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                required
               >
-                <option value="">Select a parent</option>
-                <option value="Mukamana Vestine">Mukamana Vestine</option>
-                <option value="Niyonzima Jean Claude">
-                  Niyonzima Jean Claude
-                </option>
-                <option value="Uwihana Grace">Uwihana Grace</option>
-                <option value="Habimana Patrick">Habimana Patrick</option>
-                <option value="Nyirahabimana Angelique">
-                  Nyirahabimana Angelique
-                </option>
-                <option value="Ndayisaba Emmanuel">Ndayisaba Emmanuel</option>
-                <option value="Mukamazimpaka Claudine">
-                  Mukamazimpaka Claudine
-                </option>
-                <option value="Bizimana Joseph">Bizimana Joseph</option>
+                <option value="">— Select a Parent —</option>
+                {parents.map((p: any) => (
+                  <option key={p.id} value={p.id}>
+                    {p.full_name || `${p.first_name || ""} ${p.last_name || ""}`.trim() || p.name || "Unknown"}
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Assigned Department *
-              </label>
-              <input
-                type="text"
-                value={formData.assignedDepartment}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    assignedDepartment: e.target.value,
-                  })
-                }
-                placeholder="e.g., Kitchen, Cleaning, Farm, Admin"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
+            {/* Job Role & Status */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <span className="flex items-center gap-1.5"><Briefcase className="w-4 h-4 text-emerald-600" />Job Role *</span>
+                </label>
+                <select
+                  value={formData.job_role}
+                  onChange={(e) => setFormData({ ...formData, job_role: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                  required
+                >
+                  <option value="">— Select Role —</option>
+                  {JOB_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Status *</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                >
+                  <option value="ACTIVE">Active</option>
+                  <option value="SUSPENDED">Suspended</option>
+                  <option value="TERMINATED">Terminated</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Contract Start Date & End Date */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <CalendarDays className="inline w-4 h-4 text-emerald-600 mr-1" />Contract Start Date *
+                </label>
+                <input
+                  type="date"
+                  value={formData.contract_start_date}
+                  onChange={(e) => setFormData({ ...formData, contract_start_date: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <CalendarDays className="inline w-4 h-4 text-emerald-600 mr-1" />Contract End Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.contract_end_date}
+                  onChange={(e) => setFormData({ ...formData, contract_end_date: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Supervisor & Status */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Supervisor *
-              </label>
-              <input
-                type="text"
-                value={formData.supervisor}
-                onChange={(e) =>
-                  setFormData({ ...formData, supervisor: e.target.value })
-                }
-                placeholder="Supervisor name"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status *
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) =>
-                  setFormData({ ...formData, status: e.target.value })
-                }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
-              >
-                <option value="Active">Active</option>
-                <option value="Warning Issued">Warning Issued</option>
-                <option value="Suspended">Suspended</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Performance Notes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Performance Notes
-            </label>
-            <textarea
-              value={formData.performanceNotes}
-              onChange={(e) =>
-                setFormData({ ...formData, performanceNotes: e.target.value })
-              }
-              rows={4}
-              placeholder="Add notes about performance, attendance, etc."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-            />
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 py-3 border border-gray-300 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
-            >
+          {/* Footer */}
+          <div className="px-6 py-4 border-t bg-gray-50 flex gap-3 sticky bottom-0 rounded-b-2xl">
+            <button type="button" onClick={onClose} className="flex-1 py-3 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-white transition-colors">
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isLoading}
-              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || !formData.parent || !formData.job_role}
+              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-semibold hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? "Assigning..." : "Assign Parent"}
             </button>

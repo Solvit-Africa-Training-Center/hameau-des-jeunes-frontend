@@ -52,7 +52,7 @@ export const ifasheDressingApi = createApi({
     updateIfasheDressing: builder.mutation<IfasheDressing, { id: string; data: any }>({
       query: ({ id, data }) => ({
         url: `/ifashe-dressing-distributions/${id}/`,
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: (_result, _error, { id }) => [

@@ -1,23 +1,19 @@
 import { useState } from "react";
 import { Search, Eye, Pencil, Users, UserPlus } from "lucide-react";
 import { useGetIfasheSponsorshipsQuery } from "@/store/api/ifasheSponsorshipsApi";
+import ViewSponsorshipModal from "./ViewSponsorshipModal";
+import EditSponsorshipModal from "./EditSponsorshipModal";
+import ManageSponsorshipModal from "./ManageSponsorshipModal";
 
 export interface Sponsorship {
   id: string;
   childId: string;
   beneficiaryName: string;
-  beneficiaryFamily: string;
-  type: "Education-only" | "Partial" | "Full";
-  sponsorSource: string;
+  type: string;
   startDate: string;
   endDate: string;
-  status: "Active" | "Suspended" | "Completed" | "Pending";
-  // Full data for the form
-  selectFamily: string;
-  selectChild: string;
-  sponsorshipType: string;
-  startDateFull: string;
-  expectedEndDate: string;
+  status: string;
+  pauseReason: string;
 }
 
 interface IrasheTugufasheSponsorshipViewProps {
@@ -31,30 +27,26 @@ export default function IrasheTugufasheSponsorshipView({
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  const [sponsorshipToView, setSponsorshipToView] = useState<Sponsorship | null>(null);
+  const [sponsorshipToEdit, setSponsorshipToEdit] = useState<Sponsorship | null>(null);
+  const [sponsorshipToManage, setSponsorshipToManage] = useState<Sponsorship | null>(null);
+
   const { data: fetchedSponsorships = [], isLoading, isError } = useGetIfasheSponsorshipsQuery();
 
   const sponsorships: Sponsorship[] = fetchedSponsorships.map((s: any) => ({
     id: s.id || Math.random().toString(),
-    childId: s.childId || s.child_id || "N/A",
-    beneficiaryName: s.beneficiaryName || s.beneficiary_name || s.childName || s.child_name || "Unknown",
-    beneficiaryFamily: s.beneficiaryFamily || s.beneficiary_family || s.familyName || s.family_name || "Unknown",
-    type: s.type || s.sponsorshipType || "Education-only",
-    sponsorSource: s.sponsorSource || s.sponsor_source || s.sponsor || "Unknown",
-    startDate: s.startDate || s.start_date || "Unknown",
-    endDate: s.endDate || s.end_date || s.expectedEndDate || s.expected_end_date || "Unknown",
-    status: s.status || "Active",
-    selectFamily: s.selectFamily || s.select_family || s.beneficiaryFamily || s.beneficiary_family || "",
-    selectChild: s.selectChild || s.select_child || s.beneficiaryName || s.beneficiary_name || "",
-    sponsorshipType: s.sponsorshipType || s.sponsorship_type || s.type || "",
-    startDateFull: s.startDateFull || s.start_date_full || s.startDate || s.start_date || "",
-    expectedEndDate: s.expectedEndDate || s.expected_end_date || s.endDate || s.end_date || "",
+    childId: s.child?.substring(0, 8) || "N/A",
+    beneficiaryName: s.child_name || "Unknown",
+    type: s.sponsorship_type || "FULL",
+    startDate: s.start_date || "Unknown",
+    endDate: s.end_date || "N/A",
+    status: s.status || "ACTIVE",
+    pauseReason: s.pause_reason || "",
   }));
 
   const filteredSponsorships = sponsorships.filter((sponsorship) => {
     const matchesSearch =
       sponsorship.beneficiaryName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sponsorship.sponsorSource.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sponsorship.beneficiaryFamily.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sponsorship.childId.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesType =
@@ -67,16 +59,14 @@ export default function IrasheTugufasheSponsorshipView({
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const getStatusColor = (status: Sponsorship["status"]) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active":
+      case "ACTIVE":
         return "bg-green-100 text-green-700";
-      case "Suspended":
+      case "SUSPENDED":
         return "bg-amber-100 text-amber-700";
-      case "Completed":
+      case "COMPLETED":
         return "bg-blue-100 text-blue-700";
-      case "Pending":
-        return "bg-gray-100 text-gray-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -91,23 +81,24 @@ export default function IrasheTugufasheSponsorshipView({
     {
       id: 2,
       title: "Active",
-      value: sponsorships.filter((s) => s.status === "Active").length.toString(),
+      value: sponsorships.filter((s) => s.status === "ACTIVE").length.toString(),
     },
     {
       id: 3,
       title: "Suspended",
-      value: sponsorships.filter((s) => s.status === "Suspended").length.toString(),
+      value: sponsorships.filter((s) => s.status === "SUSPENDED").length.toString(),
     },
     {
       id: 4,
       title: "Completed",
-      value: sponsorships.filter((s) => s.status === "Completed").length.toString(),
+      value: sponsorships.filter((s) => s.status === "COMPLETED").length.toString(),
     },
   ];
 
   return (
-    <div className="w-full h-screen bg-gray-50 flex flex-col overflow-hidden">
-      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-hidden">
+    <>
+      <div className="w-full h-screen bg-gray-50 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-hidden">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start justify-between mb-5 gap-4 shrink-0">
@@ -145,7 +136,7 @@ export default function IrasheTugufasheSponsorshipView({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by child, sponsor or family..."
+              placeholder="Search by child name or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -158,9 +149,8 @@ export default function IrasheTugufasheSponsorshipView({
             className="px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white appearance-none min-w-35"
           >
             <option value="all">All Types</option>
-            <option value="education-only">Education-only</option>
-            <option value="partial">Partial</option>
-            <option value="full">Full</option>
+            <option value="PARTIAL">Partial</option>
+            <option value="FULL">Full</option>
           </select>
 
           <select
@@ -172,7 +162,6 @@ export default function IrasheTugufasheSponsorshipView({
             <option value="active">Active</option>
             <option value="suspended">Suspended</option>
             <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
           </select>
         </div>
 
@@ -205,9 +194,6 @@ export default function IrasheTugufasheSponsorshipView({
                     Type
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Sponsor Source
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Start & End Date
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -223,17 +209,11 @@ export default function IrasheTugufasheSponsorshipView({
                     <tr key={sponsorship.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">{sponsorship.childId}</td>
                       <td className="px-6 py-4">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {sponsorship.beneficiaryName}
-                          </p>
-                          <p className="text-xs text-gray-500">{sponsorship.beneficiaryFamily}</p>
-                        </div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {sponsorship.beneficiaryName}
+                        </p>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">{sponsorship.type}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {sponsorship.sponsorSource}
-                      </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {sponsorship.startDate} - {sponsorship.endDate}
                       </td>
@@ -249,22 +229,25 @@ export default function IrasheTugufasheSponsorshipView({
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => setSponsorshipToView(sponsorship)}
                             className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4 text-blue-500" />
                           </button>
                           <button
+                            onClick={() => setSponsorshipToEdit(sponsorship)}
                             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Edit"
                           >
                             <Pencil className="w-4 h-4 text-gray-500" />
                           </button>
                           <button
-                            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                            onClick={() => setSponsorshipToManage(sponsorship)}
+                            className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                             title="Manage"
                           >
-                            <Users className="w-4 h-4 text-gray-500" />
+                            <Users className="w-4 h-4 text-red-400" />
                           </button>
                         </div>
                       </td>
@@ -287,7 +270,6 @@ export default function IrasheTugufasheSponsorshipView({
                     <h3 className="font-medium text-gray-900 text-sm">
                       {sponsorship.beneficiaryName}
                     </h3>
-                    <p className="text-xs text-gray-500">{sponsorship.beneficiaryFamily}</p>
                   </div>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -304,10 +286,6 @@ export default function IrasheTugufasheSponsorshipView({
                     <span className="ml-1 text-gray-900">{sponsorship.type}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Sponsor:</span>
-                    <span className="ml-1 text-gray-900">{sponsorship.sponsorSource}</span>
-                  </div>
-                  <div>
                     <span className="text-gray-500">Period:</span>
                     <span className="ml-1 text-gray-900">
                       {sponsorship.startDate} - {sponsorship.endDate}
@@ -316,15 +294,24 @@ export default function IrasheTugufasheSponsorshipView({
                 </div>
 
                 <div className="flex items-center gap-2 pt-3 border-t">
-                  <button className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
+                  <button
+                    onClick={() => setSponsorshipToView(sponsorship)}
+                    className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors"
+                  >
                     <Eye className="w-3.5 h-3.5" />
                     View
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button
+                    onClick={() => setSponsorshipToEdit(sponsorship)}
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
                     <Pencil className="w-4 h-4 text-gray-500" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Users className="w-4 h-4 text-gray-500" />
+                  <button
+                    onClick={() => setSponsorshipToManage(sponsorship)}
+                    className="p-2 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                  >
+                    <Users className="w-4 h-4 text-red-400" />
                   </button>
                 </div>
               </div>
@@ -340,7 +327,25 @@ export default function IrasheTugufasheSponsorshipView({
           </>
           )}
         </div>
+
+        {/* Modals */}
+        <ViewSponsorshipModal
+          isOpen={!!sponsorshipToView}
+          onClose={() => setSponsorshipToView(null)}
+          sponsorship={sponsorshipToView}
+        />
+        <EditSponsorshipModal
+          isOpen={!!sponsorshipToEdit}
+          onClose={() => setSponsorshipToEdit(null)}
+          sponsorship={sponsorshipToEdit}
+        />
+        <ManageSponsorshipModal
+          isOpen={!!sponsorshipToManage}
+          onClose={() => setSponsorshipToManage(null)}
+          sponsorship={sponsorshipToManage}
+        />
       </div>
     </div>
+    </>
   );
 }
