@@ -8,11 +8,11 @@ import 'swiper/swiper-bundle.css';
 
 // Import placeholder images (replace these with your actual imports)
 import story1 from '@/assets/viye.png';
-import story2 from '@/assets/testimonial_2_img.png';
-import story3 from '@/assets/testimonial_3_img.jpg';
-import story4 from '@/assets/testimonial_4_img.jpg';
-import story5 from '@/assets/child_protection_officer.png';
-import story6 from '@/assets/bg.png';
+import story2 from '@/assets/viye3.png';
+import story3 from '@/assets/viye 2.png';
+import story4 from '@/assets/viye3.png';
+import story5 from '@/assets/viye4.png';
+import story6 from '@/assets/viye3.png';
 
 interface StoryCardProps {
   image: string;
