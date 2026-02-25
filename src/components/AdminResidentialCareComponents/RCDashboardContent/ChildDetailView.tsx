@@ -13,11 +13,11 @@ import {
   Clipboard,
   Plus,
   ChevronRight,
-  Eye,
   Download,
   TrendingUp,
   Trash2,
   Phone,
+  Loader2,
 } from "lucide-react";
 import type { Child } from "@/store/api/childrenApi";
 import { useGetCaretakersQuery } from "@/store/api/caretakersApi";
@@ -25,6 +25,12 @@ import {
   useDeleteHealthRecordMutation,
   useGetHealthRecordsByChildQuery,
 } from "@/store/api/healthRecordsApi";
+import {
+  useGetEnrollmentsQuery,
+  useDeleteEnrollmentMutation,
+  type Enrollment,
+  type EnrollmentStatus,
+} from "@/store/api/enrollmentApi";
 import { toast } from "react-toastify";
 import {
   Table,
@@ -34,8 +40,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { FaGraduationCap } from "react-icons/fa";
+import NewEnrollmentModal from "./NewEnrollmentModal";
+import EditEnrollmentModal from "./EditEnrollmentModal";
+import { Card, CardContent } from "@/components/ui/card";
+import { FaPenClip } from "react-icons/fa6";
+import { BiTrash } from "react-icons/bi";
 
-// Types
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 interface Transaction {
   id: string;
   date: string;
@@ -58,13 +72,42 @@ interface ChildDetailViewProps {
   onNewHealthRecord?: () => void;
 }
 
+// ─── Status Badge ─────────────────────────────────────────────────────────────
+
+function StatusBadge({ status }: { status: EnrollmentStatus }) {
+  const styles: Record<EnrollmentStatus, string> = {
+    ACTIVE: "bg-emerald-100 text-emerald-700",
+    COMPLETED: "bg-blue-100 text-blue-700",
+    DISCONTINUED: "bg-red-100 text-red-700",
+  };
+  const labels: Record<EnrollmentStatus, string> = {
+    ACTIVE: "Active",
+    COMPLETED: "Completed",
+    DISCONTINUED: "Discontinued",
+  };
+  return (
+    <span
+      className={`px-2.5 py-1 rounded-xl text-xs font-medium ${styles[status]}`}
+    >
+      {labels[status]}
+    </span>
+  );
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function ChildDetailView({
   child,
   onBack,
   onNewHealthRecord,
 }: ChildDetailViewProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
+  const [isNewEnrollmentOpen, setIsNewEnrollmentOpen] = useState(false);
+  const [editingEnrollment, setEditingEnrollment] = useState<Enrollment | null>(
+    null,
+  );
 
+  // ── Health ──────────────────────────────────────────────────────────────────
   const {
     data: healthRecords = [],
     isLoading: healthLoading,
@@ -72,7 +115,7 @@ export default function ChildDetailView({
   } = useGetHealthRecordsByChildQuery(child.id);
   const [deleteHealthRecord] = useDeleteHealthRecordMutation();
 
-  // Fetch all caretakers and match by full_name to child's vigilant_contact_name
+  // ── Caretaker ───────────────────────────────────────────────────────────────
   const { data: caretakers = [] } = useGetCaretakersQuery();
   const matchedCaretaker = useMemo(
     () =>
@@ -84,7 +127,26 @@ export default function ChildDetailView({
     [caretakers, child.vigilant_contact_name],
   );
 
-  const handleDeleteRecord = async (id: string) => {
+  // ── Enrollments ─────────────────────────────────────────────────────────────
+  const {
+    data: enrollmentsData,
+    isLoading: enrollmentsLoading,
+    isError: enrollmentsError,
+    error: enrollmentsRawError,
+  } = useGetEnrollmentsQuery();
+
+  if (enrollmentsRawError) {
+    console.error("[Enrollments] API error:", enrollmentsRawError);
+  }
+
+  const enrollments = (enrollmentsData?.results ?? []).filter(
+    (e) => (e.child as any)?.id === child.id,
+  );
+  const [deleteEnrollment] = useDeleteEnrollmentMutation();
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
+
+  const handleDeleteHealthRecord = async (id: string) => {
     if (!confirm("Are you sure you want to delete this health record?")) return;
     try {
       await deleteHealthRecord(id).unwrap();
@@ -94,7 +156,33 @@ export default function ChildDetailView({
     }
   };
 
-  // Transaction history data
+  const handleDeleteEnrollment = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this enrollment?")) return;
+    try {
+      await deleteEnrollment(id).unwrap();
+      toast.success("Enrollment deleted.");
+    } catch {
+      toast.error("Failed to delete enrollment.");
+    }
+  };
+
+  // ── Derived values ──────────────────────────────────────────────────────────
+
+  const caretakerInitials = child.vigilant_contact_name
+    ? child.vigilant_contact_name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "—";
+
+  const caretakerPhone =
+    matchedCaretaker?.phone || child.vigilant_contact_phone;
+  const caretakerRole = matchedCaretaker?.role || "Guardian / Caretaker";
+  const caretakerEmail = matchedCaretaker?.email || null;
+
+  // ── Dummy finance data ──────────────────────────────────────────────────────
   const transactions: Transaction[] = [
     {
       id: "1",
@@ -128,20 +216,7 @@ export default function ChildDetailView({
     { id: "progress", label: "Progress & Reports", icon: BarChart3 },
   ];
 
-  // Derive caretaker initials for avatar fallback
-  const caretakerInitials = child.vigilant_contact_name
-    ? child.vigilant_contact_name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase()
-    : "—";
-  // Use matched caretaker phone/email if available, fall back to child's vigilant fields
-  const caretakerPhone =
-    matchedCaretaker?.phone || child.vigilant_contact_phone;
-  const caretakerRole = matchedCaretaker?.role || "Guardian / Caretaker";
-  const caretakerEmail = matchedCaretaker?.email || null;
+  // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
@@ -220,14 +295,12 @@ export default function ChildDetailView({
           </div>
         </div>
 
-        {/* Tab Content */}
+        {/* ── Tab Content ───────────────────────────────────────────────────── */}
         <div className="space-y-6">
           {/* Overview Tab */}
           {activeTab === "overview" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column */}
               <div className="lg:col-span-2 space-y-6">
-                {/* Health & Education Status */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white rounded-xl p-6">
                     <div className="flex items-center gap-3 mb-4">
@@ -241,7 +314,6 @@ export default function ChildDetailView({
                       Last checkup: Feb 3, 2026
                     </p>
                   </div>
-
                   <div className="bg-white rounded-xl p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -249,8 +321,20 @@ export default function ChildDetailView({
                       </div>
                       <span className="font-medium">Education</span>
                     </div>
-                    <div className="text-2xl font-bold mb-1">Enrolled</div>
-                    <p className="text-sm text-gray-600">Primary Level 2</p>
+                    <div className="text-2xl font-bold mb-1">
+                      {enrollments.filter((e) => e.status === "ACTIVE").length >
+                      0
+                        ? "Enrolled"
+                        : "Not Enrolled"}
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {enrollments.filter((e) => e.status === "ACTIVE").length}{" "}
+                      active enrollment
+                      {enrollments.filter((e) => e.status === "ACTIVE")
+                        .length !== 1
+                        ? "s"
+                        : ""}
+                    </p>
                   </div>
                 </div>
 
@@ -290,9 +374,9 @@ export default function ChildDetailView({
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-3 h-3 rounded-full ${item.color}`}
-                          ></div>
+                          />
                           {index < 3 && (
-                            <div className="w-0.5 h-full bg-gray-200 mt-2"></div>
+                            <div className="w-0.5 h-full bg-gray-200 mt-2" />
                           )}
                         </div>
                         <div className="flex-1 pb-4">
@@ -308,14 +392,12 @@ export default function ChildDetailView({
                 </div>
               </div>
 
-              {/* Right Column - Current Care Team */}
+              {/* Right Column - Current Care Taker */}
               <div className="bg-white rounded-xl p-6">
                 <h3 className="font-semibold text-lg mb-6">
                   Current Care Taker
                 </h3>
-
                 <div className="flex items-start gap-4">
-                  {/* Avatar — initials since API has no caretaker photo */}
                   <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                     <span className="text-emerald-800 font-semibold text-lg">
                       {caretakerInitials}
@@ -358,27 +440,20 @@ export default function ChildDetailView({
                   </div>
                 </div>
 
-                {/* Divider */}
                 <div className="border-t my-5" />
 
-                {/* Child quick stats */}
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Child</span>
-                    <span className="font-medium">{child.full_name}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Gender</span>
-                    <span className="font-medium">{child.gender}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Age</span>
-                    <span className="font-medium">{child.age} yrs</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Admitted</span>
-                    <span className="font-medium">{child.start_date}</span>
-                  </div>
+                  {[
+                    { label: "Child", value: child.full_name },
+                    { label: "Gender", value: child.gender },
+                    { label: "Age", value: `${child.age} yrs` },
+                    { label: "Admitted", value: child.start_date },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex justify-between text-sm">
+                      <span className="text-gray-500">{label}</span>
+                      <span className="font-medium">{value}</span>
+                    </div>
+                  ))}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Status</span>
                     <span
@@ -393,7 +468,6 @@ export default function ChildDetailView({
                   </div>
                 </div>
 
-                {/* Special needs note */}
                 {child.special_needs && (
                   <>
                     <div className="border-t my-5" />
@@ -420,7 +494,6 @@ export default function ChildDetailView({
                   Last Updated: Jan 20, 2026 by Administrator
                 </p>
               </div>
-
               <div className="grid grid-cols-2 gap-x-12 gap-y-6">
                 <div>
                   <label className="text-sm text-gray-600">Full Name</label>
@@ -467,7 +540,6 @@ export default function ChildDetailView({
                   </p>
                 </div>
               </div>
-
               <div className="mt-8">
                 <label className="text-sm text-gray-600">
                   Background Information
@@ -494,9 +566,10 @@ export default function ChildDetailView({
               </div>
 
               {healthLoading && (
-                <p className="text-sm text-center text-gray-400 py-10">
+                <div className="flex items-center justify-center gap-2 py-10 text-sm text-gray-400">
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   Loading health records...
-                </p>
+                </div>
               )}
               {healthError && (
                 <p className="text-sm text-center text-red-500 py-10">
@@ -562,7 +635,9 @@ export default function ChildDetailView({
                               <ChevronRight className="w-4 h-4 text-gray-500" />
                             </button>
                             <button
-                              onClick={() => handleDeleteRecord(record.id)}
+                              onClick={() =>
+                                handleDeleteHealthRecord(record.id)
+                              }
                               className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                             >
                               <Trash2 className="w-4 h-4 text-red-500" />
@@ -577,74 +652,147 @@ export default function ChildDetailView({
             </div>
           )}
 
-          {/* Education Tab */}
+          {/* ── Education Tab ─────────────────────────────────────────────── */}
           {activeTab === "education" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl p-6">
-                <h3 className="font-semibold text-lg mb-6">Academic Info</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm text-gray-600">School Name</label>
-                    <p className="font-medium mt-1">St. Maria Primary School</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">
-                      Education Level
-                    </label>
-                    <p className="font-medium mt-1">Primary Level 2</p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">
-                      Competency Status
-                    </label>
-                    <p className="font-medium mt-1 text-green-600">
-                      Excellent (96%)
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-600">
-                      Current Progress
-                    </label>
-                    <p className="font-medium mt-1">
-                      Steady Improvement in Literacy
-                    </p>
-                  </div>
-                </div>
+            <div className="flex flex-col gap-6">
+              {/* Toolbar */}
+              <div className="flex justify-end">
+                <Button
+                  onClick={() => setIsNewEnrollmentOpen(true)}
+                  className="flex gap-2 bg-emerald-900 hover:bg-emerald-800"
+                >
+                  <FaGraduationCap size={18} />
+                  <span className="text-sm text-white">New Enrollment</span>
+                </Button>
               </div>
 
-              <div className="bg-white rounded-xl p-6">
-                <h3 className="font-semibold text-lg mb-6">
-                  Documents & Reports
-                </h3>
-                <div className="space-y-3">
-                  {[
-                    { name: "Report Card - Term 3 2025.pdf" },
-                    { name: "Admission Certificate.pdf" },
-                  ].map((doc, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-5 h-5 text-gray-600" />
-                        <span className="text-sm font-medium">{doc.name}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-gray-100 rounded">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button className="p-2 hover:bg-gray-100 rounded">
-                          <Download className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  <button className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-600 hover:border-emerald-500 hover:text-emerald-500 transition-colors flex items-center justify-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    Upload Document
-                  </button>
+              {/* States */}
+              {enrollmentsLoading && (
+                <div className="flex items-center justify-center gap-2 py-16 text-sm text-gray-400 bg-white rounded-3xl">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Loading enrollments...
                 </div>
-              </div>
+              )}
+
+              {enrollmentsError && (
+                <div className="py-16 text-center text-sm text-red-500 bg-white rounded-3xl">
+                  Failed to load enrollments — check the browser console for
+                  details.
+                </div>
+              )}
+
+              {!enrollmentsLoading &&
+                !enrollmentsError &&
+                enrollments.length === 0 && (
+                  <div className="py-16 text-center text-sm text-gray-400 bg-white rounded-3xl">
+                    No enrollments found for this child.
+                  </div>
+                )}
+
+              {/* Table */}
+              {!enrollmentsLoading &&
+                !enrollmentsError &&
+                enrollments.length > 0 && (
+                  <Card className="rounded-3xl shadow-sm">
+                    <CardContent className="p-0">
+                      <Table className="text-gray-500">
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              Institution
+                            </TableHead>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              Program
+                            </TableHead>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              Level
+                            </TableHead>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              Start Date
+                            </TableHead>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              End Date
+                            </TableHead>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              Cost
+                            </TableHead>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              Status
+                            </TableHead>
+                            <TableHead className="text-gray-500 font-bold text-center">
+                              Actions
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {enrollments.map((enrollment) => (
+                            <TableRow
+                              key={enrollment.id}
+                              className="hover:bg-muted/40"
+                            >
+                              <TableCell className="text-center">
+                                {enrollment.program?.institution?.name ?? "—"}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {enrollment.program?.program_name ?? "—"}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {enrollment.level}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {enrollment.start_date}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {enrollment.end_date}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {enrollment.cost}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <StatusBadge status={enrollment.status} />
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center justify-center gap-3">
+                                  <button
+                                    onClick={() =>
+                                      setEditingEnrollment(enrollment)
+                                    }
+                                    className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                                    title="Edit enrollment"
+                                  >
+                                    <FaPenClip className="text-gray-500" />
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteEnrollment(enrollment.id)
+                                    }
+                                    className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                                    title="Delete enrollment"
+                                  >
+                                    <BiTrash className="text-red-600" />
+                                  </button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                )}
+
+              {/* Modals */}
+              <NewEnrollmentModal
+                isOpen={isNewEnrollmentOpen}
+                onClose={() => setIsNewEnrollmentOpen(false)}
+                childId={child.id}
+              />
+
+              <EditEnrollmentModal
+                isOpen={!!editingEnrollment}
+                enrollment={editingEnrollment}
+                onClose={() => setEditingEnrollment(null)}
+              />
             </div>
           )}
 
@@ -705,20 +853,15 @@ export default function ChildDetailView({
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.map((transaction) => (
-                        <tr
-                          key={transaction.id}
-                          className="border-b hover:bg-gray-50"
-                        >
-                          <td className="py-4 text-sm">{transaction.date}</td>
+                      {transactions.map((t) => (
+                        <tr key={t.id} className="border-b hover:bg-gray-50">
+                          <td className="py-4 text-sm">{t.date}</td>
                           <td className="py-4">
                             <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                              {transaction.category}
+                              {t.category}
                             </span>
                           </td>
-                          <td className="py-4 text-sm">
-                            {transaction.description}
-                          </td>
+                          <td className="py-4 text-sm">{t.description}</td>
                           <td className="py-4">
                             <button className="text-emerald-900 hover:text-emerald-700">
                               <ChevronRight className="w-5 h-5" />

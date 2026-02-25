@@ -9,86 +9,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
+import {
+  useGetInstitutionsQuery,
+  type EducationalInstitution,
+} from "@/store/api/educationApi";
 
 /* -------------------- Types -------------------- */
 
-export interface Institution {
-  id: number;
+// Flattened view model used only inside this component
+interface InstitutionRow {
+  id: string; // UUID string — matches EducationalInstitution.id
   name: string;
   email: string;
   phone: string;
-  programs: string[];
+  programs: string[]; // flattened from { program_name: string }[]
   address: string;
 }
-
-/* -------------------- Data -------------------- */
-
-const institutions: Institution[] = [
-  {
-    id: 1,
-    name: "APADE",
-    email: "apade@education.com",
-    phone: "0789773293",
-    programs: ["MCB", "PCB", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-  {
-    id: 2,
-    name: "Lycee de Nyaza",
-    email: "lyceenyanza@gmail.com",
-    phone: "0789773293",
-    programs: ["MCB", "PCB", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-  {
-    id: 3,
-    name: "Remera High School",
-    email: "remerahs@gmail.com",
-    phone: "0789773293",
-    programs: ["MCB", "PCB", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-  {
-    id: 4,
-    name: "Gikondo High School",
-    email: "gikondohs@gmail.com",
-    phone: "0789773293",
-    programs: ["MCB", "PCB", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-  {
-    id: 5,
-    name: "St Joseph",
-    email: "stjoseph@gmail.com",
-    phone: "0789773293",
-    programs: ["MCB", "PCB", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-  {
-    id: 6,
-    name: "Muhima High School",
-    email: "muhimahs@gmail.com",
-    phone: "0789773293",
-    programs: ["MCB", "PCB", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-  {
-    id: 7,
-    name: "Lycee de Kicukiro",
-    email: "lyceekicukiro@gmail.com",
-    phone: "0789773293",
-    programs: ["MCB", "PCB", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-  {
-    id: 8,
-    name: "AUCA",
-    email: "auca.un@edu.com",
-    phone: "0789773293",
-    programs: ["SE", "Networking"],
-    address: "Kigali, Gasabo",
-  },
-];
 
 /* -------------------- Programs Cell -------------------- */
 
@@ -160,17 +96,42 @@ const FilterDropdown: React.FC<{
 /* -------------------- Component -------------------- */
 
 export const InstitutionsDataTable: React.FC = () => {
+  const {
+    data: institutions = [],
+    isLoading,
+    isError,
+  } = useGetInstitutionsQuery();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [addressFilter, setAddressFilter] = useState("");
   const [programFilter, setProgramFilter] = useState("");
 
-  const allAddresses = Array.from(new Set(institutions.map((r) => r.address)));
-  const allPrograms = Array.from(
-    new Set(institutions.flatMap((r) => r.programs)),
+  // Flatten API shape into view-model rows
+  const rows: InstitutionRow[] = useMemo(
+    () =>
+      institutions.map((inst: EducationalInstitution) => ({
+        id: inst.id,
+        name: inst.name,
+        email: inst.email,
+        phone: inst.phone,
+        address: inst.address,
+        programs: inst.programs?.map((p) => p.program_name) ?? [],
+      })),
+    [institutions],
+  );
+
+  const allAddresses = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.address).filter(Boolean))),
+    [rows],
+  );
+
+  const allPrograms = useMemo(
+    () => Array.from(new Set(rows.flatMap((r) => r.programs))),
+    [rows],
   );
 
   const filtered = useMemo(() => {
-    return institutions.filter((r) => {
+    return rows.filter((r) => {
       const matchesSearch =
         r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -179,7 +140,7 @@ export const InstitutionsDataTable: React.FC = () => {
         !programFilter || r.programs.includes(programFilter);
       return matchesSearch && matchesAddress && matchesProgram;
     });
-  }, [searchQuery, addressFilter, programFilter]);
+  }, [rows, searchQuery, addressFilter, programFilter]);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -218,7 +179,7 @@ export const InstitutionsDataTable: React.FC = () => {
           <TableHeader className="bg-[#F9FAFB] sticky top-0 z-10">
             <TableRow className="border-none">
               <TableHead className="px-6 font-medium text-[#838484] text-sm">
-                Institution Names
+                Institution Name
               </TableHead>
               <TableHead className="font-medium text-[#838484] text-sm">
                 Email
@@ -237,7 +198,25 @@ export const InstitutionsDataTable: React.FC = () => {
           </TableHeader>
 
           <TableBody className="bg-white">
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-10 text-sm text-gray-400"
+                >
+                  Loading institutions...
+                </TableCell>
+              </TableRow>
+            ) : isError ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-10 text-sm text-red-500"
+                >
+                  Failed to load institutions.
+                </TableCell>
+              </TableRow>
+            ) : filtered.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -252,32 +231,21 @@ export const InstitutionsDataTable: React.FC = () => {
                   key={record.id}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                 >
-                  {/* Institution Name */}
                   <TableCell className="px-6 py-4 text-sm font-medium text-gray-800">
                     {record.name}
                   </TableCell>
-
-                  {/* Email */}
                   <TableCell className="text-sm text-gray-500">
                     {record.email}
                   </TableCell>
-
-                  {/* Phone */}
                   <TableCell className="text-sm text-gray-600">
                     {record.phone}
                   </TableCell>
-
-                  {/* Programs */}
                   <TableCell>
                     <ProgramsCell programs={record.programs} />
                   </TableCell>
-
-                  {/* Address */}
                   <TableCell className="text-sm text-gray-600">
                     {record.address}
                   </TableCell>
-
-                  {/* Arrow */}
                   <TableCell>
                     <button
                       onClick={() => {}}
@@ -295,7 +263,7 @@ export const InstitutionsDataTable: React.FC = () => {
 
       {/* Result count */}
       <div className="px-6 py-3 border-t border-gray-100 text-xs text-gray-400">
-        Showing {filtered.length} of {institutions.length} institutions
+        Showing {filtered.length} of {rows.length} institutions
       </div>
     </div>
   );

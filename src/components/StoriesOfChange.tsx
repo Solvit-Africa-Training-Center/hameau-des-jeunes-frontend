@@ -1,18 +1,18 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper/modules';
-import { ArrowRight } from 'lucide-react';
+import React from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import { ArrowRight } from "lucide-react";
 
 // Import Swiper styles
-import 'swiper/swiper-bundle.css';
+import "swiper/swiper-bundle.css";
 
 // Import placeholder images (replace these with your actual imports)
-import story1 from '@/assets/viye.png';
-import story2 from '@/assets/testimonial_2_img.png';
-import story3 from '@/assets/testimonial_3_img.jpg';
-import story4 from '@/assets/testimonial_4_img.jpg';
-import story5 from '@/assets/child_protection_officer.png';
-import story6 from '@/assets/bg.png';
+import story1 from "@/assets/viye.png";
+import story2 from "@/assets/testimonial_2_img.png";
+import story3 from "@/assets/testimonial_3_img.jpg";
+import story4 from "@/assets/testimonial_4_img.jpg";
+import story5 from "@/assets/child_protection_officer.png";
+import story6 from "@/assets/bg.png";
 
 interface StoryCardProps {
   image: string;
@@ -35,15 +35,11 @@ const StoryCard: React.FC<StoryCardProps> = ({ image, name, story }) => {
             />
           </div>
         </div>
-        
+
         {/* Content - RIGHT side */}
         <div className="flex-1 pt-4">
-          <h3 className="mb-3 text-base font-bold text-gray-900">
-            {name}
-          </h3>
-          <p className="text-xs leading-relaxed text-gray-600">
-            {story}
-          </p>
+          <h3 className="mb-3 text-base font-bold text-gray-900">{name}</h3>
+          <p className="text-xs leading-relaxed text-gray-600">{story}</p>
         </div>
       </div>
     </div>
@@ -54,33 +50,39 @@ export const StoriesOfChange = () => {
   const stories = [
     {
       image: story1,
-      name: 'NDEKEZI Pascal',
-      story: '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+      name: "NDEKEZI Pascal",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
     {
       image: story2,
-      name: 'MANIRAKIZA JEAN Paul',
-      story: '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+      name: "MANIRAKIZA JEAN Paul",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
     {
       image: story3,
-      name: 'UWIMPAYE Evelyne',
-      story: '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+      name: "UWIMPAYE Evelyne",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
     {
       image: story4,
-      name: 'MUKAMANA Grace',
-      story: '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+      name: "MUKAMANA Grace",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
     {
       image: story5,
-      name: 'NIYONZIMA Jean',
-      story: '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+      name: "NIYONZIMA Jean",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
     {
       image: story6,
-      name: 'UWIHANA Rose',
-      story: '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+      name: "UWIHANA Rose",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
   ];
 
@@ -92,7 +94,8 @@ export const StoriesOfChange = () => {
             Stories of Change
           </h2>
           <p className="max-w-2xl text-sm text-gray-700 md:text-base">
-            Real journeys of transformation, resilience, and hope from vulnerability to independence
+            Real journeys of transformation, resilience, and hope from
+            vulnerability to independence
           </p>
         </div>
 
