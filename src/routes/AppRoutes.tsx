@@ -8,7 +8,6 @@ import ResidentialCareChildren from "@/pages/AdminResidentialCarePages/Residenti
 import ResidentialCareDashboard from "@/pages/AdminResidentialCarePages/ResidentialCareDashboard";
 import ResidentialCareSettings from "@/pages/AdminResidentialCarePages/ResidentialCareSettings";
 import { Contacts } from "@/pages/Contacts";
-import { IfasheTugufasheDashboard } from "@/pages/DashboardPages/IfasheTugufasheDashboard";
 import { ManageResidentialCare } from "@/pages/DashboardPages/ManageResidentialCare";
 import { SuperAdminActivityOverview } from "@/pages/DashboardPages/SuperAdminActivityOverview";
 import SuperAdminAnalytics from "@/pages/DashboardPages/SuperAdminAnalytics";
@@ -39,6 +38,16 @@ import InternshipApplication from "@/pages/AdminInternshipPages/InternshipApplic
 import InternshipManagement from "@/pages/AdminInternshipPages/InternshipManagement";
 import InternshipFeedBack from "@/pages/AdminInternshipPages/InternshipFeedback";
 import InternshipSettings from "@/pages/AdminInternshipPages/InternshipSettings";
+import IfasheTugufasheDashboard from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheDashboard";
+import IfasheTugufasheFamily from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheFamily";
+import IfasheTugufasheChildren from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheChildren";
+import IfasheTugufasheSponsorship from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheSponsorship";
+import IfasheTugufasheSchool from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheSchool";
+import IfasheTugufasheClothes from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheClothes";
+import IfasheTugufasheParentWork from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheParentWork";
+import IfasheTugufasheReport from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheReport";
+
+
 import Institutions from "@/pages/AdminResidentialCarePages/Institutions";
 
 export const AppRoutes = () => {
@@ -50,7 +59,7 @@ export const AppRoutes = () => {
       <Route path="/programs" element={<Programs />} />
       <Route path="/programs/residentialCare" element={<ResidentialCare />} />
       <Route path="/programs/ifasheTugufashe" element={<IfasheTugufashe />} />
-      <Route path="/programs/internships" element={<Internship />} />
+      <Route path="/internships" element={<Internship />} />
       <Route path="/ourImpact" element={<OurImpact />} />
       <Route path="/donate" element={<Donate />} />
       <Route path="/gallery" element={<Gallery />} />
@@ -279,6 +288,63 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
             <IfasheTugufasheDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/IfasheTugufasheFamily"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheFamily />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/IfasheTugufasheChildren"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheChildren />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/IfasheTugufasheSponsorship"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheSponsorship />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/IfasheTugufasheSchool"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheSchool />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/IfasheTugufasheClothes"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheClothes />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/IfasheTugufasheParentWork"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheParentWork />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/IfasheTugufasheReport"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheReport />
           </ProtectedRoute>
         }
       />

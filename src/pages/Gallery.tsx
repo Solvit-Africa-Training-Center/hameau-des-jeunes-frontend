@@ -61,18 +61,18 @@ function Gallery() {
       <TopNavBar />
       <main>
         {/* Hero Section */}
-        <section className="relative h-125 bg-cover bg-center">
+        <section className="relative h-100 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${gallery})` }}
           >
             <div className="absolute inset-0 bg-teal-900/70"></div>
           </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl text-yellow-500 font-bold text-center mb-4">
+          <div className="relative z-10 text-center text-white px-4">
+            <h1 className="text-5xl font-bold mb-4 text-yellow-500">
               Our Gallery
             </h1>
-            <p className="text-xl md:text-2xl text-center max-w-3xl mb-8">
+            <p className="text-xl max-w-2xl mx-auto">
               Moments of hope, growth, and transformation captured through the lens of our 
               daily work with children and communities
             </p>

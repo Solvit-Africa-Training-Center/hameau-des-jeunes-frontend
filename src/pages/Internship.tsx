@@ -2,7 +2,9 @@ import { Footer } from "@/components/Footer";
 import { TopNavBar } from "@/components/TopNavBar";
 import { Clock, Users, Lightbulb, X } from "lucide-react";
 import { useState } from "react";
-import Donate from "../assets/donate.jpg";
+import Interns from "../assets/IIImage.jpg";
+import { FiMail } from "react-icons/fi";
+import { FaPhoneAlt } from "react-icons/fa";
 
 function Internship() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +42,7 @@ function Internship() {
     setSelectedPrograms((prev) =>
       prev.includes(programId)
         ? prev.filter((id) => id !== programId)
-        : [...prev, programId]
+        : [...prev, programId],
     );
   };
 
@@ -54,21 +56,22 @@ function Internship() {
     <div className="min-h-screen bg-white">
       <TopNavBar />
       <main>
-        <section className="relative h-125 bg-cover bg-center">
+        <section className="relative h-100 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${Donate})` }}
+            style={{ backgroundImage: `url(${Interns})` }}
           >
             <div className="absolute inset-0 bg-teal-900/70"></div>
           </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl text-yellow-500 font-bold text-center mb-4">
+
+          <div className="relative z-10 text-center text-white px-4">
+            <h1 className="text-5xl font-bold mb-4 text-yellow-500">
               International Internship
             </h1>
-            <p className="text-xl md:text-2xl text-center max-w-3xl mb-8">
+            <p className="text-xl max-w-2xl mx-auto">
               Gain valuable hands-on experience in community development,
               education, and social work. Our internship program offers
-              meaningful learning opportunities in a supportive environment
+              meaningful learning opportunities in a supportive environmentT
             </p>
           </div>
         </section>
@@ -108,12 +111,12 @@ function Internship() {
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-sm sm:text-base">
                 <div className="flex items-center gap-2">
-                  <span className="text-yellow-400">📞</span>
+                  <span className="text-yellow-400"><FaPhoneAlt size={20} /></span>
                   <span>+250 (788) 436 189</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-yellow-400">✉️</span>
+                  <span className="text-yellow-400 "><FiMail size={20} /></span>
                   <span>hameau_kizito@yahoo.com</span>
                 </div>
               </div>
@@ -235,7 +238,8 @@ function Internship() {
                   {/* CV/Resume Upload */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Choose CV/Resume (PDF) <span className="text-red-500">*</span>
+                      Choose CV/Resume (PDF){" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-3">
                       <label className="px-4 py-2 bg-[#0f3d2e] text-white text-sm rounded-md cursor-pointer hover:bg-[#0f3d2e]/90 transition-colors">

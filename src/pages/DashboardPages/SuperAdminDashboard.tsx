@@ -15,14 +15,13 @@ export const SuperAdminDashboard = () => {
       {/* Desktop Sidebar - completely hidden on mobile */}
       <Sidebar className="hidden md:flex" />
 
-      {/* Main content - offset by sidebar on desktop only */}
-      <div className="md:ml-54">
-        <DashboardTopNavBar onMenuClick={() => setSidebarOpen(true)} />
+      {/* Top navbar */}
+      <DashboardTopNavBar onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex flex-col items-center gap-6">
-          <DashboardContent />
-        </main>
-      </div>
+      {/* Main content - offset by sidebar on desktop only */}
+      <main className="pt-16 md:ml-[13.5rem] flex flex-col items-center gap-6">
+        <DashboardContent />
+      </main>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 export const PhotoGallery: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8 sm:px-6 md:p-16">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8 sm:px-6 md:p-8">
       <div className="w-full max-w-7xl">
         <section className="py-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-10 md:mb-16 leading-tight text-center md:text-left">
@@ -11,7 +11,7 @@ export const PhotoGallery: React.FC = () => {
             <br />
             Our Work
           </h1>
-          <div className="relative mb-16 ">
+          <div className="relative mb-1">
             <div className="flex flex-col items-center gap-4 sm:gap-6 md:relative md:h-175">
               <div className="w-full max-w-sm h-64 sm:h-72 md:absolute md:left-50  md:bottom-55 md:w-45 md:h-32.5">
                 <img
@@ -57,7 +57,7 @@ export const PhotoGallery: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-center mt-8 md:mt-0">
+          <div className="flex justify-center  md:mt-0">
             <button className="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-900 rounded-md text-gray-900 hover:bg-gray-50 transition-colors font-medium">
               View Our Gallery
               <ChevronRight className="w-4 h-4" />
