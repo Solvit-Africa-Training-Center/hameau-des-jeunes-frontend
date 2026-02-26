@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { Search, Download, Eye, Pencil, UserPlus, Users } from "lucide-react";
+import { useGetIfasheFamiliesQuery } from "@/store/api/ifasheFamiliesApi";
+import ViewFamilyModal from "./ViewFamilyModal";
+import EditFamilyModal from "./EditFamilyModal";
+import ManageFamilyChildrenModal from "./ManageFamilyChildrenModal";
 
 export interface Family {
   id: string;
@@ -8,6 +12,7 @@ export interface Family {
   phoneNumber: string;
   children: number;
   vulnerability: "Low" | "Medium" | "High" | "Critical";
+  parentId?: string;
   // Full data for the form
   fullName: string;
   gender: string;
@@ -33,168 +38,45 @@ export default function IfasheTugufasheFamilyView({
   const [searchQuery, setSearchQuery] = useState("");
   const [vulnerabilityFilter, setVulnerabilityFilter] = useState("all");
 
-  const families: Family[] = [
-    {
-      id: "1",
-      familyId: "FML73522",
-      parentName: "Mukemama Vestine",
-      phoneNumber: "+250798123456",
-      children: 3,
-      vulnerability: "High",
-      fullName: "Mukemama Vestine",
-      gender: "Female",
-      dob: "1985-03-15",
-      nationalId: "1198580012345678",
-      educationLevel: "Secondary",
-      maritalStatus: "Single",
-      address: "Kigali, Gasabo District",
-      previousEmployment: "Farmer",
-      monthlyIncome: "50000",
-      housingCondition: "Rented Apartment",
-      vulnerabilityLevel: "High",
-      assessmentNotes: "Single mother with limited income. Needs support for children's education.",
-    },
-    {
-      id: "2",
-      familyId: "FML73522",
-      parentName: "Niyonzima Jean Claude",
-      phoneNumber: "+250788234567",
-      children: 4,
-      vulnerability: "High",
-      fullName: "Niyonzima Jean Claude",
-      gender: "Male",
-      dob: "1980-07-22",
-      nationalId: "1198080034567890",
-      educationLevel: "Primary",
-      maritalStatus: "Married",
-      address: "Kigali, Kicukiro District",
-      previousEmployment: "Teacher",
-      monthlyIncome: "30000",
-      housingCondition: "Own House",
-      vulnerabilityLevel: "High",
-      assessmentNotes: "Large family with very limited resources. Urgent need for food support.",
-    },
-    {
-      id: "3",
-      familyId: "FML73522",
-      parentName: "Uwihana Grace",
-      phoneNumber: "+250787345678",
-      children: 2,
-      vulnerability: "Critical",
-      fullName: "Uwihana Grace",
-      gender: "Female",
-      dob: "1992-11-10",
-      nationalId: "1199280056789012",
-      educationLevel: "No Education",
-      maritalStatus: "Widowed",
-      address: "Kigali, Nyarugenge District",
-      previousEmployment: "Unemployed",
-      monthlyIncome: "0",
-      housingCondition: "Shared Housing",
-      vulnerabilityLevel: "Critical",
-      assessmentNotes: "Recent widow with no income. Children at risk of malnutrition.",
-    },
-    {
-      id: "4",
-      familyId: "FML73522",
-      parentName: "Habimana Patrick",
-      phoneNumber: "+250786456789",
-      children: 2,
-      vulnerability: "High",
-      fullName: "Habimana Patrick",
-      gender: "Male",
-      dob: "1988-05-18",
-      nationalId: "1198880078901234",
-      educationLevel: "Bachelor's Degree",
-      maritalStatus: "Divorced",
-      address: "Kigali, Gasabo District",
-      previousEmployment: "Driver",
-      monthlyIncome: "80000",
-      housingCondition: "Rented Apartment",
-      vulnerabilityLevel: "High",
-      assessmentNotes: "Struggling with child custody payments. Needs temporary financial assistance.",
-    },
-    {
-      id: "5",
-      familyId: "FML73522",
-      parentName: "Nyirahabimana Angelique",
-      phoneNumber: "+250785567890",
-      children: 3,
-      vulnerability: "Medium",
-      fullName: "Nyirahabimana Angelique",
-      gender: "Female",
-      dob: "1987-09-25",
-      nationalId: "1198780090123456",
-      educationLevel: "Secondary",
-      maritalStatus: "Married",
-      address: "Kigali, Kicukiro District",
-      previousEmployment: "Tailor",
-      monthlyIncome: "120000",
-      housingCondition: "Own House",
-      vulnerabilityLevel: "Medium",
-      assessmentNotes: "Stable income but needs support for medical expenses.",
-    },
-    {
-      id: "6",
-      familyId: "FML73522",
-      parentName: "Ndayisaba Emmanuel",
-      phoneNumber: "+250784678901",
-      children: 2,
-      vulnerability: "Low",
-      fullName: "Ndayisaba Emmanuel",
-      gender: "Male",
-      dob: "1990-02-14",
-      nationalId: "1199080012345678",
-      educationLevel: "Master's Degree",
-      maritalStatus: "Married",
-      address: "Kigali, Gasabo District",
-      previousEmployment: "Engineer",
-      monthlyIncome: "250000",
-      housingCondition: "Own House",
-      vulnerabilityLevel: "Low",
-      assessmentNotes: "Financially stable. Enrolled for community development programs.",
-    },
-    {
-      id: "7",
-      familyId: "FML73522",
-      parentName: "Mukamazimpaka Claudine",
-      phoneNumber: "+250783789012",
-      children: 1,
-      vulnerability: "Medium",
-      fullName: "Mukamazimpaka Claudine",
-      gender: "Female",
-      dob: "1995-06-30",
-      nationalId: "1199580034567890",
-      educationLevel: "Bachelor's Degree",
-      maritalStatus: "Single",
-      address: "Kigali, Nyarugenge District",
-      previousEmployment: "Nurse",
-      monthlyIncome: "150000",
-      housingCondition: "Rented Apartment",
-      vulnerabilityLevel: "Medium",
-      assessmentNotes: "Young mother pursuing career. Needs childcare support.",
-    },
-    {
-      id: "8",
-      familyId: "FML73522",
-      parentName: "Bizimana Joseph",
-      phoneNumber: "+250788890123",
-      children: 5,
-      vulnerability: "High",
-      fullName: "Bizimana Joseph",
-      gender: "Male",
-      dob: "1983-12-05",
-      nationalId: "1198380056789012",
-      educationLevel: "Primary",
-      maritalStatus: "Married",
-      address: "Kigali, Kicukiro District",
-      previousEmployment: "Construction Worker",
-      monthlyIncome: "70000",
-      housingCondition: "Shared Housing",
-      vulnerabilityLevel: "High",
-      assessmentNotes: "Large family in cramped housing. Needs housing and food support.",
-    },
-  ];
+  const [familyToView, setFamilyToView] = useState<Family | null>(null);
+  const [familyToEdit, setFamilyToEdit] = useState<Family | null>(null);
+  const [familyToManageChildren, setFamilyToManageChildren] = useState<Family | null>(null);
+
+  const { data: fetchedFamilies = [], isLoading, isError } = useGetIfasheFamiliesQuery();
+
+  const families: Family[] = fetchedFamilies.map((f: any) => {
+    const mainParent = f.parents?.[0] || {};
+    const parentFullName = mainParent.first_name 
+      ? `${mainParent.first_name} ${mainParent.last_name || ""}`.trim() 
+      : (f.parentName || f.parent_name || f.fullName || f.full_name || f.family_name || "Unknown");
+    
+    // Safely calculate children count, avoiding NaN if it's an array
+    const childrenCount = Array.isArray(f.children) 
+      ? f.children.length 
+      : Number(f.children || f.children_count || f.family_members || 0);
+
+    return {
+      id: String(f.id || Math.random().toString()),
+      familyId: String(f.familyId || f.family_id || f.id || "N/A").substring(0, 8),
+      parentId: String(mainParent.id || ""),
+      parentName: String(parentFullName),
+      phoneNumber: String(mainParent.phone || f.phoneNumber || f.phone_number || f.phone || "Not given"),
+      children: childrenCount,
+      vulnerability: String(f.vulnerability_level || f.vulnerabilityLevel || f.vulnerability || "Unknown") as Family["vulnerability"],
+      fullName: String(parentFullName),
+      gender: String(mainParent.gender || f.gender || ""),
+      dob: String(mainParent.date_of_birth || f.dob || f.date_of_birth || ""),
+      nationalId: String(mainParent.national_id || f.nationalId || f.national_id || ""),
+      educationLevel: String(mainParent.education_level || f.educationLevel || f.education_level || ""),
+      maritalStatus: String(mainParent.marital_status || f.maritalStatus || f.marital_status || ""),
+      address: String(f.address || ""),
+      previousEmployment: String(mainParent.previous_employment || f.previousEmployment || f.previous_employment || ""),
+      monthlyIncome: String(mainParent.monthly_income || f.monthlyIncome || f.monthly_income || ""),
+      housingCondition: String(f.housing_condition || f.housingCondition || ""),
+      vulnerabilityLevel: String(f.vulnerability_level || f.vulnerabilityLevel || f.vulnerability || ""),
+      assessmentNotes: String(f.social_worker_assessment || f.assessmentNotes || f.assessment_notes || ""),
+    };
+  });
 
   const filteredFamilies = families.filter((family) => {
     const matchesSearch =
@@ -222,6 +104,27 @@ export default function IfasheTugufasheFamilyView({
       default:
         return "bg-gray-100 text-gray-700";
     }
+  };
+
+  const handleExportCSV = () => {
+    if (filteredFamilies.length === 0) return;
+    const headers = ["Family ID", "Parent", "Phone Name", "Children", "Vulnerability"];
+    const csvContent = [
+      headers.join(","),
+      ...filteredFamilies.map(f => 
+        [f.familyId, f.parentName, f.phoneNumber, f.children, f.vulnerability].map(val => `"${val}"`).join(",")
+      )
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "family_records.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -270,7 +173,10 @@ export default function IfasheTugufasheFamilyView({
             </select>
           </div>
 
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors whitespace-nowrap">
+          <button 
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors whitespace-nowrap"
+          >
             <Download className="w-4 h-4" />
             Export to CSV
           </button>
@@ -279,11 +185,23 @@ export default function IfasheTugufasheFamilyView({
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col flex-1 overflow-hidden">
 
-          {/* Desktop Table */}
-          <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b shrink-0">
-                <tr className="text-left">
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-gray-500">Loading families...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-red-500">Error loading families. Please try again.</p>
+            </div>
+          )}
+          {!isLoading && !isError && (
+            <>
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-auto flex-1">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 border-b sticky top-0 z-10">
+                <tr>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Family ID
                   </th>
@@ -304,10 +222,7 @@ export default function IfasheTugufasheFamilyView({
                   </th>
                 </tr>
               </thead>
-            </table>
-            <div className="overflow-auto flex-1">
-              <table className="w-full">
-                <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white divide-y divide-gray-100">
                   {filteredFamilies.map((family) => (
                     <tr key={family.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">{family.familyId}</td>
@@ -326,18 +241,21 @@ export default function IfasheTugufasheFamilyView({
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => setFamilyToView(family)}
                             className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4 text-blue-500" />
                           </button>
                           <button
+                            onClick={() => setFamilyToEdit(family)}
                             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Edit"
                           >
                             <Pencil className="w-4 h-4 text-gray-500" />
                           </button>
                           <button
+                            onClick={() => setFamilyToManageChildren(family)}
                             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Manage Children"
                           >
@@ -349,9 +267,7 @@ export default function IfasheTugufasheFamilyView({
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
-
           {/* Mobile Cards */}
           <div className="lg:hidden overflow-auto flex-1 p-4 space-y-3">
             {filteredFamilies.map((family) => (
@@ -380,14 +296,14 @@ export default function IfasheTugufasheFamilyView({
                 </div>
 
                 <div className="flex items-center gap-2 pt-3 border-t">
-                  <button className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
+                  <button onClick={() => setFamilyToView(family)} className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
                     <Eye className="w-3.5 h-3.5" />
                     View
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button onClick={() => setFamilyToEdit(family)} className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     <Pencil className="w-4 h-4 text-gray-500" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button onClick={() => setFamilyToManageChildren(family)} className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     <Users className="w-4 h-4 text-gray-500" />
                   </button>
                 </div>
@@ -396,13 +312,33 @@ export default function IfasheTugufasheFamilyView({
           </div>
 
           {/* No Results */}
-          {filteredFamilies.length === 0 && (
+          {!isLoading && !isError && filteredFamilies.length === 0 && (
             <div className="flex-1 flex items-center justify-center">
               <p className="text-gray-500 text-sm">No families found.</p>
             </div>
           )}
+            </>
+          )}
         </div>
       </div>
+
+      {/* Action Modals */}
+      <ViewFamilyModal
+        isOpen={!!familyToView}
+        onClose={() => setFamilyToView(null)}
+        family={familyToView}
+      />
+      <EditFamilyModal
+        isOpen={!!familyToEdit}
+        onClose={() => setFamilyToEdit(null)}
+        family={familyToEdit}
+      />
+      <ManageFamilyChildrenModal
+        isOpen={!!familyToManageChildren}
+        onClose={() => setFamilyToManageChildren(null)}
+        family={familyToManageChildren}
+      />
+
     </div>
   );
 }

@@ -43,10 +43,10 @@ import IfasheTugufasheFamily from "@/pages/AdminIfasheTugufashePages/IfasheTuguf
 import IfasheTugufasheChildren from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheChildren";
 import IfasheTugufasheSponsorship from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheSponsorship";
 import IfasheTugufasheSchool from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheSchool";
+import IfasheTugufasheSchoolsRegistry from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheSchoolsRegistry";
 import IfasheTugufasheClothes from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheClothes";
 import IfasheTugufasheParentWork from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheParentWork";
 import IfasheTugufasheReport from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheReport";
-
 
 import Institutions from "@/pages/AdminResidentialCarePages/Institutions";
 
@@ -321,6 +321,14 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
             <IfasheTugufasheSchool />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/IfasheTugufasheSchoolsRegistry"
+        element={
+          <ProtectedRoute allowedRoles={["IFASHE_MANAGER"]}>
+            <IfasheTugufasheSchoolsRegistry />
           </ProtectedRoute>
         }
       />

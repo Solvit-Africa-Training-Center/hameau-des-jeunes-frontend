@@ -58,8 +58,19 @@ export const educationApi = createApi({
       }),
       invalidatesTags: ["Institution"],
     }),
+
+    deleteInstitution: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/children_educational_institutions/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Institution"],
+    }),
   }),
 });
 
-export const { useGetInstitutionsQuery, useCreateInstitutionMutation } =
-  educationApi;
+export const {
+  useGetInstitutionsQuery,
+  useCreateInstitutionMutation,
+  useDeleteInstitutionMutation,
+} = educationApi;

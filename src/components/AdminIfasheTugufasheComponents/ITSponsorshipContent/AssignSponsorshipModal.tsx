@@ -1,5 +1,9 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useCreateIfasheSponsorshipMutation } from "@/store/api/ifasheSponsorshipsApi";
+import { useGetIfasheFamiliesQuery } from "@/store/api/ifasheFamiliesApi";
+import { useGetIfasheChildrenQuery } from "@/store/api/ifasheChildrenApi";
+import { toast } from "react-toastify";
 
 interface AssignSponsorshipModalProps {
   isOpen: boolean;
@@ -10,27 +14,54 @@ export default function AssignSponsorshipModal({ isOpen, onClose }: AssignSponso
   const [formData, setFormData] = useState({
     selectFamily: "",
     selectChild: "",
-    sponsorshipType: "",
-    sponsorSource: "",
+    sponsorshipType: "FULL",
     startDate: "",
     expectedEndDate: "",
-    status: "Active",
+    status: "ACTIVE",
+    pauseReason: "",
   });
+
+  const { data: fetchedFamilies = [] } = useGetIfasheFamiliesQuery();
+  const { data: fetchedChildren = [] } = useGetIfasheChildrenQuery();
+  const [createSponsorship, { isLoading }] = useCreateIfasheSponsorshipMutation();
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Assign sponsorship:", formData);
-    onClose();
+    try {
+      const payload = {
+        child: formData.selectChild,
+        sponsorship_type: formData.sponsorshipType,
+        start_date: formData.startDate,
+        end_date: formData.expectedEndDate || null,
+        status: formData.status,
+        pause_reason: formData.pauseReason,
+      };
+      await createSponsorship(payload).unwrap();
+      toast.success("Sponsorship assigned successfully!");
+      setFormData({
+        selectFamily: "",
+        selectChild: "",
+        sponsorshipType: "FULL",
+        startDate: "",
+        expectedEndDate: "",
+        status: "ACTIVE",
+        pauseReason: "",
+      });
+      onClose();
+    } catch (error) {
+      console.error("Failed to assign sponsorship", error);
+      toast.error("Failed to assign sponsorship");
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl">
 
         {/* Header */}
-        <div className="px-6 py-5 border-b flex items-center justify-between">
+        <div className="px-6 py-5 border-b flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Assign New Sponsorship</h2>
             <p className="text-sm text-gray-500 mt-0.5">
@@ -46,52 +77,61 @@ export default function AssignSponsorshipModal({ isOpen, onClose }: AssignSponso
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
 
-          {/* Select Family & Select Specific Child */}
+          {/* Select Child */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Family *
+                Select Family (Filter)
               </label>
               <select
                 value={formData.selectFamily}
-                onChange={(e) => setFormData({ ...formData, selectFamily: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, selectFamily: e.target.value, selectChild: "" });
+                }}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
               >
-                <option value="">Select Family</option>
-                <option value="Mukamana Vestine">Mukamana Vestine</option>
-                <option value="Niyonzima Jean Claude">Niyonzima Jean Claude</option>
-                <option value="Uwihana Grace">Uwihana Grace</option>
-                <option value="Habimana Patrick">Habimana Patrick</option>
-                <option value="Nyirahabimana Angelique">Nyirahabimana Angelique</option>
-                <option value="Ndayisaba Emmanuel">Ndayisaba Emmanuel</option>
-                <option value="Bizimana Joseph">Bizimana Joseph</option>
-                <option value="Mukamazimpaka Claudine">Mukamazimpaka Claudine</option>
+                <option value="">All Families</option>
+                {fetchedFamilies.map((f: any) => {
+                  const parentName = f.parents?.[0]?.first_name 
+                    ? `${f.parents[0].first_name} ${f.parents[0].last_name || ""}`.trim() 
+                    : (f.family_name || "Unknown Family");
+                  return (
+                    <option key={f.id} value={f.id}>
+                      {parentName}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Specific Child (Optional)
+                Select Specific Child *
               </label>
               <select
                 value={formData.selectChild}
                 onChange={(e) => setFormData({ ...formData, selectChild: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white disabled:opacity-50 disabled:bg-gray-50"
+                required
+                disabled={!fetchedChildren.length}
               >
-                <option value="">Family-wide sponsorship</option>
-                <option value="Ishimwe Marie">Ishimwe Marie</option>
-                <option value="Mugisha Eric">Mugisha Eric</option>
-                <option value="Uwase Serah">Uwase Serah</option>
-                <option value="Niyonzima Desire">Niyonzima Desire</option>
-                <option value="Niyonzima Peace">Niyonzima Peace</option>
+                <option value="">Select a Child</option>
+                {fetchedChildren
+                  .filter((child: any) => {
+                    if (!formData.selectFamily) return true;
+                    return child.family === formData.selectFamily || child.family_id === formData.selectFamily || child.linked_family === formData.selectFamily;
+                  })
+                  .map((child: any) => (
+                    <option key={child.id} value={child.id}>
+                      {child.full_name || child.first_name || "Unknown Child"}
+                    </option>
+                  ))}
               </select>
             </div>
-          </div>
 
-          {/* Sponsorship Type & Sponsor Source */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Sponsorship Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Sponsorship Type *
@@ -100,25 +140,11 @@ export default function AssignSponsorshipModal({ isOpen, onClose }: AssignSponso
                 value={formData.sponsorshipType}
                 onChange={(e) => setFormData({ ...formData, sponsorshipType: e.target.value })}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                required
               >
-                <option value="">Select Type</option>
-                <option value="Education-only">Education-only</option>
-                <option value="Partial">Partial</option>
-                <option value="Full">Full</option>
+                <option value="FULL">Full Sponsorship</option>
+                <option value="PARTIAL">Partial Sponsorship</option>
               </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sponsor Source *
-              </label>
-              <input
-                type="text"
-                value={formData.sponsorSource}
-                onChange={(e) => setFormData({ ...formData, sponsorSource: e.target.value })}
-                placeholder="e.g Individual, Organization, Government"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
             </div>
           </div>
 
@@ -151,19 +177,34 @@ export default function AssignSponsorshipModal({ isOpen, onClose }: AssignSponso
             </div>
           </div>
 
-          {/* Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status *</label>
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
-            >
-              <option value="Active">Active</option>
-              <option value="Pending">Pending</option>
-              <option value="Suspended">Suspended</option>
-              <option value="Completed">Completed</option>
-            </select>
+          {/* Status & Pause Reason */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                required
+              >
+                <option value="ACTIVE">Active</option>
+                <option value="SUSPENDED">Suspended</option>
+                <option value="COMPLETED">Completed</option>
+              </select>
+            </div>
+
+            {formData.status === "SUSPENDED" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Pause Reason</label>
+                <input
+                  type="text"
+                  value={formData.pauseReason}
+                  onChange={(e) => setFormData({ ...formData, pauseReason: e.target.value })}
+                  placeholder="Reason for suspension"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+              </div>
+            )}
           </div>
 
           {/* Buttons */}
@@ -177,9 +218,10 @@ export default function AssignSponsorshipModal({ isOpen, onClose }: AssignSponso
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors"
+              disabled={isLoading || !formData.selectChild || !formData.startDate}
+              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Assign Sponsorship
+              {isLoading ? "Assigning..." : "Assign Sponsorship"}
             </button>
           </div>
         </form>

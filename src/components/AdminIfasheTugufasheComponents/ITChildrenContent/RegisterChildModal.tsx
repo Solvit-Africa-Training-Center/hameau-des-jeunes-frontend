@@ -1,5 +1,9 @@
-import { X, Save } from "lucide-react";
+import { X, Save, Plus, School } from "lucide-react";
 import { useState } from "react";
+import { useCreateIfasheChildMutation } from "@/store/api/ifasheChildrenApi";
+import { useGetIfasheFamiliesQuery } from "@/store/api/ifasheFamiliesApi";
+import { useGetInstitutionsQuery, useCreateInstitutionMutation } from "@/store/api/educationApi";
+import { toast } from "react-toastify";
 
 interface RegisterChildModalProps {
   isOpen: boolean;
@@ -8,7 +12,7 @@ interface RegisterChildModalProps {
 
 export default function RegisterChildModal({ isOpen, onClose }: RegisterChildModalProps) {
   const [formData, setFormData] = useState({
-    linkedFamily: "",
+    linkedFamilyId: "",
     fullName: "",
     dateOfBirth: "",
     gender: "",
@@ -17,21 +21,96 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
     supportStatus: "Active",
     healthConditions: "",
   });
+  const [showNewSchoolForm, setShowNewSchoolForm] = useState(false);
+  const [newSchool, setNewSchool] = useState({ name: "", address: "", phone: "", email: "" });
+  const [isCreatingSchool, setIsCreatingSchool] = useState(false);
+
+  const { data: institutions = [], refetch: refetchInstitutions } = useGetInstitutionsQuery();
+  const [createInstitution] = useCreateInstitutionMutation();
+
+  const { data: fetchedFamilies = [] } = useGetIfasheFamiliesQuery();
+  const [createChild, { isLoading }] = useCreateIfasheChildMutation();
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleAddNewSchool = async () => {
+    if (!newSchool.name.trim()) { toast.error("School name is required."); return; }
+    setIsCreatingSchool(true);
+    try {
+      await createInstitution({
+        name: newSchool.name.trim(),
+        address: newSchool.address.trim(),
+        phone: newSchool.phone.trim(),
+        email: newSchool.email.trim(),
+        programs: [],
+      }).unwrap();
+      toast.success(`"${newSchool.name}" added to registry!`);
+      setFormData((prev) => ({ ...prev, schoolName: newSchool.name.trim() }));
+      setNewSchool({ name: "", address: "", phone: "", email: "" });
+      setShowNewSchoolForm(false);
+      refetchInstitutions();
+    } catch (err: any) {
+      // If 403 (no access yet), still use the name as school_name text
+      if (err?.status === 403) {
+        toast.info("School registry access pending — saving school name directly.");
+        setFormData((prev) => ({ ...prev, schoolName: newSchool.name.trim() }));
+        setShowNewSchoolForm(false);
+      } else {
+        toast.error("Failed to create school. Please try again.");
+      }
+    } finally {
+      setIsCreatingSchool(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Register child:", formData);
-    onClose();
+    try {
+      const names = formData.fullName.trim().split(" ");
+      const first_name = names[0] || "Unknown";
+      const last_name = names.slice(1).join(" ") || "Unknown";
+
+      // Map the "Graduated" / "Transferred" status to "EXITED" for the backend
+      let parsedStatus = formData.supportStatus.toUpperCase();
+      if (parsedStatus === "GRADUATED" || parsedStatus === "TRANSFERRED") parsedStatus = "EXITED";
+
+      const payload: Record<string, any> = {
+        first_name,
+        last_name,
+        date_of_birth: formData.dateOfBirth || null,
+        gender: formData.gender ? formData.gender.toUpperCase() : "MALE",
+        school_name: formData.schoolName,
+        school_level: formData.educationLevel,
+        support_status: parsedStatus,
+        health_conditions: formData.healthConditions,
+      };
+      if (formData.linkedFamilyId) payload.family_id = formData.linkedFamilyId;
+      
+      await createChild(payload).unwrap();
+      toast.success("Child registered successfully!");
+      setFormData({
+        linkedFamilyId: "",
+        fullName: "",
+        dateOfBirth: "",
+        gender: "",
+        schoolName: "",
+        educationLevel: "",
+        supportStatus: "Active",
+        healthConditions: "",
+      });
+      onClose();
+    } catch (error) {
+      console.error("Failed to register child", error);
+      toast.error("Failed to register child");
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 bg-opacity-40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl">
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl max-h-[90vh] flex flex-col">
 
         {/* Header */}
-        <div className="px-6 py-5 border-b flex items-center justify-between">
+        <div className="px-6 py-5 border-b flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Register New Child</h2>
             <p className="text-sm text-gray-500 mt-0.5">
@@ -47,29 +126,35 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+          <div className="px-6 py-5 space-y-4">
 
-          {/* Linked Family */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Linked Family *
-            </label>
-            <select
-              value={formData.linkedFamily}
-              onChange={(e) => setFormData({ ...formData, linkedFamily: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
-            >
-              <option value="">Select Family</option>
-              <option value="Mukamana Vestine">Mukamana Vestine</option>
-              <option value="Niyonzima Jean Claude">Niyonzima Jean Claude</option>
-              <option value="Uwihana Grace">Uwihana Grace</option>
-              <option value="Habimana Patrick">Habimana Patrick</option>
-              <option value="Nyirahabimana Angelique">Nyirahabimana Angelique</option>
-            </select>
-          </div>
+            {/* Linked Family */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Linked Family *
+              </label>
+              <select
+                value={formData.linkedFamilyId}
+                onChange={(e) => setFormData({ ...formData, linkedFamilyId: e.target.value })}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+              >
+                <option value="">Select Family</option>
+                {fetchedFamilies.map((f: any) => {
+                    const parentName = f.parents?.[0]?.first_name 
+                    ? `${f.parents[0].first_name} ${f.parents[0].last_name || ""}`.trim() 
+                    : (f.family_name || "Unknown Family");
+                    return (
+                        <option key={f.id} value={f.id}>
+                            {parentName}
+                        </option>
+                    )
+                })}
+              </select>
+            </div>
 
-          {/* Full Name & Date of Birth */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Full Name & Date of Birth */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Full Name*
@@ -115,15 +200,89 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                School Name*
+                School *
               </label>
-              <input
-                type="text"
-                value={formData.schoolName}
-                onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
-                placeholder="Enter School name"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
+
+              {/* Dropdown: existing institutions */}
+              <select
+                value={showNewSchoolForm ? "__new__" : formData.schoolName}
+                onChange={(e) => {
+                  if (e.target.value === "__new__") {
+                    setShowNewSchoolForm(true);
+                    setFormData({ ...formData, schoolName: "" });
+                  } else {
+                    setShowNewSchoolForm(false);
+                    setFormData({ ...formData, schoolName: e.target.value });
+                  }
+                }}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                required={!showNewSchoolForm}
+              >
+                <option value="">— Select School —</option>
+                {institutions.map((inst) => (
+                  <option key={inst.id} value={inst.name}>
+                    {inst.name}{inst.address ? ` — ${inst.address}` : ""}
+                  </option>
+                ))}
+                <option value="__new__">+ Add New School...</option>
+              </select>
+
+              {/* Inline new-school creation form */}
+              {showNewSchoolForm && (
+                <div className="mt-3 p-4 border border-emerald-200 rounded-lg bg-emerald-50 space-y-3">
+                  <p className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
+                    <School className="w-3.5 h-3.5" /> New School Details
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="School name *"
+                    value={newSchool.name}
+                    onChange={(e) => setNewSchool({ ...newSchool, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Address (optional)"
+                    value={newSchool.address}
+                    onChange={(e) => setNewSchool({ ...newSchool, address: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Phone (optional)"
+                      value={newSchool.phone}
+                      onChange={(e) => setNewSchool({ ...newSchool, phone: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email (optional)"
+                      value={newSchool.email}
+                      onChange={(e) => setNewSchool({ ...newSchool, email: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => { setShowNewSchoolForm(false); setNewSchool({ name: "", address: "", phone: "", email: "" }); }}
+                      className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddNewSchool}
+                      disabled={isCreatingSchool || !newSchool.name.trim()}
+                      className="px-3 py-1.5 text-xs bg-emerald-900 text-white rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50 flex items-center gap-1"
+                    >
+                      <Plus className="w-3 h-3" />
+                      {isCreatingSchool ? "Adding..." : "Add & Select"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -140,15 +299,11 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
               >
                 <option value="">Select Level</option>
                 <option value="Nursery">Nursery</option>
-                <option value="Primary 1">Primary 1</option>
-                <option value="Primary 2">Primary 2</option>
-                <option value="Primary 3">Primary 3</option>
-                <option value="Primary 4">Primary 4</option>
-                <option value="Primary 5">Primary 5</option>
-                <option value="Primary 6">Primary 6</option>
-                <option value="Secondary 1">Secondary 1</option>
-                <option value="Secondary 2">Secondary 2</option>
-                <option value="Secondary 3">Secondary 3</option>
+                <option value="Primary">Primary</option>
+                <option value="Secondary O-Level">Secondary (O-Level)</option>
+                <option value="Secondary A-Level">Secondary (A-Level)</option>
+                <option value="TVET">TVET / Vocational</option>
+                <option value="University">University</option>
               </select>
             </div>
 
@@ -183,8 +338,10 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
             />
           </div>
 
+          </div>
+
           {/* Buttons */}
-          <div className="flex gap-3 pt-2">
+          <div className="px-6 py-4 border-t bg-gray-50 flex gap-3 sticky bottom-0 shrink-0">
             <button
               type="button"
               onClick={onClose}
@@ -194,10 +351,11 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
-              Save Child
+              {isLoading ? "Saving..." : "Save Child"}
             </button>
           </div>
         </form>

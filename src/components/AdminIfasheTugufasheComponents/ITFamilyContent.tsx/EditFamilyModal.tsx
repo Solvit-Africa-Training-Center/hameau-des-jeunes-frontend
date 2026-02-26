@@ -1,13 +1,19 @@
 import { X, Save } from "lucide-react";
-import { useState } from "react";
-import { useCreateIfasheFamilyMutation } from "@/store/api/ifasheFamiliesApi";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useUpdateIfasheFamilyMutation, ifasheFamiliesApi } from "@/store/api/ifasheFamiliesApi";
+import { useUpdateIfasheParentMutation } from "@/store/api/ifasheParentsApi";
+import type { Family } from "./IfasheTugufasheFamilyView";
+import { toast } from "react-toastify";
 
-interface RegisterFamilyModalProps {
+interface EditFamilyModalProps {
   isOpen: boolean;
   onClose: () => void;
+  family: Family | null;
 }
 
-export default function RegisterFamilyModal({ isOpen, onClose }: RegisterFamilyModalProps) {
+export default function EditFamilyModal({ isOpen, onClose, family }: EditFamilyModalProps) {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "",
@@ -29,9 +35,47 @@ export default function RegisterFamilyModal({ isOpen, onClose }: RegisterFamilyM
     assessmentNotes: "",
   });
 
-  const [createFamily, { isLoading }] = useCreateIfasheFamilyMutation();
+  const [updateFamily, { isLoading: isUpdatingFamily }] = useUpdateIfasheFamilyMutation();
+  const [updateParent, { isLoading: isUpdatingParent }] = useUpdateIfasheParentMutation();
 
-  if (!isOpen) return null;
+  const isLoading = isUpdatingFamily || isUpdatingParent;
+
+  useEffect(() => {
+    if (family) {
+      let mappedHousingCond = family.housingCondition || "";
+      if (mappedHousingCond === "OWNED") mappedHousingCond = "Own House";
+      else if (mappedHousingCond === "RENTED") mappedHousingCond = "Rented Apartment";
+      else if (mappedHousingCond === "TEMPORARY") mappedHousingCond = "Shared Housing";
+
+      let mappedVulnLevel = family.vulnerabilityLevel || "";
+      if (mappedVulnLevel) {
+        mappedVulnLevel = mappedVulnLevel.charAt(0).toUpperCase() + mappedVulnLevel.slice(1).toLowerCase();
+      }
+
+      setFormData({
+        fullName: family.fullName && family.fullName !== "Unknown" ? family.fullName : "",
+        gender: family.gender ? family.gender.charAt(0).toUpperCase() + family.gender.slice(1).toLowerCase() : "",
+        dob: family.dob || "",
+        nationalId: family.nationalId || "",
+        phone: family.phoneNumber !== "N/A" ? family.phoneNumber : "",
+        educationLevel: family.educationLevel || "",
+        maritalStatus: family.maritalStatus ? family.maritalStatus.charAt(0).toUpperCase() + family.maritalStatus.slice(1).toLowerCase() : "",
+        address: family.address || "",
+        province: "",
+        district: "",
+        sector: "",
+        cell: "",
+        village: "",
+        previousEmployment: family.previousEmployment || "",
+        monthlyIncome: family.monthlyIncome !== "N/A" ? family.monthlyIncome : "",
+        housingCondition: mappedHousingCond,
+        vulnerabilityLevel: mappedVulnLevel === "Critical" || mappedVulnLevel === "High" || mappedVulnLevel === "Medium" || mappedVulnLevel === "Low" ? mappedVulnLevel : "",
+        assessmentNotes: family.assessmentNotes || "",
+      });
+    }
+  }, [family]);
+
+  if (!isOpen || !family) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +86,7 @@ export default function RegisterFamilyModal({ isOpen, onClose }: RegisterFamilyM
         return "TEMPORARY";
       };
 
-      const payload = {
+      const familyPayload = {
         family_name: formData.fullName || "Family",
         address: formData.address || "N/A",
         province: formData.province || "N/A",
@@ -53,45 +97,36 @@ export default function RegisterFamilyModal({ isOpen, onClose }: RegisterFamilyM
         vulnerability_level: formData.vulnerabilityLevel ? formData.vulnerabilityLevel.toUpperCase() : "LOW",
         housing_condition: mapHousing(formData.housingCondition),
         social_worker_assessment: formData.assessmentNotes,
-        parents: [
-          {
-            first_name: formData.fullName.split(' ')[0] || "Unknown",
-            last_name: formData.fullName.split(' ').slice(1).join(' ') || "Unknown",
-            gender: formData.gender ? formData.gender.toUpperCase() : "MALE",
-            phone: formData.phone || "0000000000",
-            national_id: formData.nationalId || null,
-            date_of_birth: formData.dob ? new Date(formData.dob).toISOString().split('T')[0] : null,
-            education_level: formData.educationLevel || "None",
-            marital_status: formData.maritalStatus ? formData.maritalStatus.toUpperCase() : "SINGLE",
-            previous_employment: formData.previousEmployment || "",
-            monthly_income: formData.monthlyIncome ? parseInt(formData.monthlyIncome) : 0,
-          }
-        ]
       };
-      await createFamily(payload).unwrap();
-      setFormData({
-        fullName: "",
-        gender: "",
-        dob: "",
-        nationalId: "",
-        phone: "",
-        educationLevel: "",
-        maritalStatus: "",
-        address: "",
-        province: "",
-        district: "",
-        sector: "",
-        cell: "",
-        village: "",
-        previousEmployment: "",
-        monthlyIncome: "",
-        housingCondition: "",
-        vulnerabilityLevel: "",
-        assessmentNotes: "",
-      });
+
+      const parentPayload = {
+        first_name: formData.fullName.split(' ')[0] || "Unknown",
+        last_name: formData.fullName.split(' ').slice(1).join(' ') || "Unknown",
+        gender: formData.gender ? formData.gender.toUpperCase() : "MALE",
+        phone: formData.phone || "0000000000",
+        national_id: formData.nationalId || null,
+        date_of_birth: formData.dob ? new Date(formData.dob).toISOString().split('T')[0] : null,
+        education_level: formData.educationLevel || "None",
+        marital_status: formData.maritalStatus ? formData.maritalStatus.toUpperCase() : "SINGLE",
+        previous_employment: formData.previousEmployment || "",
+        monthly_income: formData.monthlyIncome ? parseInt(formData.monthlyIncome) : 0,
+      };
+      
+      // Update family core data
+      await updateFamily({ id: family.id, data: familyPayload }).unwrap();
+
+      // Update parent data independently if a parent ID is available
+      if (family.parentId) {
+        await updateParent({ id: family.parentId, data: parentPayload }).unwrap();
+        // Force the family list to re-fetch since the parent API slice is separate
+        dispatch(ifasheFamiliesApi.util.invalidateTags(["IfasheFamilies"]));
+      }
+
+      toast.success("Family updated successfully!");
       onClose();
     } catch (error) {
-      console.error("Failed to register family", error);
+      console.error("Failed to update family", error);
+      toast.error("Failed to update family. Please check inputs.");
     }
   };
 
@@ -102,9 +137,9 @@ export default function RegisterFamilyModal({ isOpen, onClose }: RegisterFamilyM
         {/* Header */}
         <div className="px-6 py-5 border-b flex items-center justify-between shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Register New Family</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Edit Family Profile</h2>
             <p className="text-sm text-gray-500 mt-0.5">
-              Enter family details to register them in the program
+              Update information for Family ID: {family.familyId}
             </p>
           </div>
           <button
@@ -162,7 +197,6 @@ export default function RegisterFamilyModal({ isOpen, onClose }: RegisterFamilyM
                     type="date"
                     value={formData.dob}
                     onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-                    placeholder="DD/MM/YYY"
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   />
                 </div>
@@ -417,7 +451,7 @@ export default function RegisterFamilyModal({ isOpen, onClose }: RegisterFamilyM
               className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
-              {isLoading ? "Saving..." : "Save Family"}
+              {isLoading ? "Updating..." : "Update Family"}
             </button>
           </div>
         </form>

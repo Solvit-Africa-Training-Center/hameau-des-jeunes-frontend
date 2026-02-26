@@ -1,22 +1,19 @@
 import { useState } from "react";
 import { Search, Eye, Pencil, Users, UserPlus } from "lucide-react";
+import { useGetIfasheSponsorshipsQuery } from "@/store/api/ifasheSponsorshipsApi";
+import ViewSponsorshipModal from "./ViewSponsorshipModal";
+import EditSponsorshipModal from "./EditSponsorshipModal";
+import ManageSponsorshipModal from "./ManageSponsorshipModal";
 
 export interface Sponsorship {
   id: string;
   childId: string;
   beneficiaryName: string;
-  beneficiaryFamily: string;
-  type: "Education-only" | "Partial" | "Full";
-  sponsorSource: string;
+  type: string;
   startDate: string;
   endDate: string;
-  status: "Active" | "Suspended" | "Completed" | "Pending";
-  // Full data for the form
-  selectFamily: string;
-  selectChild: string;
-  sponsorshipType: string;
-  startDateFull: string;
-  expectedEndDate: string;
+  status: string;
+  pauseReason: string;
 }
 
 interface IrasheTugufasheSponsorshipViewProps {
@@ -30,158 +27,26 @@ export default function IrasheTugufasheSponsorshipView({
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const sponsorships: Sponsorship[] = [
-    {
-      id: "1",
-      childId: "#3001",
-      beneficiaryName: "Ishimwe Marie",
-      beneficiaryFamily: "Chidi",
-      type: "Education-only",
-      sponsorSource: "Global Education Fund",
-      startDate: "8/22/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Mukamana Vestine",
-      selectChild: "Ishimwe Marie",
-      sponsorshipType: "Education-only",
-      startDateFull: "2025-08-22",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "2",
-      childId: "#3002",
-      beneficiaryName: "Mukamana Vestine",
-      beneficiaryFamily: "Family",
-      type: "Partial",
-      sponsorSource: "Individual - Sarah Johnson",
-      startDate: "9/1/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Mukamana Vestine",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Partial",
-      startDateFull: "2025-09-01",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "3",
-      childId: "#3003",
-      beneficiaryName: "Niyonzima Desire",
-      beneficiaryFamily: "Chidi",
-      type: "Full",
-      sponsorSource: "Hope for Rwanda Foundation",
-      startDate: "9/18/2025",
-      endDate: "9/18/2025",
-      status: "Active",
-      selectFamily: "Niyonzima Jean Claude",
-      selectChild: "Niyonzima Desire",
-      sponsorshipType: "Full",
-      startDateFull: "2025-09-18",
-      expectedEndDate: "2029-09-18",
-    },
-    {
-      id: "4",
-      childId: "#3004",
-      beneficiaryName: "Uwihana Grace",
-      beneficiaryFamily: "Family",
-      type: "Full",
-      sponsorSource: "United Relief Organization",
-      startDate: "10/10/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Uwihana Grace",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Full",
-      startDateFull: "2025-10-10",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "5",
-      childId: "#3005",
-      beneficiaryName: "Habimana Kevin",
-      beneficiaryFamily: "Chidi",
-      type: "Education-only",
-      sponsorSource: "Individual - Michael Brown",
-      startDate: "11/15/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Habimana Patrick",
-      selectChild: "Habimana Kevin",
-      sponsorshipType: "Education-only",
-      startDateFull: "2025-11-15",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "6",
-      childId: "#3006",
-      beneficiaryName: "Nyirahabimana Angelique",
-      beneficiaryFamily: "Family",
-      type: "Partial",
-      sponsorSource: "Community Church Group",
-      startDate: "12/15/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Nyirahabimana Angelique",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Partial",
-      startDateFull: "2025-12-15",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "7",
-      childId: "#3007",
-      beneficiaryName: "Ndayisaba Dylan",
-      beneficiaryFamily: "Chidi",
-      type: "Education-only",
-      sponsorSource: "Individual - Emma Wilson",
-      startDate: "12/30/2025",
-      endDate: "8/22/2029",
-      status: "Active",
-      selectFamily: "Ndayisaba Emmanuel",
-      selectChild: "Ndayisaba Dylan",
-      sponsorshipType: "Education-only",
-      startDateFull: "2025-12-30",
-      expectedEndDate: "2029-08-22",
-    },
-    {
-      id: "8",
-      childId: "#3008",
-      beneficiaryName: "Bizimana Joseph",
-      beneficiaryFamily: "Family",
-      type: "Full",
-      sponsorSource: "Rwanda Development Trust",
-      startDate: "1/5/2026",
-      endDate: "1/5/2030",
-      status: "Active",
-      selectFamily: "Bizimana Joseph",
-      selectChild: "Family-wide sponsorship",
-      sponsorshipType: "Full",
-      startDateFull: "2026-01-05",
-      expectedEndDate: "2030-01-05",
-    },
-    {
-      id: "9",
-      childId: "#3009",
-      beneficiaryName: "Mukamazimpaka Eric",
-      beneficiaryFamily: "Chidi",
-      type: "Partial",
-      sponsorSource: "Individual - David Kim",
-      startDate: "1/20/2026",
-      endDate: "1/20/2029",
-      status: "Suspended",
-      selectFamily: "Mukamazimpaka Claudine",
-      selectChild: "Mukamazimpaka Eric",
-      sponsorshipType: "Partial",
-      startDateFull: "2026-01-20",
-      expectedEndDate: "2029-01-20",
-    },
-  ];
+  const [sponsorshipToView, setSponsorshipToView] = useState<Sponsorship | null>(null);
+  const [sponsorshipToEdit, setSponsorshipToEdit] = useState<Sponsorship | null>(null);
+  const [sponsorshipToManage, setSponsorshipToManage] = useState<Sponsorship | null>(null);
+
+  const { data: fetchedSponsorships = [], isLoading, isError } = useGetIfasheSponsorshipsQuery();
+
+  const sponsorships: Sponsorship[] = fetchedSponsorships.map((s: any) => ({
+    id: s.id || Math.random().toString(),
+    childId: s.child?.substring(0, 8) || "N/A",
+    beneficiaryName: s.child_name || "Unknown",
+    type: s.sponsorship_type || "FULL",
+    startDate: s.start_date || "Unknown",
+    endDate: s.end_date || "N/A",
+    status: s.status || "ACTIVE",
+    pauseReason: s.pause_reason || "",
+  }));
 
   const filteredSponsorships = sponsorships.filter((sponsorship) => {
     const matchesSearch =
       sponsorship.beneficiaryName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sponsorship.sponsorSource.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sponsorship.beneficiaryFamily.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sponsorship.childId.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesType =
@@ -194,16 +59,14 @@ export default function IrasheTugufasheSponsorshipView({
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const getStatusColor = (status: Sponsorship["status"]) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active":
+      case "ACTIVE":
         return "bg-green-100 text-green-700";
-      case "Suspended":
+      case "SUSPENDED":
         return "bg-amber-100 text-amber-700";
-      case "Completed":
+      case "COMPLETED":
         return "bg-blue-100 text-blue-700";
-      case "Pending":
-        return "bg-gray-100 text-gray-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -213,28 +76,29 @@ export default function IrasheTugufasheSponsorshipView({
     {
       id: 1,
       title: "Total Sponsorships",
-      value: "9",
+      value: sponsorships.length.toString(),
     },
     {
       id: 2,
       title: "Active",
-      value: "8",
+      value: sponsorships.filter((s) => s.status === "ACTIVE").length.toString(),
     },
     {
       id: 3,
       title: "Suspended",
-      value: "1",
+      value: sponsorships.filter((s) => s.status === "SUSPENDED").length.toString(),
     },
     {
       id: 4,
       title: "Completed",
-      value: "0",
+      value: sponsorships.filter((s) => s.status === "COMPLETED").length.toString(),
     },
   ];
 
   return (
-    <div className="w-full h-screen bg-gray-50 flex flex-col overflow-hidden">
-      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-hidden">
+    <>
+      <div className="w-full h-screen bg-gray-50 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-hidden">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start justify-between mb-5 gap-4 shrink-0">
@@ -272,7 +136,7 @@ export default function IrasheTugufasheSponsorshipView({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by child, sponsor or family..."
+              placeholder="Search by child name or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -285,9 +149,8 @@ export default function IrasheTugufasheSponsorshipView({
             className="px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white appearance-none min-w-35"
           >
             <option value="all">All Types</option>
-            <option value="education-only">Education-only</option>
-            <option value="partial">Partial</option>
-            <option value="full">Full</option>
+            <option value="PARTIAL">Partial</option>
+            <option value="FULL">Full</option>
           </select>
 
           <select
@@ -299,18 +162,28 @@ export default function IrasheTugufasheSponsorshipView({
             <option value="active">Active</option>
             <option value="suspended">Suspended</option>
             <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
           </select>
         </div>
 
         {/* Table Section */}
         <div className="bg-white rounded-xl shadow-sm flex flex-col flex-1 overflow-hidden">
-
-          {/* Desktop Table */}
-          <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b shrink-0">
-                <tr className="text-left">
+          {isLoading && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-gray-500">Loading sponsorships...</p>
+            </div>
+          )}
+          {isError && (
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-red-500">Error loading sponsorships. Please try again.</p>
+            </div>
+          )}
+          {!isLoading && !isError && (
+            <>
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-auto flex-1">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 border-b sticky top-0 z-10">
+                <tr>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Child ID
                   </th>
@@ -319,9 +192,6 @@ export default function IrasheTugufasheSponsorshipView({
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Type
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Sponsor Source
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Start & End Date
@@ -334,25 +204,16 @@ export default function IrasheTugufasheSponsorshipView({
                   </th>
                 </tr>
               </thead>
-            </table>
-            <div className="overflow-auto flex-1">
-              <table className="w-full">
-                <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white divide-y divide-gray-100">
                   {filteredSponsorships.map((sponsorship) => (
                     <tr key={sponsorship.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-gray-900">{sponsorship.childId}</td>
                       <td className="px-6 py-4">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {sponsorship.beneficiaryName}
-                          </p>
-                          <p className="text-xs text-gray-500">{sponsorship.beneficiaryFamily}</p>
-                        </div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {sponsorship.beneficiaryName}
+                        </p>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">{sponsorship.type}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {sponsorship.sponsorSource}
-                      </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {sponsorship.startDate} - {sponsorship.endDate}
                       </td>
@@ -368,22 +229,25 @@ export default function IrasheTugufasheSponsorshipView({
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => setSponsorshipToView(sponsorship)}
                             className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye className="w-4 h-4 text-blue-500" />
                           </button>
                           <button
+                            onClick={() => setSponsorshipToEdit(sponsorship)}
                             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Edit"
                           >
                             <Pencil className="w-4 h-4 text-gray-500" />
                           </button>
                           <button
-                            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                            onClick={() => setSponsorshipToManage(sponsorship)}
+                            className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                             title="Manage"
                           >
-                            <Users className="w-4 h-4 text-gray-500" />
+                            <Users className="w-4 h-4 text-red-400" />
                           </button>
                         </div>
                       </td>
@@ -391,7 +255,6 @@ export default function IrasheTugufasheSponsorshipView({
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
 
           {/* Mobile Cards */}
@@ -407,7 +270,6 @@ export default function IrasheTugufasheSponsorshipView({
                     <h3 className="font-medium text-gray-900 text-sm">
                       {sponsorship.beneficiaryName}
                     </h3>
-                    <p className="text-xs text-gray-500">{sponsorship.beneficiaryFamily}</p>
                   </div>
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -424,10 +286,6 @@ export default function IrasheTugufasheSponsorshipView({
                     <span className="ml-1 text-gray-900">{sponsorship.type}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Sponsor:</span>
-                    <span className="ml-1 text-gray-900">{sponsorship.sponsorSource}</span>
-                  </div>
-                  <div>
                     <span className="text-gray-500">Period:</span>
                     <span className="ml-1 text-gray-900">
                       {sponsorship.startDate} - {sponsorship.endDate}
@@ -436,15 +294,24 @@ export default function IrasheTugufasheSponsorshipView({
                 </div>
 
                 <div className="flex items-center gap-2 pt-3 border-t">
-                  <button className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
+                  <button
+                    onClick={() => setSponsorshipToView(sponsorship)}
+                    className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors"
+                  >
                     <Eye className="w-3.5 h-3.5" />
                     View
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button
+                    onClick={() => setSponsorshipToEdit(sponsorship)}
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
                     <Pencil className="w-4 h-4 text-gray-500" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Users className="w-4 h-4 text-gray-500" />
+                  <button
+                    onClick={() => setSponsorshipToManage(sponsorship)}
+                    className="p-2 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                  >
+                    <Users className="w-4 h-4 text-red-400" />
                   </button>
                 </div>
               </div>
@@ -457,8 +324,28 @@ export default function IrasheTugufasheSponsorshipView({
               <p className="text-gray-500 text-sm">No sponsorships found.</p>
             </div>
           )}
+          </>
+          )}
         </div>
+
+        {/* Modals */}
+        <ViewSponsorshipModal
+          isOpen={!!sponsorshipToView}
+          onClose={() => setSponsorshipToView(null)}
+          sponsorship={sponsorshipToView}
+        />
+        <EditSponsorshipModal
+          isOpen={!!sponsorshipToEdit}
+          onClose={() => setSponsorshipToEdit(null)}
+          sponsorship={sponsorshipToEdit}
+        />
+        <ManageSponsorshipModal
+          isOpen={!!sponsorshipToManage}
+          onClose={() => setSponsorshipToManage(null)}
+          sponsorship={sponsorshipToManage}
+        />
       </div>
     </div>
+    </>
   );
 }

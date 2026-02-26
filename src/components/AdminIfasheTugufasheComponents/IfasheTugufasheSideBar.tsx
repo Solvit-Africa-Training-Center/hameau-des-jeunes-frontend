@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ClipboardCheckIcon } from "lucide-react";
+import { LayoutDashboard, ClipboardCheckIcon, School } from "lucide-react";
 import profilePic from "@/assets/profile_pic.jpg";
 import DashLogo from "@/assets/dashboardLogo.png";
 import Typography from "../ui/typography";
@@ -18,7 +18,8 @@ const sidebarItems = [
   { icon: FaArrowTrendUp, label: "Family Registration", href: "/IfasheTugufasheFamily" },
   { icon: GrOverview, label: "Child Registration", href: "/IfasheTugufasheChildren" },
   { icon: ClipboardCheckIcon, label: "Sponsorship", href: "/IfasheTugufasheSponsorship" },
-  { icon: GoPeople, label: "School support", href: "/IfasheTugufasheSchool" },
+  { icon: GoPeople, label: "School Support", href: "/IfasheTugufasheSchool" },
+  { icon: School, label: "Schools Registry", href: "/IfasheTugufasheSchoolsRegistry" },
   { icon: VscFeedback, label: "Clothes Support", href: "/IfasheTugufasheClothes" },
   { icon: GiProgression, label: "Parent Work", href: "/IfasheTugufasheParentWork" },
   { icon: IoSettingsOutline, label: "Report", href: "/IfasheTugufasheReport" },

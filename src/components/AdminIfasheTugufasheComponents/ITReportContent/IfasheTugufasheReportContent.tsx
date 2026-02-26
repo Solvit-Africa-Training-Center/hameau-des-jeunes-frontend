@@ -1,9 +1,68 @@
 import { FileText, Download, Upload } from "lucide-react";
 import { useState } from "react";
+import {
+  useLazyGetIfasheFamiliesReportQuery,
+  useLazyGetIfasheParentWorkReportQuery,
+  useLazyGetIfasheSummaryReportQuery,
+  useLazyGetIfasheSupportReportQuery,
+} from "@/store/api/ifasheReportsApi";
+import { useGetIfasheFamiliesQuery } from "@/store/api/ifasheFamiliesApi";
+import { useGetIfasheChildrenQuery } from "@/store/api/ifasheChildrenApi";
+import { useGetIfasheSponsorshipsQuery } from "@/store/api/ifasheSponsorshipsApi";
+import { useGetIfasheDressingsQuery } from "@/store/api/ifasheDressingApi";
+import { useGetIfasheParentContractsQuery } from "@/store/api/ifasheParentsApi";
+import { useGetIfasheSchoolSupportsQuery } from "@/store/api/ifasheSchoolSupportApi";
 
 export default function IfasheTugufasheReportContent() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const [triggerFamiliesReport] = useLazyGetIfasheFamiliesReportQuery();
+  const [triggerParentWorkReport] = useLazyGetIfasheParentWorkReportQuery();
+  const [triggerSummaryReport] = useLazyGetIfasheSummaryReportQuery();
+  const [triggerSupportReport] = useLazyGetIfasheSupportReportQuery();
+  const [isDownloading, setIsDownloading] = useState<number | null>(null);
+
+  const handleDownload = async (reportId: number, format: "pdf" | "excel") => {
+    try {
+      setIsDownloading(reportId);
+      let blob: Blob | undefined;
+      
+      switch (reportId) {
+        case 1:
+          blob = await triggerFamiliesReport({ format }).unwrap();
+          break;
+        case 2:
+        case 3:
+          blob = await triggerSummaryReport({ format }).unwrap();
+          break;
+        case 4:
+          blob = await triggerParentWorkReport({ format }).unwrap();
+          break;
+        case 5:
+          blob = await triggerSupportReport({ format }).unwrap();
+          break;
+        default:
+          return;
+      }
+      
+      if (blob) {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `report_${reportId}_${new Date().toISOString().split('T')[0]}.${format === "excel" ? "xlsx" : "pdf"}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      }
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Failed to download report. Please try again.");
+    } finally {
+      setIsDownloading(null);
+    }
+  };
 
   const reports = [
     {
@@ -53,15 +112,26 @@ export default function IfasheTugufasheReportContent() {
     },
   ];
 
+  const { data: familiesList = [] } = useGetIfasheFamiliesQuery();
+  const { data: childrenList = [] } = useGetIfasheChildrenQuery();
+  const { data: sponsorshipsList = [] } = useGetIfasheSponsorshipsQuery();
+  const { data: dressingsList = [] } = useGetIfasheDressingsQuery();
+  const { data: parentContractsList = [] } = useGetIfasheParentContractsQuery();
+  const { data: schoolSupportsList = [] } = useGetIfasheSchoolSupportsQuery();
+
+  const totalSchoolSupportAmount = schoolSupportsList.reduce((sum, s: any) => {
+    return sum + (parseInt(s.schoolFeesPaid || s.amountPaid || s.school_fees_paid || '0') || 0);
+  }, 0);
+
   const stats = [
-    { id: 1, label: "Total Families", value: "8" },
-    { id: 2, label: "Total Children", value: "22" },
-    { id: 3, label: "Active Sponsorships", value: "8" },
-    { id: 4, label: "Total School Support", value: "918,000 RWF" },
-    { id: 5, label: "Clothes Distributions", value: "15" },
-    { id: 6, label: "Parent Work Assignments", value: "8" },
-    { id: 7, label: "Children in School", value: "22" },
-    { id: 8, label: "High Vulnerability", value: "4" },
+    { id: 1, label: "Total Families", value: familiesList.length.toString() },
+    { id: 2, label: "Total Children", value: childrenList.length.toString() },
+    { id: 3, label: "Active Sponsorships", value: sponsorshipsList.filter((s: any) => s.status === "Active").length.toString() },
+    { id: 4, label: "Total School Support", value: `${totalSchoolSupportAmount.toLocaleString()} RWF` },
+    { id: 5, label: "Clothes Distributions", value: dressingsList.length.toString() },
+    { id: 6, label: "Parent Work Assignments", value: parentContractsList.length.toString() },
+    { id: 7, label: "Children in School", value: childrenList.filter((c: any) => c.school && c.school !== "N/A" && c.school !== "Unknown" && c.school !== "").length.toString() },
+    { id: 8, label: "High Vulnerability", value: familiesList.filter((f: any) => f.vulnerabilityLevel === "High" || f.vulnerabilityLevel === "Critical" || f.vulnerability === "High" || f.vulnerability === "Critical").length.toString() },
   ];
 
   return (
@@ -134,13 +204,21 @@ export default function IfasheTugufasheReportContent() {
 
                   {/* Action Buttons */}
                   <div className="flex items-center gap-3 mt-auto">
-                    <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <button 
+                      onClick={() => handleDownload(report.id, "excel")}
+                      disabled={isDownloading === report.id}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    >
                       <Upload className="w-4 h-4" />
-                      Excel
+                      {isDownloading === report.id ? "..." : "Excel"}
                     </button>
-                    <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-900 text-white rounded-lg text-sm font-medium hover:bg-emerald-800 transition-colors">
+                    <button 
+                      onClick={() => handleDownload(report.id, "pdf")}
+                      disabled={isDownloading === report.id}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-900 text-white rounded-lg text-sm font-medium hover:bg-emerald-800 transition-colors disabled:opacity-50"
+                    >
                       <Download className="w-4 h-4" />
-                      Generate PDF
+                      {isDownloading === report.id ? "..." : "Generate PDF"}
                     </button>
                   </div>
                 </div>

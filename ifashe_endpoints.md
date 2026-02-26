@@ -1,0 +1,154 @@
+# Ifashe Tugufashe Endpoints
+
+- **GET** `{{baseUrl}}/api/ifashe-children/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/{id}/api ifashe children retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-children/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/{id}/api ifashe children update
+- **PATCH** `{{baseUrl}}/api/ifashe-children/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/{id}/api ifashe children partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-children/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/{id}/api ifashe children destroy
+- **POST** `{{baseUrl}}/api/ifashe-children/bulk_delete/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/bulk_delete/api ifashe children bulk delete create
+- **POST** `{{baseUrl}}/api/ifashe-children/bulk_exit_program/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/bulk_exit_program/api ifashe children bulk exit program create
+- **POST** `{{baseUrl}}/api/ifashe-children/bulk_update/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/bulk_update/api ifashe children bulk update create
+- **GET** `{{baseUrl}}/api/ifashe-children/?gender=MALE&ordering=string&page=5966&page_size=5966&school_level=string&school_name=string&search=string&support_status=ACTIVE`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/api ifashe children list
+- **POST** `{{baseUrl}}/api/ifashe-children/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-children/api ifashe children create
+- **GET** `{{baseUrl}}/api/ifashe-dressing-distributions/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/{id}/api ifashe dressing distributions retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-dressing-distributions/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/{id}/api ifashe dressing distributions update
+- **PATCH** `{{baseUrl}}/api/ifashe-dressing-distributions/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/{id}/api ifashe dressing distributions partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-dressing-distributions/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/{id}/api ifashe dressing distributions destroy
+- **POST** `{{baseUrl}}/api/ifashe-dressing-distributions/bulk_delete/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/bulk_delete/api ifashe dressing distributions bulk delete create
+- **POST** `{{baseUrl}}/api/ifashe-dressing-distributions/bulk_update/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/bulk_update/api ifashe dressing distributions bulk update create
+- **GET** `{{baseUrl}}/api/ifashe-dressing-distributions/?page=5966&page_size=5966`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/api ifashe dressing distributions list
+- **POST** `{{baseUrl}}/api/ifashe-dressing-distributions/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-dressing-distributions/api ifashe dressing distributions create
+- **GET** `{{baseUrl}}/api/ifashe-families/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/{id}/api ifashe families retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-families/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/{id}/api ifashe families update
+- **PATCH** `{{baseUrl}}/api/ifashe-families/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/{id}/api ifashe families partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-families/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/{id}/api ifashe families destroy
+- **POST** `{{baseUrl}}/api/ifashe-families/bulk_delete/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/bulk_delete/api ifashe families bulk delete create
+- **POST** `{{baseUrl}}/api/ifashe-families/bulk_update/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/bulk_update/api ifashe families bulk update create
+- **GET** `{{baseUrl}}/api/ifashe-families/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/api ifashe families list
+- **POST** `{{baseUrl}}/api/ifashe-families/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-families/api ifashe families create
+- **GET** `{{baseUrl}}/api/ifashe-sponsorships/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-sponsorships/{id}/api ifashe sponsorships retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-sponsorships/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-sponsorships/{id}/api ifashe sponsorships update
+- **PATCH** `{{baseUrl}}/api/ifashe-sponsorships/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-sponsorships/{id}/api ifashe sponsorships partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-sponsorships/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-sponsorships/{id}/api ifashe sponsorships destroy
+- **GET** `{{baseUrl}}/api/ifashe-sponsorships/sponsorship_stats/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-sponsorships/sponsorship_stats/api ifashe sponsorships sponsorship stats retrieve
+- **GET** `{{baseUrl}}/api/ifashe-sponsorships/?ordering=string&page=5966&page_size=5966&search=string&sponsorship_type=FULL&status=COMPLETED`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-sponsorships/api ifashe sponsorships list
+- **POST** `{{baseUrl}}/api/ifashe-sponsorships/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-sponsorships/api ifashe sponsorships create
+- **GET** `{{baseUrl}}/api/ifashe-parents/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/{id}/api ifashe parents retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-parents/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/{id}/api ifashe parents update
+- **PATCH** `{{baseUrl}}/api/ifashe-parents/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/{id}/api ifashe parents partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-parents/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/{id}/api ifashe parents destroy
+- **POST** `{{baseUrl}}/api/ifashe-parents/bulk_delete/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/bulk_delete/api ifashe parents bulk delete create
+- **POST** `{{baseUrl}}/api/ifashe-parents/bulk_update/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/bulk_update/api ifashe parents bulk update create
+- **POST** `{{baseUrl}}/api/ifashe-parents/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/api ifashe parents create
+- **GET** `{{baseUrl}}/api/ifashe-parents/?gender=FEMALE&marital_status=DIVORCED&ordering=string&page=5966&page_size=5966&relationship=MOTHER&search=string`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parents/api ifashe parents list
+- **GET** `{{baseUrl}}/api/ifashe-parent-attendance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-attendance/{id}/api ifashe parent attendance retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-parent-attendance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-attendance/{id}/api ifashe parent attendance update
+- **PATCH** `{{baseUrl}}/api/ifashe-parent-attendance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-attendance/{id}/api ifashe parent attendance partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-parent-attendance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-attendance/{id}/api ifashe parent attendance destroy
+- **GET** `{{baseUrl}}/api/ifashe-parent-attendance/?page=5966&page_size=5966`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-attendance/api ifashe parent attendance list
+- **POST** `{{baseUrl}}/api/ifashe-parent-attendance/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-attendance/api ifashe parent attendance create
+- **GET** `{{baseUrl}}/api/ifashe-parent-contracts/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-contracts/{id}/api ifashe parent contracts retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-parent-contracts/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-contracts/{id}/api ifashe parent contracts update
+- **PATCH** `{{baseUrl}}/api/ifashe-parent-contracts/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-contracts/{id}/api ifashe parent contracts partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-parent-contracts/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-contracts/{id}/api ifashe parent contracts destroy
+- **GET** `{{baseUrl}}/api/ifashe-parent-contracts/?page=5966&page_size=5966`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-contracts/api ifashe parent contracts list
+- **POST** `{{baseUrl}}/api/ifashe-parent-contracts/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-contracts/api ifashe parent contracts create
+- **GET** `{{baseUrl}}/api/ifashe-parent-performance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-performance/{id}/api ifashe parent performance retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-parent-performance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-performance/{id}/api ifashe parent performance update
+- **PATCH** `{{baseUrl}}/api/ifashe-parent-performance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-performance/{id}/api ifashe parent performance partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-parent-performance/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-performance/{id}/api ifashe parent performance destroy
+- **GET** `{{baseUrl}}/api/ifashe-parent-performance/?page=5966&page_size=5966`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-performance/api ifashe parent performance list
+- **POST** `{{baseUrl}}/api/ifashe-parent-performance/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-parent-performance/api ifashe parent performance create
+- **POST** `{{baseUrl}}/api/ifashe-school-support/:id/add_payment/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/{id}/add_payment/api ifashe school support add payment create
+- **GET** `{{baseUrl}}/api/ifashe-school-support/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/{id}/api ifashe school support retrieve
+- **PUT** `{{baseUrl}}/api/ifashe-school-support/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/{id}/api ifashe school support update
+- **PATCH** `{{baseUrl}}/api/ifashe-school-support/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/{id}/api ifashe school support partial update
+- **DELETE** `{{baseUrl}}/api/ifashe-school-support/:id/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/{id}/api ifashe school support destroy
+- **POST** `{{baseUrl}}/api/ifashe-school-support/bulk_delete/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/bulk_delete/api ifashe school support bulk delete create
+- **POST** `{{baseUrl}}/api/ifashe-school-support/bulk_mark_paid/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/bulk_mark_paid/api ifashe school support bulk mark paid create
+- **POST** `{{baseUrl}}/api/ifashe-school-support/bulk_update/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/bulk_update/api ifashe school support bulk update create
+- **GET** `{{baseUrl}}/api/ifashe-school-support/?academic_year=string&ordering=string&page=5966&page_size=5966&payment_status=OVERDUE&school=def855e1-902f-1204-28de-c5fbc1f54ed9&search=string`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/api ifashe school support list
+- **POST** `{{baseUrl}}/api/ifashe-school-support/`
+  - Path: /v1/Ifashe Tugufashe Program/ifashe-school-support/api ifashe school support create
+- **GET** `{{baseUrl}}/api/ifashe/reports/families/excel/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/families/excel/api ifashe reports families excel retrieve
+- **GET** `{{baseUrl}}/api/ifashe/reports/families/pdf/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/families/pdf/api ifashe reports families pdf retrieve
+- **GET** `{{baseUrl}}/api/ifashe/reports/parent-work/excel/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/parent-work/excel/api ifashe reports parent work excel retrieve
+- **GET** `{{baseUrl}}/api/ifashe/reports/parent-work/pdf/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/parent-work/pdf/api ifashe reports parent work pdf retrieve
+- **GET** `{{baseUrl}}/api/ifashe/reports/summary/excel/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/summary/excel/api ifashe reports summary excel retrieve
+- **GET** `{{baseUrl}}/api/ifashe/reports/summary/pdf/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/summary/pdf/api ifashe reports summary pdf retrieve
+- **GET** `{{baseUrl}}/api/ifashe/reports/support/excel/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/support/excel/api ifashe reports support excel retrieve
+- **GET** `{{baseUrl}}/api/ifashe/reports/support/pdf/`
+  - Path: /v1/Ifashe Tugufashe Program/reports/support/pdf/api ifashe reports support pdf retrieve
