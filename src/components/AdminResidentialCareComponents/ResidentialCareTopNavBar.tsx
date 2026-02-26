@@ -1,0 +1,108 @@
+import { Menu, Search } from "lucide-react";
+
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "../ui/navigation-menu";
+import { Field } from "../ui/field";
+import { Input } from "../ui/input";
+import { IoNotificationsOutline, IoSettingsOutline } from "react-icons/io5";
+import profilePic from "@/assets/profile_pic.jpg";
+
+interface ResidentialCareTopNavBar {
+  onMenuClick?: () => void;
+}
+
+export const ResidentialCareTopNavBar = ({
+  onMenuClick,
+}: ResidentialCareTopNavBar) => {
+  return (
+    <header className="fixed top-0 z-40 h-16.25 w-full md:left-54 md:w-[calc(100%-13.5rem)] lg:left-54 lg:w-[calc(100%-13.5rem)] border-b bg-background">
+      {/* ===== Mobile / Tablet ===== */}
+      <div className="flex md:hidden items-center justify-between px-4 h-full">
+        <div className="flex items-center">
+          <Field className="flex-1">
+            <div className="relative max-w-xs">
+              <Input
+                id="search_field"
+                type="text"
+                placeholder="Search something"
+                required
+                className="border-none rounded-2xl bg-[#F5F7FA] text-[#718EBF] pl-10"
+              />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718EBF]"
+                size={18}
+              />
+            </div>
+          </Field>
+        </div>
+
+        <div className="flex gap-2">
+          <div className="h-10 w-10 text-[#718EBF] rounded-full bg-[#F5F7FA] flex items-center justify-center">
+            <IoNotificationsOutline size={20} />
+          </div>
+
+          <button
+            onClick={onMenuClick}
+            className="p-2 rounded-md border bg-white ml-3"
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+      </div>
+
+      {/* ===== Desktop ===== */}
+      <div className="hidden md:flex md:justify-end md:items-center lg:justify-end lg:items-center h-full shadow-sm px-4">
+        <NavigationMenu className="flex items-center gap-4 h-15">
+          <NavigationMenuList className="flex items-center gap-4">
+            {/* search bar */}
+            <NavigationMenuItem>
+              <Field>
+                <div className="relative w-full max-w-xs">
+                  <Input
+                    id="search_field"
+                    type="text"
+                    placeholder="Search something"
+                    required
+                    className="border-none rounded-2xl bg-[#F5F7FA] text-[#718EBF] pl-10"
+                  />
+                  <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718EBF]"
+                    size={18}
+                  />
+                </div>
+              </Field>
+            </NavigationMenuItem>
+
+            {/* settings icon */}
+            <NavigationMenuItem>
+              <div className="h-8 w-8 text-[#718EBF] rounded-full bg-[#F5F7FA] flex items-center justify-center">
+                <IoSettingsOutline size={20} />
+              </div>
+            </NavigationMenuItem>
+
+            {/* notifications icon */}
+            <NavigationMenuItem>
+              <div className="h-8 w-8 text-[#718EBF] rounded-full bg-[#F5F7FA] flex items-center justify-center">
+                <IoNotificationsOutline size={20} />
+              </div>
+            </NavigationMenuItem>
+
+            {/* profile picture */}
+            <NavigationMenuItem>
+              <div className="h-12 w-12 rounded-full overflow-hidden">
+                <img
+                  src={profilePic}
+                  alt="profile_pic"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+    </header>
+  );
+};

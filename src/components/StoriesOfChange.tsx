@@ -1,4 +1,19 @@
-import React from 'react';
+import React from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import { ArrowRight } from "lucide-react";
+
+// Import Swiper styles
+import "swiper/swiper-bundle.css";
+
+// Import placeholder images (replace these with your actual imports)
+import story1 from '@/assets/viye.png';
+import story2 from '@/assets/viye3.png';
+import story3 from '@/assets/viye 2.png';
+import story4 from '@/assets/viye3.png';
+import story5 from '@/assets/viye4.png';
+import story6 from '@/assets/viye3.png';
+
 
 interface StoryCardProps {
   image: string;
@@ -8,68 +23,128 @@ interface StoryCardProps {
 
 const StoryCard: React.FC<StoryCardProps> = ({ image, name, story }) => {
   return (
-    <div className="flex flex-col items-center text-center bg-white rounded-sm">
-      <div className="mb-4 h-24 w-24 overflow-hidden rounded-md border-4 border-gray-200 sm:h-28 sm:w-28 md:h-32 md:w-32">
-        <img
-          src={image}
-          alt={name}
-          className="h-full w-full object-cover"
-        />
+    <div className="relative pt-12">
+      {/* White Card */}
+      <div className="bg-white shadow-md p-6 pl-0 flex gap-6 items-start">
+        {/* Portrait Image - LEFT side, extends above card */}
+        <div className="shrink-0 -mt-18.5">
+          <div className="h-48 w-32 overflow-hidden">
+            <img
+              src={image}
+              alt={name}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Content - RIGHT side */}
+        <div className="flex-1 pt-4">
+          <h3 className="mb-3 text-base font-bold text-gray-900">{name}</h3>
+          <p className="text-xs leading-relaxed text-gray-600">{story}</p>
+        </div>
       </div>
-      <h3 className="mb-2 text-base font-bold uppercase tracking-wide text-gray-900 sm:text-lg md:mb-3">
-        {name}
-      </h3>
-      <p className="text-base leading-relaxed text-gray-600 sm:text-base">
-        {story}
-      </p>
     </div>
   );
 };
 
-export const StoriesOfChange= () => {
+export const StoriesOfChange = () => {
   const stories = [
-     {
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbCLdglNRCWITCP7qQGWY6RdzWOBXJ6TimHw&s',
-      name: 'NDEKEZI Pascal',
-      story: ' I have been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!',
-      
+    {
+      image: story1,
+      name: "NDEKEZI Pascal",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
     {
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWiFTjPzMtOOiOyQ5reLcmz98X2dhfg30sIw&s',
-      name: 'MANIRAKIZA JEAN Paul',
-      story: 'I have been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!',
+      image: story2,
+      name: "MANIRAKIZA JEAN Paul",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
     {
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWiFTjPzMtOOiOyQ5reLcmz98X2dhfg30sIw&s',
-      name: 'UWIMPAYE Evelyne',
-      story: 'I have been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!',
+      image: story3,
+      name: "UWIMPAYE Evelyne",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+    },
+    {
+      image: story4,
+      name: "MUKAMANA Grace",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+    },
+    {
+      image: story5,
+      name: "NIYONZIMA Jean",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
+    },
+    {
+      image: story6,
+      name: "UWIHANA Rose",
+      story:
+        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
     },
   ];
 
   return (
     <section className="bg-gray-100 py-12 md:py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center md:mb-12">
-          <h2 className="mb-3 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl md:mb-4">
+        <div className="mb-12 text-left md:mb-16">
+          <h2 className="mb-3 text-3xl font-bold text-gray-900 md:text-4xl">
             Stories of Change
           </h2>
-          <p className="mx-auto max-w-3xl text-sm text-gray-700 sm:text-base md:text-lg">
-            Real journeys of transformation, resilience, and hope from vulnerability to independence
+          <p className="max-w-2xl text-sm text-gray-700 md:text-base">
+            Real journeys of transformation, resilience, and hope from
+            vulnerability to independence
           </p>
         </div>
-        <div className="mb-8 grid gap-8 sm:grid-cols-2 md:mb-12 md:gap-12 lg:grid-cols-3">
-          {stories.map((story, index) => (
-            <StoryCard
-              key={index}
-              image={story.image}
-              name={story.name}
-              story={story.story}
-            />
-          ))}
+
+        {/* Swiper Carousel */}
+        <div className="mb-12 md:mb-16">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            spaceBetween={30}
+            slidesPerView={1}
+            loop={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            speed={800}
+            breakpoints={{
+              640: {
+                slidesPerView: 1,
+                spaceBetween: 20,
+              },
+              768: {
+                slidesPerView: 2,
+                spaceBetween: 24,
+              },
+              1024: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+              },
+            }}
+            className="stories-swiper"
+          >
+            {stories.map((story, index) => (
+              <SwiperSlide key={index}>
+                <StoryCard
+                  image={story.image}
+                  name={story.name}
+                  story={story.story}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
+
         <div className="text-center">
-          <button className="rounded-md border-2 border-gray-900 bg-transparent px-6 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:px-8 sm:py-3 sm:text-base">
+          <button className="inline-flex items-center gap-2 rounded-full border-2 border-gray-900 bg-transparent px-8 py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white">
             Read More Stories
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

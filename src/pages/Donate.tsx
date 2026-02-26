@@ -203,18 +203,18 @@ function Donate() {
     <div className="min-h-screen bg-white">
       <TopNavBar />
       <main>
-        <section className="relative h-125 bg-cover bg-center">
+        <section className="relative h-100 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${donate})` }}
           >
             <div className="absolute inset-0 bg-teal-900/70"></div>
           </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl text-yellow-500 font-bold text-center mb-4">
+          <div className="relative z-10 text-center text-white px-4">
+            <h1 className="text-5xl font-bold mb-4 text-yellow-500">
               Make a Difference Today
             </h1>
-            <p className="text-xl md:text-2xl text-center max-w-3xl mb-8">
+            <p className="text-xl max-w-2xl mx-auto">
               Your Generosity transforms lives and builds brighter futures for
               vulnerable children and their families
             </p>

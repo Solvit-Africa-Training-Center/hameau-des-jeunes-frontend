@@ -52,7 +52,7 @@ export const MeetOurTeam: React.FC = () => {
   ];
 
   return (
-    <section className="bg-white py-12 md:py-16 lg:py-24">
+    <section className="bg-gray-100 py-12 md:py-8 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 text-center md:mb-12">
           <h2 className="mb-3 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl md:mb-4">

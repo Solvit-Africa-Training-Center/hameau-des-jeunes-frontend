@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { useLoginMutation } from "@/store/api/authApi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import hdj_logo_black from "@/assets/hdj_logo_black.png";
 
 export function LoginForm({
   className,
@@ -24,19 +27,29 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [login, { isLoading, error }] = useLoginMutation();
   const navigate = useNavigate();
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-3", className)} {...props}>
       <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
+        <div className="text-center">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-center">
+              <img
+                src={hdj_logo_black}
+                alt="hdj_logo"
+                className="boject-cover"
+              />
+            </CardTitle>
+            <CardDescription className="text-black">
+              Welcome again !
+            </CardDescription>
+          </CardHeader>
+        </div>
+
         <CardContent>
           <form
             onSubmit={async (e) => {
@@ -53,10 +66,11 @@ export function LoginForm({
                 localStorage.setItem("refreshToken", res.refresh);
                 localStorage.setItem("user", JSON.stringify(res.user));
 
+                toast.success("Logged in successfully!");
+
                 const loggedInUserString = localStorage.getItem("user");
 
                 if (!loggedInUserString) {
-                  // user not found in localStorage
                   console.error("No user in localStorage");
                   return;
                 }
@@ -73,7 +87,7 @@ export function LoginForm({
                     break;
 
                   case "INTERNSHIPS_MANAGER":
-                    navigate("/internshipsDashboard");
+                    navigate("/InternshipsDashboard");
                     break;
 
                   case "IFASHE_MANAGER":
@@ -105,28 +119,45 @@ export function LoginForm({
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <a
                     href="/resetPassword"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    className="ml-auto inline-block text-[#0F3D2E] font-semibold text-sm underline-offset-4 hover:underline"
                   >
-                    Forgot your password?
+                    Want to reset your password?
                   </a>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <AiOutlineEyeInvisible size={20} />
+                    ) : (
+                      <AiOutlineEye size={20} />
+                    )}
+                  </button>
+                </div>
               </Field>
               <Field>
-                <Button type="submit" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="bg-[#0F3D2E]"
+                >
                   {isLoading ? "Logging..." : "Login"}
                 </Button>
-                <Button variant="outline" type="button">
-                  Login with Google
-                </Button>
+
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/adminSignup">Sign up</a>
+                  {/* Don&apos;t have an account? <a href="/adminSignup">Sign up</a> */}
                 </FieldDescription>
               </Field>
             </FieldGroup>

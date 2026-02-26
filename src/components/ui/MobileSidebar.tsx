@@ -11,36 +11,38 @@ interface MobileSidebarProps {
 
 export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
   return (
-    <div
-      className={cn(
-        "fixed inset-0 z-50 lg:hidden transition-opacity duration-300",
-        open
-          ? "opacity-100 pointer-events-auto"
-          : "opacity-0 pointer-events-none",
-      )}
-    >
+    <>
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div
+        className={cn(
+          "fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300",
+          open
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
+        )}
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
       {/* Drawer */}
-      <aside
+      <div
         className={cn(
-          "absolute left-0 top-0 h-full w-64 bg-[#1a2e35] transform transition-transform duration-300",
+          "fixed left-0 top-0 h-full w-54 z-50 md:hidden transform transition-transform duration-300",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white lg:hidden"
+          className="absolute top-4 right-4 text-[#0F3D2E] z-10 hover:bg-gray-100 rounded-full p-1 transition-colors"
           aria-label="Close sidebar"
         >
-          <X className="h-5 w-5" />
+          <X className="h-6 w-6" />
         </button>
 
-        {/* Reuse existing sidebar */}
-        <Sidebar className="flex h-full w-full" />
-      </aside>
-    </div>
+        {/* Sidebar content */}
+        <Sidebar className="relative" />
+      </div>
+    </>
   );
 }

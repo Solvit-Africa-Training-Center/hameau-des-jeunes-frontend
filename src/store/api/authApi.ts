@@ -4,7 +4,7 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://tricky-cyb-matabar-576778bf.koyeb.app/api",
-    // baseUrl: "http://192.168.1.129:8000/api",
+    // baseUrl: "http://192.168.1.251:8000/api",
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("accessToken");
       if (token) {
@@ -43,6 +43,44 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+
+    confirmPasswordReset: builder.mutation<
+      any,
+      {
+        email: string;
+        code: string;
+        new_password: string;
+        confirm_password: string;
+      }
+    >({
+      query: (data) => ({
+        url: "/managers/password-reset/confirm/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    changePassword: builder.mutation<
+      any,
+      { old_password: string; new_password: string; password_confirm: string }
+    >({
+      query: (data) => ({
+        url: "/managers/change-password/",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    logout: builder.mutation<void, void>({
+      query: () => {
+        const refreshToken = localStorage.getItem("refreshToken");
+        return {
+          url: "/managers/logout/",
+          method: "POST",
+          body: { refresh: refreshToken },
+        };
+      },
+    }),
   }),
 });
 
@@ -50,4 +88,7 @@ export const {
   useLoginMutation,
   useSignupMutation,
   useRequestPasswordResetMutation,
+  useConfirmPasswordResetMutation,
+  useChangePasswordMutation,
+  useLogoutMutation,
 } = authApi;

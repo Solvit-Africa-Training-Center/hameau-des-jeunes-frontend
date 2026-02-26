@@ -1,5 +1,5 @@
 import { TopNavBar } from "@/components/TopNavBar";
-import aboutImage from "@/assets/hameadu_des_jeunes_community.jpeg";
+import aboutImage from "@/assets/people.jpg";
 
 import { Footer } from "@/components/Footer";
 import { OurStory } from "@/components/AboutUsComponents/OurStory";
@@ -9,26 +9,26 @@ import { MeetOurTeam } from "@/components/AboutUsComponents/MeetOurTeam";
 
 export const AboutUs = () => {
   return (
-    <>
+    <>  
       <TopNavBar />
-      <header
-        className="relative h-64 sm:h-80 md:h-96 lg:h-[17rem] flex items-center justify-center text-white"
-        style={{
-          backgroundImage: `linear-gradient(to bottom,rgba(0,0,0,.6),rgba(0,0,0,.6)),url(${aboutImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
-        }}
-      >
-        <div className="text-center px-4 max-w-4xl mx-auto">
-          <h1 className="text-2xl text-button-yellow sm:text-5xl md:text-5xl lg:text-5xl font-bold mb-2 leading-tight">
+      <section className="relative h-100 flex items-center justify-center">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${aboutImage})` }}
+        >
+          <div className="absolute inset-0 bg-teal-900/70"></div>
+        </div>
+
+        <div className="relative z-10 text-center text-white px-4">
+          <h1 className="text-5xl font-bold mb-4 text-yellow-500">
             About us
           </h1>
-          <p className="justify-center text-white md:text-2xl  sm:text-sm">
+          <p className="text-xl max-w-2xl mx-auto">
             Learn about our journey, mission, and the values that guide our work
             in supporting vulnerable children and families in Rwanda.
           </p>
         </div>
-      </header>
+      </section>
       <OurStory />
       <MissionAndVision />
       <OurCoreValues />
