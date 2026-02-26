@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Search, Download, Eye, Pencil, UserPlus, Users } from "lucide-react";
 import { useGetIfasheFamiliesQuery } from "@/store/api/ifasheFamiliesApi";
-import { toast } from "react-toastify";
 import ViewFamilyModal from "./ViewFamilyModal";
 import EditFamilyModal from "./EditFamilyModal";
 import ManageFamilyChildrenModal from "./ManageFamilyChildrenModal";
@@ -11,6 +10,7 @@ export interface Family {
   familyId: string;
   parentName: string;
   phoneNumber: string;
+  children: number;
   vulnerability: "Low" | "Medium" | "High" | "Critical";
   parentId?: string;
   // Full data for the form
