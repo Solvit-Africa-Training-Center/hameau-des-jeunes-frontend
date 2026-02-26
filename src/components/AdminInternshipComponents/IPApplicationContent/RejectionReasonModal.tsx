@@ -6,21 +6,22 @@ interface RejectionReasonModalProps {
   isOpen: boolean;
   onClose: () => void;
   application: Application | null;
+  onConfirm: (reason: string) => void;
 }
 
 export default function RejectionReasonModal({
   isOpen,
   onClose,
   application,
+  onConfirm,
 }: RejectionReasonModalProps) {
   const [reason, setReason] = useState("");
 
   if (!isOpen || !application) return null;
 
   const handleSend = () => {
-    console.log("Rejection reason:", reason);
+    onConfirm(reason);
     setReason("");
-    onClose();
   };
 
   return (

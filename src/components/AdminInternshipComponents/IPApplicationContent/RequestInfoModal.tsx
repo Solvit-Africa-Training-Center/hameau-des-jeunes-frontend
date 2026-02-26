@@ -6,21 +6,22 @@ interface RequestInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   application: Application | null;
+  onConfirm: (notes: string) => void;
 }
 
 export default function RequestInfoModal({
   isOpen,
   onClose,
   application,
+  onConfirm,
 }: RequestInfoModalProps) {
-  const [info, setInfo] = useState("");
+  const [request, setRequest] = useState("");
 
   if (!isOpen || !application) return null;
 
   const handleSend = () => {
-    console.log("Information request:", info);
-    setInfo("");
-    onClose();
+    onConfirm(request);
+    setRequest("");
   };
 
   return (
@@ -42,9 +43,9 @@ export default function RequestInfoModal({
         {/* Body */}
         <div className="px-6 py-5">
           <textarea
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-            placeholder="Specify them here..."
+            value={request}
+            onChange={(e) => setRequest(e.target.value)}
+            placeholder="Describe the information you need"
             rows={6}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
           />
