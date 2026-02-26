@@ -88,7 +88,7 @@ export const internshipApi = createApi({
     }),
     getApplication: builder.query<InternshipApplication, string>({
       query: (id) => `/internship-applications/${id}/`,
-      providesTags: (result, error, id) => [{ type: "InternshipApplication", id }],
+      providesTags: (_result, _error, id) => [{ type: "InternshipApplication", id }],
     }),
     createApplication: builder.mutation<InternshipApplication, FormData>({
       query: (data) => ({
@@ -104,7 +104,7 @@ export const internshipApi = createApi({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "InternshipApplication", id }, "InternshipApplication"],
+      invalidatesTags: (_result, _error, { id }) => [{ type: "InternshipApplication", id }, "InternshipApplication"],
     }),
     deleteApplication: builder.mutation<void, string>({
       query: (id) => ({
