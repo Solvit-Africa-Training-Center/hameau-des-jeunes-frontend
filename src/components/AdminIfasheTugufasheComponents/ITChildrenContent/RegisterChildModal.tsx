@@ -1,8 +1,8 @@
-import { X, Save } from "lucide-react";
+import { X, Save, Plus, School } from "lucide-react";
 import { useState } from "react";
 import { useCreateIfasheChildMutation } from "@/store/api/ifasheChildrenApi";
 import { useGetIfasheFamiliesQuery } from "@/store/api/ifasheFamiliesApi";
-import { useGetInstitutionsQuery } from "@/store/api/educationApi";
+import { useGetInstitutionsQuery, useCreateInstitutionMutation } from "@/store/api/educationApi";
 import { toast } from "react-toastify";
 
 interface RegisterChildModalProps {
@@ -21,13 +21,47 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
     supportStatus: "Active",
     healthConditions: "",
   });
+  const [showNewSchoolForm, setShowNewSchoolForm] = useState(false);
+  const [newSchool, setNewSchool] = useState({ name: "", address: "", phone: "", email: "" });
+  const [isCreatingSchool, setIsCreatingSchool] = useState(false);
 
-  const { data: institutions = [] } = useGetInstitutionsQuery();
+  const { data: institutions = [], refetch: refetchInstitutions } = useGetInstitutionsQuery();
+  const [createInstitution] = useCreateInstitutionMutation();
 
   const { data: fetchedFamilies = [] } = useGetIfasheFamiliesQuery();
   const [createChild, { isLoading }] = useCreateIfasheChildMutation();
 
   if (!isOpen) return null;
+
+  const handleAddNewSchool = async () => {
+    if (!newSchool.name.trim()) { toast.error("School name is required."); return; }
+    setIsCreatingSchool(true);
+    try {
+      await createInstitution({
+        name: newSchool.name.trim(),
+        address: newSchool.address.trim(),
+        phone: newSchool.phone.trim(),
+        email: newSchool.email.trim(),
+        programs: [],
+      }).unwrap();
+      toast.success(`"${newSchool.name}" added to registry!`);
+      setFormData((prev) => ({ ...prev, schoolName: newSchool.name.trim() }));
+      setNewSchool({ name: "", address: "", phone: "", email: "" });
+      setShowNewSchoolForm(false);
+      refetchInstitutions();
+    } catch (err: any) {
+      // If 403 (no access yet), still use the name as school_name text
+      if (err?.status === 403) {
+        toast.info("School registry access pending — saving school name directly.");
+        setFormData((prev) => ({ ...prev, schoolName: newSchool.name.trim() }));
+        setShowNewSchoolForm(false);
+      } else {
+        toast.error("Failed to create school. Please try again.");
+      }
+    } finally {
+      setIsCreatingSchool(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,29 +202,86 @@ export default function RegisterChildModal({ isOpen, onClose }: RegisterChildMod
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 School *
               </label>
+
+              {/* Dropdown: existing institutions */}
               <select
-                value={formData.schoolName}
-                onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
+                value={showNewSchoolForm ? "__new__" : formData.schoolName}
+                onChange={(e) => {
+                  if (e.target.value === "__new__") {
+                    setShowNewSchoolForm(true);
+                    setFormData({ ...formData, schoolName: "" });
+                  } else {
+                    setShowNewSchoolForm(false);
+                    setFormData({ ...formData, schoolName: e.target.value });
+                  }
+                }}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm appearance-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
-                required
+                required={!showNewSchoolForm}
               >
                 <option value="">— Select School —</option>
-                {institutions.length > 0 && (
-                  <optgroup label="Educational Institutions">
-                    {institutions.map((inst) => (
-                      <option key={inst.id} value={inst.name}>{inst.name}{inst.address ? ` — ${inst.address}` : ""}</option>
-                    ))}
-                  </optgroup>
-                )}
-                <option value="Other">Other (specify below)</option>
+                {institutions.map((inst) => (
+                  <option key={inst.id} value={inst.name}>
+                    {inst.name}{inst.address ? ` — ${inst.address}` : ""}
+                  </option>
+                ))}
+                <option value="__new__">+ Add New School...</option>
               </select>
-              {formData.schoolName === "Other" && (
-                <input
-                  type="text"
-                  placeholder="Enter school name..."
-                  className="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
-                />
+
+              {/* Inline new-school creation form */}
+              {showNewSchoolForm && (
+                <div className="mt-3 p-4 border border-emerald-200 rounded-lg bg-emerald-50 space-y-3">
+                  <p className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
+                    <School className="w-3.5 h-3.5" /> New School Details
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="School name *"
+                    value={newSchool.name}
+                    onChange={(e) => setNewSchool({ ...newSchool, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Address (optional)"
+                    value={newSchool.address}
+                    onChange={(e) => setNewSchool({ ...newSchool, address: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Phone (optional)"
+                      value={newSchool.phone}
+                      onChange={(e) => setNewSchool({ ...newSchool, phone: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email (optional)"
+                      value={newSchool.email}
+                      onChange={(e) => setNewSchool({ ...newSchool, email: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => { setShowNewSchoolForm(false); setNewSchool({ name: "", address: "", phone: "", email: "" }); }}
+                      className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddNewSchool}
+                      disabled={isCreatingSchool || !newSchool.name.trim()}
+                      className="px-3 py-1.5 text-xs bg-emerald-900 text-white rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50 flex items-center gap-1"
+                    >
+                      <Plus className="w-3 h-3" />
+                      {isCreatingSchool ? "Adding..." : "Add & Select"}
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
