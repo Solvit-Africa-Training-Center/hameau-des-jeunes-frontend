@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { BaseQueryApi } from "@reduxjs/toolkit/query/react";
 import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
 import type {
   // EnrollmentStatus,

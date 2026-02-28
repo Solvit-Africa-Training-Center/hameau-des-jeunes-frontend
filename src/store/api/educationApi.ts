@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
 import type {
-  Program,
   EducationalInstitution,
   CreateInstitutionPayload,
 } from "@/types";

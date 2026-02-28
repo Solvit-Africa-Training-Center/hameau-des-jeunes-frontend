@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
-import type { Child, UpdateChildPayload } from "@/types";
+import type { Child } from "@/types";
 
 interface PaginatedResponse {
   count: number;

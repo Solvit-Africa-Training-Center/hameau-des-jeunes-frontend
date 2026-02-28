@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
-import type {
-  LoginCredentials,
-  PasswordResetRequest,
-  PasswordResetConfirmation,
-  ChangePasswordPayload,
-} from "@/types";
+// import type {
+//   LoginCredentials,
+//   PasswordResetRequest,
+//   PasswordResetConfirmation,
+//   ChangePasswordPayload,
+// } from "@/types";
 
 export const authApi = createApi({
   reducerPath: "authApi",
