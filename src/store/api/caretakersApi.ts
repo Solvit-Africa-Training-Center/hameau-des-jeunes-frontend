@@ -1,52 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export interface Caretaker {
-  id: string;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  date_of_birth: string;
-  gender: string;
-  phone: string;
-  email: string;
-  address: string;
-  role: string;
-  hire_date: string;
-  is_active: boolean;
-  created_on: string;
-  updated_on: string;
-}
-
-export interface CreateCaretakerPayload {
-  first_name: string;
-  last_name: string;
-  date_of_birth: string;
-  gender: string;
-  phone: string;
-  email: string;
-  address: string;
-  role: string;
-  hire_date: string;
-  is_active: boolean;
-}
-
-export interface BulkAssignPayload {
-  caretaker_id: string;
-  children_ids: string[];
-}
-
-// Updated to match what the API actually returns at runtime
-export interface ChildCaretakerAssignmentRead {
-  id: string;
-  child: string; // child UUID
-  child_name: string; // child display name
-  caretaker: string; // caretaker UUID (may be missing in some API versions)
-  caretaker_name: string; // caretaker display name — always present
-  assigned_date: string;
-  end_date: string | null;
-  is_active: boolean;
-  description: string;
-}
+import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
+import type {
+  Caretaker,
+  CreateCaretakerPayload,
+  BulkAssignPayload,
+  ChildCaretakerAssignmentRead,
+} from "@/types";
 
 interface BulkAssignResponse {
   count: number;
@@ -65,14 +24,8 @@ interface PaginatedResponse {
 export const caretakersApi = createApi({
   reducerPath: "caretakersApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://tricky-cyb-matabar-576778bf.koyeb.app/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
+    baseUrl: API_CONFIG.BASE_URL,
+    prepareHeaders: (headers) => preparaAuthHeaders(headers),
   }),
   tagTypes: ["Caretakers", "Caretaker", "Assignments"],
   endpoints: (builder) => ({
@@ -137,3 +90,11 @@ export const {
   useGetAssignmentsQuery,
   useBulkAssignChildrenMutation,
 } = caretakersApi;
+
+// Re-export types for backward compatibility
+export type {
+  Caretaker,
+  CreateCaretakerPayload,
+  BulkAssignPayload,
+  ChildCaretakerAssignmentRead,
+} from "@/types";

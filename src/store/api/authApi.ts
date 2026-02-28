@@ -1,17 +1,17 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
+import type {
+  LoginCredentials,
+  PasswordResetRequest,
+  PasswordResetConfirmation,
+  ChangePasswordPayload,
+} from "@/types";
 
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://tricky-cyb-matabar-576778bf.koyeb.app/api",
-    // baseUrl: "http://192.168.1.251:8000/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
+    baseUrl: API_CONFIG.BASE_URL,
+    prepareHeaders: (headers) => preparaAuthHeaders(headers),
   }),
   endpoints: (builder) => ({
     login: builder.mutation({
@@ -92,3 +92,11 @@ export const {
   useChangePasswordMutation,
   useLogoutMutation,
 } = authApi;
+
+// Re-export types for backward compatibility
+export type {
+  LoginCredentials,
+  PasswordResetRequest,
+  PasswordResetConfirmation,
+  ChangePasswordPayload,
+} from "@/types";

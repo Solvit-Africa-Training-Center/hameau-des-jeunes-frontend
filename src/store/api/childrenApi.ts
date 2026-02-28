@@ -1,37 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export interface Child {
-  id: string;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  gender: "MALE" | "FEMALE";
-  date_of_birth: string;
-  age: number;
-  profile_image: string;
-  start_date: string;
-  end_date: string;
-  status: "ACTIVE" | "INACTIVE";
-  special_needs: string;
-  vigilant_contact_name: string;
-  vigilant_contact_phone: string;
-  story: string;
-  created_on: string;
-  updated_on: string;
-}
-
-export interface UpdateChildPayload {
-  first_name: string;
-  last_name: string;
-  date_of_birth: string;
-  gender: "MALE" | "FEMALE";
-  profile_image?: string;
-  start_date: string;
-  special_needs?: string;
-  vigilant_contact_name?: string;
-  vigilant_contact_phone?: string;
-  story?: string | null;
-}
+import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
+import type { Child, UpdateChildPayload } from "@/types";
 
 interface PaginatedResponse {
   count: number;
@@ -43,14 +12,8 @@ interface PaginatedResponse {
 export const childrenApi = createApi({
   reducerPath: "childrenApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://tricky-cyb-matabar-576778bf.koyeb.app/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
+    baseUrl: API_CONFIG.BASE_URL,
+    prepareHeaders: (headers) => preparaAuthHeaders(headers),
   }),
   tagTypes: ["Children", "Child"],
   endpoints: (builder) => ({
@@ -103,3 +66,6 @@ export const {
   useUpdateChildMutation,
   useDeleteChildMutation,
 } = childrenApi;
+
+// Re-export types for backward compatibility
+export type { Child, UpdateChildPayload } from "@/types";

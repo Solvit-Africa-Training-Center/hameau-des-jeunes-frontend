@@ -1,80 +1,27 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { BaseQueryApi } from "@reduxjs/toolkit/query/react";
+import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
+import type {
+  // EnrollmentStatus,
+  // EnrollmentChild,
+  // EnrollmentInstitution,
+  // EnrollmentProgram,
+  Enrollment,
+  EnrollmentFilters,
+  CreateEnrollmentPayload,
+  UpdateEnrollmentPayload,
+} from "@/types";
 
-export type EnrollmentStatus = "ACTIVE" | "COMPLETED" | "DISCONTINUED";
-
-// ─── Nested shapes exactly as the API returns them ────────────────────────────
-
-export interface EnrollmentChild {
-  id: string;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  gender: string;
-  age: number;
-  profile_image: string;
-  status: string;
-}
-
-export interface EnrollmentInstitution {
-  id: string;
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  programs: { id: string; program_name: string }[];
-}
-
-export interface EnrollmentProgram {
-  id: string;
-  program_name: string;
-  institution: EnrollmentInstitution;
-}
-
-export interface Enrollment {
-  id: string; // UUID
-  child: EnrollmentChild; // nested object
-  institution: string; // UUID string (flat)
-  program: EnrollmentProgram; // nested object
-  level: string;
-  start_date: string;
-  end_date: string;
-  cost: string;
-  cost_formatted?: string;
-  status: EnrollmentStatus;
-  created_on: string;
-  updated_on: string;
-}
-
-export interface PaginatedEnrollments {
+interface PaginatedEnrollments {
   count: number;
   next: string | null;
   previous: string | null;
   results: Enrollment[];
 }
-
-export interface EnrollmentFilters {
-  child?: string;
-  child_name?: string;
-  status?: EnrollmentStatus;
-  ordering?: string;
-  page?: number;
-  page_size?: number;
-}
-
-export interface CreateEnrollmentPayload {
-  child: string; // UUID — Child.id
-  institution: string; // UUID
-  program: string; // UUID
-  level: string;
-  start_date: string;
-  end_date: string;
-  cost: string | number;
-  status?: EnrollmentStatus;
-}
-
-export type UpdateEnrollmentPayload = Partial<CreateEnrollmentPayload> & {
-  id: string; // UUID
-};
+//   end_date: string;
+//   cost: string | number;
+//   status?: EnrollmentStatus;
+// }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -110,12 +57,8 @@ function normaliseToPaginated(raw: unknown): PaginatedEnrollments {
 export const enrollmentApi = createApi({
   reducerPath: "enrollmentApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://tricky-cyb-matabar-576778bf.koyeb.app/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      return headers;
-    },
+    baseUrl: API_CONFIG.BASE_URL,
+    prepareHeaders: (headers) => preparaAuthHeaders(headers),
   }),
   tagTypes: ["Enrollment"],
   endpoints: (builder) => ({
@@ -184,3 +127,15 @@ export const {
   useUpdateEnrollmentMutation,
   useDeleteEnrollmentMutation,
 } = enrollmentApi;
+
+// Re-export types for backward compatibility
+export type {
+  EnrollmentStatus,
+  EnrollmentChild,
+  EnrollmentInstitution,
+  EnrollmentProgram,
+  Enrollment,
+  EnrollmentFilters,
+  CreateEnrollmentPayload,
+  UpdateEnrollmentPayload,
+} from "@/types";

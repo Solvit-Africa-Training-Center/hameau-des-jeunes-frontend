@@ -1,36 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export interface Program {
-  id: string; // UUID
-  program_name: string;
-}
-
-export interface EducationalInstitution {
-  id: string; // UUID
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  programs: Program[];
-}
-
-export interface CreateInstitutionPayload {
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-  programs: Pick<Program, "program_name">[];
-}
+import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
+import type {
+  Program,
+  EducationalInstitution,
+  CreateInstitutionPayload,
+} from "@/types";
 
 export const educationApi = createApi({
   reducerPath: "educationApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://tricky-cyb-matabar-576778bf.koyeb.app/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) headers.set("Authorization", `Bearer ${token}`);
-      return headers;
-    },
+    baseUrl: API_CONFIG.BASE_URL,
+    prepareHeaders: (headers) => preparaAuthHeaders(headers),
   }),
   tagTypes: ["Institution"],
   endpoints: (builder) => ({
@@ -63,3 +43,10 @@ export const educationApi = createApi({
 
 export const { useGetInstitutionsQuery, useCreateInstitutionMutation } =
   educationApi;
+
+// Re-export types for backward compatibility
+export type {
+  Program,
+  EducationalInstitution,
+  CreateInstitutionPayload,
+} from "@/types";

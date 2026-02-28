@@ -1,40 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export interface ChildDetails {
-  id: string;
-  full_name: string;
-  age: number;
-  gender: string;
-  profile_image: string | null;
-}
-
-export interface HealthRecord {
-  id: string;
-  child: string;
-  child_name: string;
-  child_details: ChildDetails;
-  record_type: "MEDICAL_VISIT" | "VACCINATION" | "ILLNESS";
-  visit_date: string;
-  hospital_name: string | null;
-  diagnosis: string | null;
-  treatment: string | null;
-  description: string | null;
-  cost: string | null;
-  cost_formatted: string;
-  created_on: string;
-  updated_on: string;
-}
-
-export interface CreateHealthRecordPayload {
-  child: string;
-  record_type: "MEDICAL_VISIT" | "VACCINATION" | "ILLNESS";
-  visit_date: string;
-  hospital_name?: string;
-  diagnosis?: string;
-  treatment?: string;
-  description?: string;
-  cost?: string;
-}
+import { API_CONFIG, preparaAuthHeaders } from "./apiEntry";
+import type {
+  ChildDetails,
+  HealthRecord,
+  CreateHealthRecordPayload,
+} from "@/types";
 
 interface PaginatedResponse {
   count: number;
@@ -46,14 +16,8 @@ interface PaginatedResponse {
 export const healthRecordsApi = createApi({
   reducerPath: "healthRecordsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://tricky-cyb-matabar-576778bf.koyeb.app/api",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
+    baseUrl: API_CONFIG.BASE_URL,
+    prepareHeaders: (headers) => preparaAuthHeaders(headers),
   }),
   tagTypes: ["HealthRecords"],
   endpoints: (builder) => ({
@@ -103,3 +67,10 @@ export const {
   useCreateHealthRecordMutation,
   useDeleteHealthRecordMutation,
 } = healthRecordsApi;
+
+// Re-export types for backward compatibility
+export type {
+  ChildDetails,
+  HealthRecord,
+  CreateHealthRecordPayload,
+} from "@/types";
