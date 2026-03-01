@@ -3,10 +3,10 @@ import { ChevronRight } from "lucide-react";
 
 import g1 from "@/assets/rwanda_2006/DSC_6099.jpg";
 import g2 from "@/assets/rwanda_2006/DSC_6896.jpg";
-import g3 from "@/assets/rwanda_2006/DSC_6173--.jpg";
-import g4 from "@/assets/rwanda_2006/DSC_6229--.jpg";
-import g5 from "@/assets/rwanda_2006/DSC_6174--.jpg";
-import g6 from "@/assets/rwanda_2006/DSC_6264--.jpg";
+import g3 from "@/assets/rwanda_2006/DSC_6889.jpg";
+import g4 from "@/assets/rwanda_2006/DSC_7002.jpg";
+import g5 from "@/assets/rwanda_2006/DSC_7000.jpg";
+import g6 from "@/assets/rwanda_2006/DSC_6907.jpg";
 
 export const PhotoGallery: React.FC = () => {
   return (
