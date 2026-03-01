@@ -1,5 +1,5 @@
-import hero_image_1 from "@/assets/hero_image_1.png";
-import hero_image_2 from "@/assets/hero_image_2.png";
+import hero_image_1 from "@/assets/rwanda_2006/DSC_7109.jpg";
+import hero_image_2 from "@/assets/rwanda_2006/DSC_6896.jpg";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 

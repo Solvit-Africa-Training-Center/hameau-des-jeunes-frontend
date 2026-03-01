@@ -3,22 +3,22 @@ import { TopNavBar } from '@/components/TopNavBar'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import gallery from "@/assets/gallery.jpg"
-import g1 from "@/assets/g1.jpg";
-import g2 from "@/assets/g2.jpg";
-import g3 from "@/assets/g3.jpg";
-import g4 from "@/assets/g4.jpg";
-import g5 from "@/assets/g5.jpg";
-import g6 from "@/assets/g6.jpg";
-import g7 from "@/assets/g7.jpg";
-import g8 from "@/assets/g8.jpg";
-import g9 from "@/assets/g9.jpg";
-import g10 from "@/assets/g10.jpg";
-import g11 from "@/assets/g11.jpg";
-import g12 from "@/assets/g12.jpg";
-import g13 from "@/assets/g13.jpg";
-import g14 from "@/assets/g14.jpg";
-import g15 from "@/assets/g15.jpg";
-import g16 from "@/assets/g16.jpg";
+import g1 from "@/assets/rwanda_2006/DSC_6099.jpg";
+import g2 from "@/assets/rwanda_2006/DSC_6100--.jpg";
+import g3 from "@/assets/rwanda_2006/DSC_6173--.jpg";
+import g4 from "@/assets/rwanda_2006/DSC_6229--.jpg";
+import g5 from "@/assets/rwanda_2006/DSC_6174--.jpg";
+import g6 from "@/assets/rwanda_2006/DSC_6264--.jpg";
+import g7 from "@/assets/rwanda_2006/DSC_6272--.jpg";
+import g8 from "@/assets/rwanda_2006/DSC_6273--.jpg";
+import g9 from "@/assets/rwanda_2006/DSC_6281--.jpg";
+import g10 from "@/assets/rwanda_2006/DSC_6273--.jpg";
+import g11 from "@/assets/rwanda_2006/DSC_6281--.jpg";
+import g12 from "@/assets/rwanda_2006/DSC_6285--.jpg";
+import g13 from "@/assets/rwanda_2006/DSC_6367--.jpg";
+import g14 from "@/assets/rwanda_2006/DSC_6460.jpg";
+import g15 from "@/assets/rwanda_2006/DSC_6458.jpg";
+import g16 from "@/assets/rwanda_2006/DSC_6468.jpg";
 
 
 function Gallery() {
