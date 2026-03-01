@@ -6,7 +6,7 @@ import gallery from "@/assets/gallery.jpg"
 import g1 from "@/assets/rwanda_2006/DSC_6099.jpg";
 import g2 from "@/assets/rwanda_2006/DSC_6100--.jpg";
 import g3 from "@/assets/rwanda_2006/DSC_6100--.jpg";
-import g4 from "@/assets/rwanda_2006/DSC_7111.jpg";
+import g4 from "@/assets/rwanda_2006/DSC_7111.JPG";
 import g5 from "@/assets/rwanda_2006/DSC_6174--.jpg";
 import g6 from "@/assets/rwanda_2006/DSC_6264--.jpg";
 import g7 from "@/assets/rwanda_2006/DSC_6272--.jpg";
