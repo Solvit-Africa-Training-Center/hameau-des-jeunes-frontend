@@ -47,8 +47,8 @@ import IfasheTugufasheClothes from "@/pages/AdminIfasheTugufashePages/IfasheTugu
 import IfasheTugufasheParentWork from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheParentWork";
 import IfasheTugufasheReport from "@/pages/AdminIfasheTugufashePages/IfasheTugufasheReport";
 
-
 import Institutions from "@/pages/AdminResidentialCarePages/Institutions";
+import { SuperAdminWebsiteMgt } from "@/pages/DashboardPages/SuperAdminWebsiteMgt";
 
 export const AppRoutes = () => {
   return (
@@ -149,6 +149,15 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
             <SuperAdminFinancials />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/websiteMgt"
+        element={
+          <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+            <SuperAdminWebsiteMgt />
           </ProtectedRoute>
         }
       />
