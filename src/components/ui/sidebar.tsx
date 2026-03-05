@@ -9,6 +9,9 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 import { GrOverview } from "react-icons/gr";
 import { GoPeople } from "react-icons/go";
 import { VscFeedback } from "react-icons/vsc";
+import { FaUsers } from 'react-icons/fa'; 
+import { FaRocket } from 'react-icons/fa'; 
+import { FaLightbulb } from 'react-icons/fa'; 
 import { GiProgression } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { UserMenu } from "../UserMenu";
@@ -22,6 +25,9 @@ const sidebarItems = [
   { icon: GoPeople, label: "Users", href: "/usersManagement" },
   { icon: VscFeedback, label: "Feedback", href: "/feedback" },
   { icon: GiProgression, label: "Financials", href: "/allProgramsFinancials" },
+  { icon: FaUsers, label: "We're", href: "/weAre" },
+  { icon: FaLightbulb, label: "Our Work", href: "/whatWeDo" },
+  { icon: FaRocket, label: "Impact", href: "/impact" },
   { icon: IoSettingsOutline, label: "Settings", href: "/settings" },
 ];
 
@@ -52,7 +58,7 @@ export function Sidebar({ className }: { className?: string }) {
     >
       <div className="mt-5 flex flex-col space-y-0.5 px-4">
         <img src={DashLogo} alt="Dashboard Logo" />
-        <h1 className="text-[#0F3D2E] text-center">Welcome Again!</h1>
+        <h1 className="text-[#0F3D2E] text-center">Welcome</h1>
       </div>
 
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto no-scrollbar mt-5">
