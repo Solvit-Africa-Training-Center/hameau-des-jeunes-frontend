@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, ClipboardCheckIcon } from "lucide-react";
 import profilePic from "@/assets/profile_pic.jpg";
-
 import DashLogo from "@/assets/dashboardLogo.png";
 import Typography from "./typography";
 import { FaArrowTrendUp } from "react-icons/fa6";
@@ -10,9 +9,13 @@ import { GrOverview } from "react-icons/gr";
 import { GoPeople } from "react-icons/go";
 import { VscFeedback } from "react-icons/vsc";
 import { FaUsers } from 'react-icons/fa'; 
-import { FaRocket } from 'react-icons/fa'; 
 import { FaLightbulb } from 'react-icons/fa'; 
+import { FaQuoteLeft } from 'react-icons/fa'; 
+import { MdContactPage } from 'react-icons/md';
+import { IoMdPhotos } from 'react-icons/io';
 import { GiProgression } from "react-icons/gi";
+import { MdMessage } from 'react-icons/md';
+import { FaRocket } from 'react-icons/fa';
 import { IoSettingsOutline } from "react-icons/io5";
 import { UserMenu } from "../UserMenu";
 import { useState } from "react";
@@ -27,6 +30,11 @@ const sidebarItems = [
   { icon: GiProgression, label: "Financials", href: "/allProgramsFinancials" },
   { icon: FaUsers, label: "We're", href: "/weAre" },
   { icon: FaLightbulb, label: "Our Work", href: "/whatWeDo" },
+  { icon: FaQuoteLeft, label: "Testimonials", href: "/testimonials" },
+  { icon: IoMdPhotos, label: "Our Gallery", href: "/ourGallery" },
+  { icon: FaUsers, label: "Team", href: "/team" },
+  { icon: MdContactPage, label: "Company Contact", href: "/companyContact" },
+  { icon: MdMessage, label: "Messages", href: "/messages" },
   { icon: FaRocket, label: "Impact", href: "/impact" },
   { icon: IoSettingsOutline, label: "Settings", href: "/settings" },
 ];
