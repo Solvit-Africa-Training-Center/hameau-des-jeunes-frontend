@@ -20,15 +20,14 @@ export const API_CONFIG = {
  * Prepares headers with authorization token
  * Used across all API slices
  */
-export const preparaAuthHeaders = (headers: HeadersInit) => {
-  const headersObj = new Headers(headers);
+export const preparaAuthHeaders = (headers: Headers) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
-    headersObj.set("Authorization", `Bearer ${token}`);
+    headers.set("Authorization", `Bearer ${token}`);
   } else {
     console.warn(
       "[API] No access token found in localStorage. Make sure you're authenticated.",
     );
   }
-  return headersObj;
+  return headers;
 };

@@ -17,6 +17,13 @@ import { SuperAdminFeedback } from "@/pages/DashboardPages/SuperAdminFeedback";
 import SuperAdminFinancials from "@/pages/DashboardPages/SuperAdminFinancials";
 import SuperAdminSettings from "@/pages/DashboardPages/SuperAdminSettings";
 import { ProtectedRoute } from "../ProtectedRoute";
+import { SuperAdminWhoWeAreMgt } from "@/pages/DashboardPages/SuperAdminWhoWeAreMgt";
+import { SuperAdminWhatWeDoMgt } from "@/pages/DashboardPages/SuperAdminWhatWeDoMgt";
+import { SuperAdminImpactMgt } from "@/pages/DashboardPages/SuperAdminImpactMgt";
+import { SuperAdminTestimonialsMgt } from "@/pages/DashboardPages/SuperAdminTestimonialsMgt";
+import { SuperAdminTeamMgt } from "@/pages/DashboardPages/SuperAdminTeamMgt";
+import { SuperAdminCompanyContactMgt } from "@/pages/DashboardPages/SuperAdminCompanyContactMgt";
+import { SuperAdminMessageMgt } from "@/pages/DashboardPages/SuperAdminMessageMgt";
 
 export const systemAdminRoutes = [
   <Route
@@ -101,8 +108,88 @@ export const systemAdminRoutes = [
     }
   />,
   <Route
+    key="who-we-are"
+    path="/weAre"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminWhoWeAreMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="what-we-do"
+    path="/whatWeDo"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminWhatWeDoMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="impact"
+    path="/impact"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminImpactMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="impact"
+    path="/impact"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminImpactMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="testimonials"
+    path="/testimonials"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminTestimonialsMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="team"
+    path="/team"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminTeamMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="company-contact"
+    path="/companyContact"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminCompanyContactMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="message"
+    path="/messages"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminMessageMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
     key="sa-settings"
-    path="/superAdminSettings"
+    path="/settings"
     element={
       <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
         <SuperAdminSettings />

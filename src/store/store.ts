@@ -5,6 +5,8 @@ import { caretakersApi } from "./api/caretakersApi";
 import { healthRecordsApi } from "./api/healthRecordsApi";
 import { educationApi } from "./api/educationApi";
 import { enrollmentApi } from "./api/enrollmentApi";
+import { testimonialsApi } from "./api/testimonialsApi";
+import { whoWeAreApi } from "./api/whoWeAreApi";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     [healthRecordsApi.reducerPath]: healthRecordsApi.reducer,
     [educationApi.reducerPath]: educationApi.reducer,
     [enrollmentApi.reducerPath]: enrollmentApi.reducer,
+    [testimonialsApi.reducerPath]: testimonialsApi.reducer,
+    [whoWeAreApi.reducerPath]: whoWeAreApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -23,6 +27,8 @@ export const store = configureStore({
       healthRecordsApi.middleware,
       educationApi.middleware,
       enrollmentApi.middleware,
+      testimonialsApi.middleware,
+      whoWeAreApi.middleware,
     ),
 });
 

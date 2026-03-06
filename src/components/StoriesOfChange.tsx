@@ -6,14 +6,10 @@ import { ArrowRight } from "lucide-react";
 // Import Swiper styles
 import "swiper/swiper-bundle.css";
 
-// Import placeholder images (replace these with your actual imports)
-import story1 from '@/assets/viye.png';
-import story2 from '@/assets/viye3.png';
-import story3 from '@/assets/viye 2.png';
-import story4 from '@/assets/viye3.png';
-import story5 from '@/assets/viye4.png';
-import story6 from '@/assets/viye3.png';
-
+import {
+  useGetTestimonialsQuery,
+  type Testimonial,
+} from "@/store/api/testimonialsApi";
 
 interface StoryCardProps {
   image: string;
@@ -23,11 +19,11 @@ interface StoryCardProps {
 
 const StoryCard: React.FC<StoryCardProps> = ({ image, name, story }) => {
   return (
-    <div className="relative pt-12">
+    <div className="relative pt-20">
       {/* White Card */}
-      <div className="bg-white shadow-md p-6 pl-0 flex gap-6 items-start">
+      <div className="bg-white shadow-md p-6 pl-0 flex gap-6 items-start h-56 w-full ">
         {/* Portrait Image - LEFT side, extends above card */}
-        <div className="shrink-0 -mt-18.5">
+        <div className="shrink-0 -mt-24 ">
           <div className="h-48 w-32 overflow-hidden">
             <img
               src={image}
@@ -38,8 +34,8 @@ const StoryCard: React.FC<StoryCardProps> = ({ image, name, story }) => {
         </div>
 
         {/* Content - RIGHT side */}
-        <div className="flex-1 pt-4">
-          <h3 className="mb-3 text-base font-bold text-gray-900">{name}</h3>
+        <div className="flex-1 pt-4 text-justify overflow-hidden pb-5">
+          <h3 className="mb-3 text-base font-bold text-gray-900 ">{name}</h3>
           <p className="text-xs leading-relaxed text-gray-600">{story}</p>
         </div>
       </div>
@@ -47,45 +43,25 @@ const StoryCard: React.FC<StoryCardProps> = ({ image, name, story }) => {
   );
 };
 
+// Skeleton loader matching the card shape
+const StoryCardSkeleton = () => (
+  <div className="relative pt-12">
+    <div className="bg-white shadow-md p-6 pl-0 flex gap-6 items-start animate-pulse">
+      <div className="shrink-0 -mt-18.5">
+        <div className="h-48 w-32 bg-gray-200" />
+      </div>
+      <div className="flex-1 pt-4 space-y-3">
+        <div className="h-4 bg-gray-200 rounded w-32" />
+        <div className="h-3 bg-gray-200 rounded w-full" />
+        <div className="h-3 bg-gray-200 rounded w-5/6" />
+        <div className="h-3 bg-gray-200 rounded w-4/6" />
+      </div>
+    </div>
+  </div>
+);
+
 export const StoriesOfChange = () => {
-  const stories = [
-    {
-      image: story1,
-      name: "NDEKEZI Pascal",
-      story:
-        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
-    },
-    {
-      image: story2,
-      name: "MANIRAKIZA JEAN Paul",
-      story:
-        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
-    },
-    {
-      image: story3,
-      name: "UWIMPAYE Evelyne",
-      story:
-        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
-    },
-    {
-      image: story4,
-      name: "MUKAMANA Grace",
-      story:
-        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
-    },
-    {
-      image: story5,
-      name: "NIYONZIMA Jean",
-      story:
-        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
-    },
-    {
-      image: story6,
-      name: "UWIHANA Rose",
-      story:
-        '"I\'ve been consistently impressed with the quality of service provided by this website. They have exceeded my expectations and delivered exceptional results. Highly recommended!"',
-    },
-  ];
+  const { data: testimonials, isLoading, isError } = useGetTestimonialsQuery();
 
   return (
     <section className="bg-gray-100 py-12 md:py-16 lg:py-24">
@@ -102,43 +78,60 @@ export const StoriesOfChange = () => {
 
         {/* Swiper Carousel */}
         <div className="mb-12 md:mb-16">
-          <Swiper
-            modules={[Autoplay, Pagination]}
-            spaceBetween={30}
-            slidesPerView={1}
-            loop={true}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            speed={800}
-            breakpoints={{
-              640: {
-                slidesPerView: 1,
-                spaceBetween: 20,
-              },
-              768: {
-                slidesPerView: 2,
-                spaceBetween: 24,
-              },
-              1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-              },
-            }}
-            className="stories-swiper"
-          >
-            {stories.map((story, index) => (
-              <SwiperSlide key={index}>
-                <StoryCard
-                  image={story.image}
-                  name={story.name}
-                  story={story.story}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {isError ? (
+            <p className="text-center text-sm text-red-500">
+              Failed to load stories. Please try again later.
+            </p>
+          ) : isLoading ? (
+            // Show 3 skeletons while loading
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <StoryCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : testimonials && testimonials.length > 0 ? (
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              spaceBetween={10}
+              slidesPerView={1}
+              loop={true}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              speed={800}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 24,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+              }}
+              className="stories-swiper"
+            >
+              {testimonials.map((testimonial: Testimonial) => (
+                <SwiperSlide key={testimonial.id}>
+                  <StoryCard
+                    image={testimonial.image}
+                    name={testimonial.name}
+                    story={testimonial.description}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <p className="text-center text-sm text-gray-500">
+              No stories available yet.
+            </p>
+          )}
         </div>
 
         <div className="text-center">
