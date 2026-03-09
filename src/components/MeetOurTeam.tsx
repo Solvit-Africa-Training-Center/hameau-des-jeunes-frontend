@@ -1,12 +1,19 @@
-import React from 'react';
+import { useGetTeamQuery } from "@/store/api/teamApi";
+import React from "react";
 
 interface TeamMemberProps {
   image: string;
   name: string;
   role: string;
+  linkedIn: string;
 }
 
-const TeamMember: React.FC<TeamMemberProps> = ({ image, name, role }) => {
+const TeamMember: React.FC<TeamMemberProps> = ({
+  image,
+  name,
+  role,
+  linkedIn,
+}) => {
   return (
     <div className="flex flex-col items-center text-center">
       <div className="mb-3 h-40 w-40 overflow-hidden rounded-2xl sm:h-44 sm:w-44 md:mb-4 md:h-48 md:w-48">
@@ -20,36 +27,27 @@ const TeamMember: React.FC<TeamMemberProps> = ({ image, name, role }) => {
         {name}
       </h3>
 
-      <p className="text-xs text-gray-600 sm:text-base">
-        {role}
-      </p>
+      <p className="text-xs text-gray-600 sm:text-base">{role}</p>
+      <a
+        href={linkedIn}
+        className="text-sm text-blue-400 sm:text-sm hover:font-semibold"
+      >
+        LinkedIn profile
+      </a>
     </div>
   );
 };
 
+const TeamMemberSkeleton = () => (
+  <div className="flex flex-col items-center text-center animate-pulse">
+    <div className="mb-3 h-40 w-40 rounded-2xl bg-gray-200 sm:h-44 sm:w-44 md:mb-4 md:h-48 md:w-48" />
+    <div className="mb-1 h-4 w-32 rounded bg-gray-200" />
+    <div className="h-3 w-24 rounded bg-gray-100" />
+  </div>
+);
+
 export const MeetOurTeam: React.FC = () => {
-  const teamMembers = [
-    {
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHtc-HxfIPWXcY918S2jGNlclewJF8Pq2uYw&s',
-      name: 'Jean - Claude Niyomuntu',
-      role: 'Executive Director',
-    },
-    {
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmS3nIe8yPZgOUK5O1gymkOQCIwC3wr1ybSA&s',
-      name: 'Marie Uwase',
-      role: 'Program Manager',
-    },
-    {
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvFsm7X5UEVqRlug_JIei9DymR_sM2KMuK7g&s',
-      name: 'Grace Mukamana',
-      role: 'Child Protection Officer',
-    },
-    {
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQidVTWBrqBTnW4bYhp19Viw4qgxKN5HQcUww&s',
-      name: 'Patrick Habimana',
-      role: 'Community Outreach Manager',
-    },
-  ];
+  const { data: teamMembers = [], isLoading } = useGetTeamQuery();
 
   return (
     <section className="bg-gray-100 py-12 md:py-8 lg:py-24">
@@ -59,18 +57,24 @@ export const MeetOurTeam: React.FC = () => {
             Meet Our Team
           </h2>
           <p className="mx-auto max-w-3xl text-sm text-gray-700 sm:text-base md:text-lg">
-            Dedicated caregivers, professionals, and volunteers working together for child protection and family empowerment.
+            Dedicated caregivers, professionals, and volunteers working together
+            for child protection and family empowerment.
           </p>
         </div>
         <div className="mb-8 grid gap-6 sm:grid-cols-2 md:mb-12 md:gap-8 lg:grid-cols-4">
-          {teamMembers.map((member, index) => (
-            <TeamMember
-              key={index}
-              image={member.image}
-              name={member.name}
-              role={member.role}
-            />
-          ))}
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <TeamMemberSkeleton key={i} />
+              ))
+            : teamMembers.map((member) => (
+                <TeamMember
+                  key={member.id}
+                  image={member.image}
+                  name={member.full_name}
+                  role={member.position}
+                  linkedIn={member.linkedin_url}
+                />
+              ))}
         </div>
         <div className="text-center">
           <button className="rounded-md border-2 border-gray-900 bg-transparent px-6 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:px-8 sm:py-3 sm:text-base">
