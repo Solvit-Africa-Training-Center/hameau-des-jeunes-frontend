@@ -16,12 +16,15 @@ import impact from "../assets/impact.png";
 import kid from "../assets/kid.jpg";
 import family from "../assets/family.jpg";
 import EmmanuelTeam from "../assets/EmmanuelTeam.jpg";
-
+import { useGetCompanyImpactQuery } from "@/store/api/companyImpact";
 
 const OurImpact = () => {
+  const { data: impactList = [], isLoading } = useGetCompanyImpactQuery();
+  const d = impactList[0];
+
   const stats = [
     {
-      number: "500+",
+      number: d ? `${d.children_supported}+` : "-",
       icon: <Users className="w-6 h-6" />,
       title: "Children Supported",
       description: "Direct beneficiaries of our programs",
@@ -29,7 +32,7 @@ const OurImpact = () => {
       iconColor: "text-white",
     },
     {
-      number: "300+",
+      number: d ? `${d.families_strengthened}+` : "-",
       icon: <Globe className="w-6 h-6" />,
       title: "Families Strengthened",
       description: "Families reunited and empowered",
@@ -37,7 +40,7 @@ const OurImpact = () => {
       iconColor: "text-white",
     },
     {
-      number: "95%",
+      number: d ? `${d.schools_supported}%` : "-",
       icon: <Calendar className="w-6 h-6" />,
       title: "School Enrollment",
       description: "Children in quality education",
@@ -45,7 +48,7 @@ const OurImpact = () => {
       iconColor: "text-white",
     },
     {
-      number: "150+",
+      number: d ? `${d.youth_trained}+` : "-",
       icon: <Award className="w-6 h-6" />,
       title: "Youth Trained",
       description: "Vocational skills graduates",
@@ -53,7 +56,7 @@ const OurImpact = () => {
       iconColor: "text-white",
     },
     {
-      number: "20+",
+      number: d ? `${d.years_of_service}+` : "-",
       icon: <Heart className="w-6 h-6" />,
       title: "Years of Service",
       description: "Making a difference since 2004",
@@ -61,7 +64,7 @@ const OurImpact = () => {
       iconColor: "text-white",
     },
     {
-      number: "85%",
+      number: d ? `${d.success_rate}%` : "-",
       icon: <BookOpen className="w-6 h-6" />,
       title: "Success Rate",
       description: "Successful family reintegration",
@@ -161,37 +164,52 @@ const OurImpact = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {stats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-lg p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div
-                    className={`${stat.bgColor} ${stat.iconColor} w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center mb-3 md:mb-4`}
-                  >
-                    {stat.icon}
-                  </div>
-
-                  <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                    {stat.number}
-                  </div>
-
-
-                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1">
-                    {stat.title}
-                  </h3>
-                  <p className="text-xs md:text-sm text-gray-600">{stat.description}</p>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {isLoading
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="bg-white rounded-lg p-4 md:p-6 shadow-sm animate-pulse"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-gray-200 mb-4" />
+                      <div className="h-8 w-20 bg-gray-200 rounded mb-2" />
+                      <div className="h-4 w-32 bg-gray-200 rounded mb-1" />
+                      <div className="h-3 w-40 bg-gray-100 rounded" />
+                    </div>
+                  ))
+                : stats.map((stat, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-lg p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div
+                        className={`${stat.bgColor} ${stat.iconColor} w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center mb-3 md:mb-4`}
+                      >
+                        {stat.icon}
+                      </div>
+                      <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                        {stat.number}
+                      </div>
+                      <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1">
+                        {stat.title}
+                      </h3>
+                      <p className="text-xs md:text-sm text-gray-600">
+                        {stat.description}
+                      </p>
+                    </div>
+                  ))}
             </div>
           </div>
         </section>
 
+        {/* Success stories */}
+
         <section className="py-16 px-8 bg-gray-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[#0f3d2e] mb-2">Success Stories</h2>
+              <h2 className="text-3xl font-bold text-[#0f3d2e] mb-2">
+                Success Stories
+              </h2>
               <p className="text-gray-600">Real people, real transformations</p>
             </div>
 
@@ -224,10 +242,14 @@ const OurImpact = () => {
           </div>
         </section>
 
+        {/* Program Outcomes */}
+
         <section className="py-16 px-8">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[#0f3d2e] mb-2">Program Outcomes</h2>
+              <h2 className="text-3xl font-bold text-[#0f3d2e] mb-2">
+                Program Outcomes
+              </h2>
               <p className="text-gray-600">
                 Measuring our impact across key areas
               </p>

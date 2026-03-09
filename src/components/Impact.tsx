@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useGetCompanyImpactQuery } from "@/store/api/companyImpact";
+import React, { useEffect, useRef, useState } from "react";
 
 interface StatItemProps {
   value: string;
@@ -6,7 +7,11 @@ interface StatItemProps {
   isPercentage?: boolean;
 }
 
-const StatItem: React.FC<StatItemProps> = ({ value, label, isPercentage = false }) => {
+const StatItem: React.FC<StatItemProps> = ({
+  value,
+  label,
+  isPercentage = false,
+}) => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const statRef = useRef<HTMLDivElement>(null);
@@ -18,7 +23,7 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, isPercentage = false 
           setIsVisible(true);
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
 
     if (statRef.current) {
@@ -35,7 +40,7 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, isPercentage = false 
   useEffect(() => {
     if (!isVisible) return;
 
-    const targetValue = parseInt(value.replace(/\D/g, ''));
+    const targetValue = parseInt(value.replace(/\D/g, ""));
     const duration = 2000;
     const steps = 60;
     const increment = targetValue / steps;
@@ -65,11 +70,30 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, isPercentage = false 
 };
 
 export const Impact: React.FC = () => {
+  const { data: impactList = [], isLoading } = useGetCompanyImpactQuery();
+  const impact = impactList[0];
+
   const stats = [
-    { value: '500+', label: 'Children Supported', isPercentage: false },
-    { value: '20+', label: 'Years in Service', isPercentage: false },
-    { value: '300+', label: 'Families Strengthened', isPercentage: false },
-    { value: '100%', label: 'Commitment to Impact', isPercentage: true },
+    {
+      value: impact?.children_supported ?? "0",
+      label: "Children Supported",
+      isPercentage: false,
+    },
+    {
+      value: impact?.years_of_service ?? "0",
+      label: "Years in Service",
+      isPercentage: false,
+    },
+    {
+      value: impact?.families_strengthened ?? "0",
+      label: "Families Strengthened",
+      isPercentage: false,
+    },
+    {
+      value: impact?.communities_impacted ?? "0",
+      label: "Commitment to Impact",
+      isPercentage: true,
+    },
   ];
 
   return (
@@ -83,17 +107,27 @@ export const Impact: React.FC = () => {
             Building futures one child at a time
           </p>
         </div>
-
-        <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 md:gap-12">
-          {stats.map((stat, index) => (
-            <StatItem
-              key={index}
-              value={stat.value}
-              label={stat.label}
-              isPercentage={stat.isPercentage}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 md:gap-12">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="text-center animate-pulse">
+                <div className="mx-auto mb-2 h-12 w-24 rounded bg-white/20" />
+                <div className="mx-auto h-4 w-32 rounded bg-white/10" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 md:gap-12">
+            {stats.map((stat, index) => (
+              <StatItem
+                key={index}
+                value={stat.value}
+                label={stat.label}
+                isPercentage={stat.isPercentage}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
