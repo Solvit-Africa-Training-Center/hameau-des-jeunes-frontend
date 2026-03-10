@@ -268,7 +268,7 @@ export const GalleryMgtContent = () => {
     <>
       <section className="md:mx-8 mx-5 mt-8 space-y-6">
         {/* Categories Card */}
-        <Card>
+        <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
             <CardTitle className="text-xl">Gallery Categories</CardTitle>
             <Button onClick={openCreateCat} className="flex items-center gap-2">
