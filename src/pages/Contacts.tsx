@@ -3,8 +3,16 @@ import { TopNavBar } from "@/components/TopNavBar";
 import React, { useState } from "react";
 import { Mail, Phone, Clock, MapPin, Send } from "lucide-react";
 import map from "@/assets/Map.png";
+import {
+  useGetCompanyInfoQuery,
+  useGetWorkingDaysQuery,
+} from "@/store/api/companyInfoApi";
 
 export const Contacts = () => {
+  const { data: companyList = [] } = useGetCompanyInfoQuery();
+  const { data: workingDays = [] } = useGetWorkingDaysQuery();
+  const info = companyList[0] ?? null;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,16 +33,9 @@ export const Contacts = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof typeof errors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
@@ -77,6 +78,17 @@ export const Contacts = () => {
       alert("Message sent successfully!");
     }
   };
+
+  // Format time
+
+  const formatTime = (time: string) => {
+    if (!time) return "";
+    const [h, m] = time.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12;
+    return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <TopNavBar />
@@ -95,7 +107,8 @@ export const Contacts = () => {
                 Contact Info
               </h2>
               <p className="text-gray-600 mb-8">
-                Reach out through any of these channels. and our team will get back to you as soon as possible
+                Reach out through any of these channels. and our team will get
+                back to you as soon as possible
               </p>
 
               {/* Cards */}
@@ -111,8 +124,10 @@ export const Contacts = () => {
                     </h3>
                   </div>
 
-                  <p className="text-gray-600">Our friendly team is here to help</p>
-                  <p className="text-gray-600">mwambutsadaryce@gmail.com</p>
+                  <p className="text-gray-600">
+                    Our friendly team is here to help
+                  </p>
+                  <p className="text-gray-600">{info?.company_email}</p>
                 </div>
 
                 {/* Phone Card */}
@@ -127,7 +142,7 @@ export const Contacts = () => {
                   </div>
 
                   <p className="text-gray-600">Mon-Fri from 8am to 5pm</p>
-                  <p className="text-gray-600">+250 781886927</p>
+                  <p className="text-gray-600">{info?.company_phone}</p>
                 </div>
 
                 {/* Office Hours Card */}
@@ -140,10 +155,21 @@ export const Contacts = () => {
                       Office Hours
                     </h3>
                   </div>
-
-                  <p className="text-gray-600">Mon-Fri from 8am to 5pm</p>
-                  <p className="text-gray-600">Saturday 9am-1pm</p>
-                  <p className="text-gray-600">Sunday closed</p>
+                  {workingDays.length > 0 ? (
+                    workingDays.map((wd) => (
+                      <p>
+                        {wd.close_days
+                          ? `${wd.day}: Closed`
+                          : `${wd.day}: ${formatTime(wd.start_hours)} - ${formatTime(wd.end_hours)}`}
+                      </p>
+                    ))
+                  ) : (
+                    <>
+                      <p className="text-gray-600">Mon-Fri from 8am to 5pm</p>
+                      <p className="text-gray-600">Saturday 9am-1pm</p>
+                      <p className="text-gray-600">Sunday closed</p>
+                    </>
+                  )}
                 </div>
 
                 {/* Address Card */}
@@ -156,10 +182,15 @@ export const Contacts = () => {
                       Address
                     </h3>
                   </div>
-
-                  <p className="text-gray-600">Rwamagana District</p>
-                  <p className="text-gray-600">Eaastern Province</p>
-                  <p className="text-gray-600">Rwanda</p>
+                  {info?.company_address ? (
+                    <p className="text-gray-600">{info.company_address}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">Rwamagana District</p>
+                      <p className="text-gray-600">Eaastern Province</p>
+                      <p className="text-gray-600">Rwanda</p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -365,9 +396,7 @@ export const Contacts = () => {
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Schedule a Visit
                   </h3>
-                  <p className="text-gray-600">
-                    call us arrange a tour
-                  </p>
+                  <p className="text-gray-600">call us arrange a tour</p>
                 </div>
 
                 {/* Card 2 */}
@@ -378,7 +407,9 @@ export const Contacts = () => {
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
                     Media Inquiries
                   </h3>
-                  <p className="text-gray-600">Contact our communications team.</p>
+                  <p className="text-gray-600">
+                    Contact our communications team.
+                  </p>
                 </div>
 
                 {/* Card 3 */}
