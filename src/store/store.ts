@@ -10,6 +10,7 @@ import { whoWeAreApi } from "./api/whoWeAreApi";
 import { companyImpactApi } from "./api/companyImpact";
 import { teamApi } from "./api/teamApi";
 import { companyInfoApi } from "./api/companyInfoApi";
+import { galleryApi } from "./api/galleryApi";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     [companyImpactApi.reducerPath]: companyImpactApi.reducer,
     [teamApi.reducerPath]: teamApi.reducer,
     [companyInfoApi.reducerPath]: companyInfoApi.reducer,
+    [galleryApi.reducerPath]: galleryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -38,6 +40,7 @@ export const store = configureStore({
       companyImpactApi.middleware,
       teamApi.middleware,
       companyInfoApi.middleware,
+      galleryApi.middleware,
     ),
 });
 

@@ -24,6 +24,7 @@ import { SuperAdminTestimonialsMgt } from "@/pages/DashboardPages/SuperAdminTest
 import { SuperAdminTeamMgt } from "@/pages/DashboardPages/SuperAdminTeamMgt";
 import { SuperAdminCompanyContactMgt } from "@/pages/DashboardPages/SuperAdminCompanyContactMgt";
 import { SuperAdminMessageMgt } from "@/pages/DashboardPages/SuperAdminMessageMgt";
+import { SuperAdminGalleryMgt } from "@/pages/DashboardPages/SuperAdminGalleryMgt";
 
 export const systemAdminRoutes = [
   <Route
@@ -138,11 +139,11 @@ export const systemAdminRoutes = [
   />,
 
   <Route
-    key="impact"
-    path="/impact"
+    key="gallery"
+    path="/ourGallery"
     element={
       <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
-        <SuperAdminImpactMgt />
+        <SuperAdminGalleryMgt />
       </ProtectedRoute>
     }
   />,
