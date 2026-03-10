@@ -7,8 +7,35 @@ import { CgMail } from "react-icons/cg";
 import { LuPhone } from "react-icons/lu";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import {
+  useGetCompanyInfoQuery,
+  useGetSocialMediaQuery,
+} from "@/store/api/companyInfoApi";
 
 export const Footer = () => {
+  const { data: companyList = [], isLoading } = useGetCompanyInfoQuery();
+  const { data: socialMediaList = [] } = useGetSocialMediaQuery();
+  const info = companyList[0] ?? null;
+
+  socialMediaList.map((social) => (
+    <a
+      key={social.id}
+      href={social.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={social.name}
+      className="hover:opacity-75 transition-opacity"
+    >
+      <img
+        src={social.icon}
+        alt={social.name}
+        className="w-5 h-5 object-contain"
+      />
+    </a>
+  ));
+
+  if (isLoading) return null;
+
   return (
     <footer className="bg-[#0f3d2e] text-white pt-12 pb-6 sm:pt-16 sm:pb-8">
       <div className="container px-15">
@@ -107,22 +134,20 @@ export const Footer = () => {
                 <div className="flex gap-3">
                   <IoLocationOutline className="text-button-yellow" />
                   <h2 className="text-sm font-light">
-                    Rwamagana District, Rwanda
+                    {info?.company_address}
                   </h2>
                 </div>
               </li>
               <li>
                 <div className="flex gap-3">
                   <CgMail className="text-button-yellow" />
-                  <h2 className="text-sm font-light">
-                    info@hameaudesjeunes.org
-                  </h2>
+                  <h2 className="text-sm font-light">{info?.company_email}</h2>
                 </div>
               </li>
               <li>
                 <div className="flex gap-3">
                   <LuPhone className="text-button-yellow" />
-                  <h2 className="text-sm font-light">+250 796 686 184</h2>
+                  <h2 className="text-sm font-light">{info?.company_phone}</h2>
                 </div>
               </li>
             </ul>
@@ -164,11 +189,33 @@ export const Footer = () => {
             <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">
               Follow Us
             </h3>
-            <div className="flex gap-3">
-              <FaFacebook />
-              <FaLinkedin />
-              <FaXTwitter />
-              <FaInstagram />
+            <div className="flex gap-3 flex-wrap">
+              {socialMediaList.length > 0 ? (
+                socialMediaList.map((social) => (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={social.name}
+                    className="text-white hover:text-yellow-400 transition-colors text-xl"
+                  >
+                    <img
+                      src={social.icon}
+                      alt={social.name}
+                      className="w-6 h-6 object-contain"
+                    />
+                  </a>
+                ))
+              ) : (
+                // Fallback to hardcoded icons if API returns nothing
+                <div className="flex gap-3">
+                  <FaFacebook />
+                  <FaLinkedin />
+                  <FaXTwitter />
+                  <FaInstagram />
+                </div>
+              )}
             </div>
           </div>
         </div>

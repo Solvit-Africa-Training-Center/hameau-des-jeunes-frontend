@@ -37,7 +37,7 @@ export interface CreateCompanyInfoPayload {
   company_phone: string;
   company_email: string;
   company_website: string;
-  company_logo: File; // ✅ File on create
+  company_logo: File;
 }
 
 export interface UpdateCompanyInfoPayload {
@@ -60,6 +60,28 @@ export interface CreateWorkingDayPayload {
 
 export interface UpdateWorkingDayPayload extends CreateWorkingDayPayload {
   id: string;
+}
+
+// Social Media Types
+
+export interface SocialMedia {
+  id: string;
+  name: string;
+  url: string;
+  icon: string;
+}
+
+export interface CreateSocialMediaPayload {
+  name: string;
+  url: string;
+  icon: File;
+}
+
+export interface UpdateSocialMediaPayload {
+  id: string;
+  name: string;
+  url: string;
+  icon?: File;
 }
 
 // ── Helper ─────────────────────────────────────────────────────────────────
@@ -102,7 +124,7 @@ export const companyInfoApi = createApi({
     baseUrl: API_CONFIG.BASE_URL,
     prepareHeaders: (headers) => preparaAuthHeaders(headers),
   }),
-  tagTypes: ["CompanyInfo", "WorkingDays"],
+  tagTypes: ["CompanyInfo", "WorkingDays", "SocialMedia"],
   endpoints: (builder) => ({
     // Company Info
     getCompanyInfo: builder.query<CompanyInfo[], void>({
@@ -200,6 +222,62 @@ export const companyInfoApi = createApi({
       query: (id) => ({ url: `/working-days-hours/${id}/`, method: "DELETE" }),
       invalidatesTags: ["WorkingDays"],
     }),
+
+    // Social Media
+
+    getSocialMedia: builder.query<SocialMedia[], void>({
+      query: () => "/social-media/",
+      transformResponse: (
+        res: Paginated<SocialMedia> | SocialMedia[] | SocialMedia,
+      ) => unwrap(res),
+      providesTags: ["SocialMedia"],
+    }),
+
+    createSocialMedia: builder.mutation<SocialMedia, CreateSocialMediaPayload>({
+      async queryFn(payload) {
+        try {
+          const body = new FormData();
+          body.append("name", payload.name);
+          body.append("url", payload.url);
+          body.append("icon", payload.icon);
+          const data = await multipartFetch<SocialMedia>(
+            "/social-media/",
+            "POST",
+            body,
+          );
+          return { data };
+        } catch (error) {
+          return { error: { status: "CUSTOM_ERROR", error: String(error) } };
+        }
+      },
+      invalidatesTags: ["SocialMedia"],
+    }),
+
+    updateSocialMedia: builder.mutation<SocialMedia, UpdateSocialMediaPayload>({
+      async queryFn({ id, icon, ...rest }) {
+        try {
+          const body = new FormData();
+          Object.entries(rest).forEach(([Key, val]) =>
+            body.append(Key, String(val)),
+          );
+          if (icon instanceof File) body.append("icon", icon);
+          const data = await multipartFetch<SocialMedia>(
+            `/social-media/${id}/`,
+            "PATCH",
+            body,
+          );
+          return { data };
+        } catch (error) {
+          return { error: { status: "CUSTOM_ERROR", error: String(error) } };
+        }
+      },
+      invalidatesTags: ["SocialMedia"],
+    }),
+
+    deleteSocialMedia: builder.mutation<void, string>({
+      query: (id) => ({ url: `/social-media/${id}/`, method: "DELETE" }),
+      invalidatesTags: ["SocialMedia"],
+    }),
   }),
 });
 
@@ -208,8 +286,14 @@ export const {
   useCreateCompanyInfoMutation,
   useUpdateCompanyInfoMutation,
   useDeleteCompanyInfoMutation,
+
   useGetWorkingDaysQuery,
   useCreateWorkingDayMutation,
   useUpdateWorkingDayMutation,
   useDeleteWorkingDayMutation,
+
+  useGetSocialMediaQuery,
+  useCreateSocialMediaMutation,
+  useUpdateSocialMediaMutation,
+  useDeleteSocialMediaMutation,
 } = companyInfoApi;

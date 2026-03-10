@@ -23,12 +23,18 @@ import {
   useDeleteWorkingDayMutation,
   type WorkingDay,
   type CreateWorkingDayPayload,
+  useGetSocialMediaQuery,
+  useCreateSocialMediaMutation,
+  type SocialMedia,
+  useUpdateSocialMediaMutation,
+  useDeleteSocialMediaMutation,
 } from "@/store/api/companyInfoApi";
 import { toast } from "react-toastify";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
 type WorkingDayFormMode = "create" | "edit";
+type SocialMediaFormMode = "create" | "edit";
 
 interface CompanyInfoForm {
   company_name: string;
@@ -47,6 +53,12 @@ interface WorkingDayForm {
   close_days: boolean;
 }
 
+interface SocialMediaForm {
+  name: string;
+  url: string;
+  icon: File | null;
+}
+
 const emptyCompanyForm: CompanyInfoForm = {
   company_name: "",
   company_description: "",
@@ -62,6 +74,12 @@ const emptyWorkingDayForm: WorkingDayForm = {
   start_hours: "",
   end_hours: "",
   close_days: false,
+};
+
+const emptySocialMediaForm: SocialMediaForm = {
+  name: "",
+  url: "",
+  icon: null,
 };
 
 const DAYS_OF_WEEK = [
@@ -82,6 +100,8 @@ export const CompanyContactsMgtContent = () => {
     useGetCompanyInfoQuery();
   const { data: workingDays = [], isLoading: loadingDays } =
     useGetWorkingDaysQuery();
+  const { data: socialMediaList = [], isLoading: loadingSocial } =
+    useGetSocialMediaQuery();
   const existingInfo = companyList[0] ?? null;
 
   // Mutations
@@ -92,6 +112,12 @@ export const CompanyContactsMgtContent = () => {
   const [createDay, { isLoading: creatingDay }] = useCreateWorkingDayMutation();
   const [updateDay, { isLoading: updatingDay }] = useUpdateWorkingDayMutation();
   const [deleteDay, { isLoading: deletingDay }] = useDeleteWorkingDayMutation();
+  const [createSocial, { isLoading: creatingSocial }] =
+    useCreateSocialMediaMutation();
+  const [updateSocial, { isLoading: updatingSocial }] =
+    useUpdateSocialMediaMutation();
+  const [deleteSocial, { isLoading: deletingSocial }] =
+    useDeleteSocialMediaMutation();
 
   // Company modal state
   const [companyModalOpen, setCompanyModalOpen] = useState(false);
@@ -107,8 +133,21 @@ export const CompanyContactsMgtContent = () => {
   const [dayForm, setDayForm] = useState<WorkingDayForm>(emptyWorkingDayForm);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // Social media modal state
+  const [socialModalOpen, setSocialModalOpen] = useState(false);
+  const [socialMode, setSocialMode] = useState<SocialMediaFormMode>("create");
+  const [editingSocialId, setEditingSocialId] = useState<string | null>(null);
+  const [socialForm, setSocialForm] =
+    useState<SocialMediaForm>(emptySocialMediaForm);
+  const [deletingSocialId, setDeletingSocialId] = useState<string | null>(null);
+  const [socialIconPreview, setSocialIconPreview] = useState<string | null>(
+    null,
+  );
+  const socialIconRef = useRef<HTMLInputElement>(null);
+
   const isInfoBusy = creatingInfo || updatingInfo;
   const isDayBusy = creatingDay || updatingDay;
+  const isSocialBusy = creatingSocial || updatingSocial;
 
   // ── Company Info modal ────────────────────────────────────────────────────
 
@@ -291,6 +330,91 @@ export const CompanyContactsMgtContent = () => {
     }
   };
 
+  // Social Media modal
+
+  const openCreateSocial = () => {
+    setSocialForm(emptySocialMediaForm);
+    setSocialMode("create");
+    setEditingSocialId(null);
+    setSocialModalOpen(true);
+  };
+
+  const openEditSocial = (record: SocialMedia) => {
+    setSocialForm({ name: record.name, url: record.url, icon: null });
+    setSocialMode("edit");
+    setEditingSocialId(record.id);
+    setSocialIconPreview(record.icon);
+    setSocialModalOpen(true);
+  };
+
+  const closeSocialModal = () => {
+    setSocialModalOpen(false);
+    setEditingSocialId(null);
+    setSocialForm(emptySocialMediaForm);
+    setSocialIconPreview(null);
+    if (socialIconRef.current) socialIconRef.current.value = "";
+  };
+
+  const handleSocialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.type === "file") {
+      const file = e.target.files?.[0] ?? null;
+      setSocialForm((prev) => ({ ...prev, icon: file }));
+      if (file) setSocialIconPreview(URL.createObjectURL(file));
+    } else {
+      setSocialForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    }
+  };
+
+  const handleSocialSubmit = async () => {
+    if (!socialForm.name || !socialForm.url || !socialForm.icon) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+    try {
+      if (socialMode === "create") {
+        await createSocial({
+          name: socialForm.name,
+          url: socialForm.url,
+          icon: socialForm.icon as File,
+        }).unwrap();
+        toast.success("Social media link added.");
+      } else if (editingSocialId) {
+        await updateSocial({
+          id: editingSocialId,
+          name: socialForm.name,
+          url: socialForm.url,
+          ...(socialForm.icon instanceof File && { icon: socialForm.icon }),
+        }).unwrap();
+        toast.success("Social media link updated.");
+      }
+      closeSocialModal();
+    } catch (err) {
+      const message =
+        err && typeof err === "object" && "data" in (err as object)
+          ? Object.entries((err as { data: Record<string, string[]> }).data)
+              .map(
+                ([field, msgs]) =>
+                  `${field}: ${Array.isArray(msgs) ? msgs.join(", ") : msgs}`,
+              )
+              .join(" | ")
+          : "Failed to save social media link.";
+      console.log(message);
+      toast.error("Failed to save social media link.");
+    }
+  };
+
+  const handleDeleteSocial = async (id: string) => {
+    setDeletingSocialId(id);
+    try {
+      await deleteSocial(id).unwrap();
+      toast.success("Social media link deleted.");
+    } catch {
+      toast.error("Failed to delete.");
+    } finally {
+      setDeletingSocialId(null);
+    }
+  };
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -423,6 +547,89 @@ export const CompanyContactsMgtContent = () => {
                             <button
                               onClick={() => handleDeleteDay(record.id)}
                               disabled={deletingDay && deletingId === record.id}
+                              className="p-1.5 rounded hover:bg-red-50 text-red-500 transition-colors disabled:opacity-40"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Social Media Card */}
+        <Card className="p-5">
+          <div className="flex items-center justify-between mb-4">
+            <CardTitle className="text-xl">Social Media Links</CardTitle>
+            <Button
+              onClick={openCreateSocial}
+              className="flex items-center gap-2"
+            >
+              <Plus size={16} />
+              Add Link
+            </Button>
+          </div>
+
+          <CardContent className="p-0">
+            {loadingSocial ? (
+              <p className="text-sm text-gray-500 py-4">Loading…</p>
+            ) : socialMediaList.length === 0 ? (
+              <p className="text-sm text-gray-400 py-4">
+                No social media links yet. Click <strong>Add Link</strong> to
+                get started.
+              </p>
+            ) : (
+              <div className="rounded-md border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Platform</TableHead>
+                      <TableHead>Icon</TableHead>
+                      <TableHead>URL</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {socialMediaList.map((record) => (
+                      <TableRow key={record.id}>
+                        <TableCell className="font-medium">
+                          {record.name}
+                        </TableCell>
+                        <TableCell>
+                          <img
+                            src={record.icon}
+                            alt={record.name}
+                            className="w-6 h-6 object-contain"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <a
+                            href={record.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline text-sm truncate max-w-[200px] block"
+                          >
+                            {record.url}
+                          </a>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => openEditSocial(record)}
+                              className="p-1.5 rounded hover:bg-blue-50 text-blue-600 transition-colors"
+                            >
+                              <Pencil size={15} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSocial(record.id)}
+                              disabled={
+                                deletingSocial && deletingSocialId === record.id
+                              }
                               className="p-1.5 rounded hover:bg-red-50 text-red-500 transition-colors disabled:opacity-40"
                             >
                               <Trash2 size={15} />
@@ -692,6 +899,101 @@ export const CompanyContactsMgtContent = () => {
                       : dayMode === "create"
                         ? "Save Hours"
                         : "Update Hours"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Social Media Modal */}
+      {socialModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={closeSocialModal}
+        >
+          <div className="absolute inset-0 bg-black/40" />
+          <div
+            className="relative z-10 w-full max-w-md mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Card className="p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-5">
+                <CardTitle className="text-lg">
+                  {socialMode === "create"
+                    ? "Add Social Media Link"
+                    : "Edit Social Media Link"}
+                </CardTitle>
+                <button
+                  onClick={closeSocialModal}
+                  className="p-1.5 rounded hover:bg-gray-100 text-gray-500 transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <CardContent className="p-0">
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="name">Platform name</FieldLabel>
+                    <Input
+                      id="name"
+                      name="name"
+                      type="text"
+                      placeholder="e.g. Facebook, Instagram"
+                      value={socialForm.name}
+                      onChange={handleSocialChange}
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="icon">
+                      Icon image
+                      {socialMode === "edit" && (
+                        <span className="text-gray-400 font-normal ml-1">
+                          (leave blank to keep current)
+                        </span>
+                      )}
+                    </FieldLabel>
+                    {socialIconPreview && (
+                      <img
+                        src={socialIconPreview}
+                        alt="Icon preview"
+                        className="w-10 h-10 rounded object-contain border mb-2"
+                      />
+                    )}
+                    <Input
+                      id="icon"
+                      name="icon"
+                      type="file"
+                      accept="image/*"
+                      ref={socialIconRef}
+                      onChange={handleSocialChange}
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="url">URL</FieldLabel>
+                    <Input
+                      id="url"
+                      name="url"
+                      type="url"
+                      placeholder="https://facebook.com/yourpage"
+                      value={socialForm.url}
+                      onChange={handleSocialChange}
+                    />
+                  </Field>
+                </FieldGroup>
+                <div className="flex justify-end gap-3 mt-6">
+                  <Button variant="outline" onClick={closeSocialModal}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSocialSubmit} disabled={isSocialBusy}>
+                    {isSocialBusy
+                      ? socialMode === "create"
+                        ? "Saving…"
+                        : "Updating…"
+                      : socialMode === "create"
+                        ? "Save Link"
+                        : "Update Link"}
                   </Button>
                 </div>
               </CardContent>

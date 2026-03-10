@@ -157,7 +157,7 @@ export const Contacts = () => {
                   </div>
                   {workingDays.length > 0 ? (
                     workingDays.map((wd) => (
-                      <p>
+                      <p key={wd.id} className="text-gray-600">
                         {wd.close_days
                           ? `${wd.day}: Closed`
                           : `${wd.day}: ${formatTime(wd.start_hours)} - ${formatTime(wd.end_hours)}`}
@@ -187,7 +187,7 @@ export const Contacts = () => {
                   ) : (
                     <>
                       <p className="text-gray-600">Rwamagana District</p>
-                      <p className="text-gray-600">Eaastern Province</p>
+                      <p className="text-gray-600">Eastern Province</p>
                       <p className="text-gray-600">Rwanda</p>
                     </>
                   )}
