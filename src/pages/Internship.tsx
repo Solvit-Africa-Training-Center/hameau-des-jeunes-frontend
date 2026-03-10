@@ -5,10 +5,30 @@ import { useState } from "react";
 import Interns from "../assets/IIImage.jpg";
 import { FiMail } from "react-icons/fi";
 import { FaPhoneAlt } from "react-icons/fa";
+import { useCreateApplicationMutation } from "@/store/api/internshipApi";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Internship() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPrograms, setSelectedPrograms] = useState<string[]>([]);
+  const [createApplication, { isLoading }] = useCreateApplicationMutation();
+
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    country: "",
+    education_level: "",
+    date_of_birth: "",
+    nationality: "",
+    school_university: "",
+    field_of_study: "",
+    availability_hours: "40",
+  });
+
+  const [cvFile, setCvFile] = useState<File | null>(null);
 
   const supportWays = [
     {
@@ -28,7 +48,7 @@ function Internship() {
     },
   ];
 
-  const programs = [
+  const programsList = [
     { id: "residence", label: "Residence Care" },
     { id: "home-tug", label: "Home Tug/Amatsi" },
     { id: "technical", label: "Technical High School (TTHS)" },
@@ -46,10 +66,61 @@ function Internship() {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCvFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission logic will go here when backend is ready
-    console.log("Form submitted");
+
+    if (!cvFile) {
+      toast.error("Please upload your CV");
+      return;
+    }
+
+    if (selectedPrograms.length === 0) {
+      toast.error("Please select at least one program");
+      return;
+    }
+
+    const submissionData = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      submissionData.append(key, value);
+    });
+    submissionData.append("program", selectedPrograms.join(", "));
+    submissionData.append("cv_url", cvFile);
+
+    try {
+      await createApplication(submissionData).unwrap();
+      toast.success("Application submitted successfully!");
+      setIsModalOpen(false);
+      // Reset form
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        country: "",
+        education_level: "",
+        date_of_birth: "",
+        nationality: "",
+        school_university: "",
+        field_of_study: "",
+        availability_hours: "40",
+      });
+      setSelectedPrograms([]);
+      setCvFile(null);
+    } catch (err: any) {
+      toast.error(err?.data?.detail || "Failed to submit application");
+      console.error("Submission error:", err);
+    }
   };
 
   return (
@@ -71,7 +142,7 @@ function Internship() {
             <p className="text-xl max-w-2xl mx-auto">
               Gain valuable hands-on experience in community development,
               education, and social work. Our internship program offers
-              meaningful learning opportunities in a supportive environmentT
+              meaningful learning opportunities in a supportive environment
             </p>
           </div>
         </section>
@@ -142,53 +213,159 @@ function Internship() {
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Full Name and Email Row */}
+                  {/* First Name and Last Name Row */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name <span className="text-red-500">*</span>
+                        First Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
-                        placeholder="Exp. Jane Doe"
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleInputChange}
+                        placeholder="Jane"
                         required
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email <span className="text-red-500">*</span>
+                        Last Name <span className="text-red-500">*</span>
                       </label>
                       <input
-                        type="email"
-                        placeholder="Exp. your email"
+                        type="text"
+                        name="last_name"
+                        value={formData.last_name}
+                        onChange={handleInputChange}
+                        placeholder="Doe"
                         required
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
                       />
                     </div>
                   </div>
 
-                  {/* Phone Number and Contact Row */}
+                  {/* Email and Phone Row */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number <span className="text-red-500">*</span>
+                        Email <span className="text-red-500">*</span>
                       </label>
                       <input
-                        type="tel"
-                        placeholder="(123) 000-0000"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="your@email.com"
                         required
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Contact (Snap / Line / Instagram){" "}
-                        <span className="text-red-500">*</span>
+                        Phone Number <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="+250..."
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* DOB and Nationality Row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Date of Birth <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        name="date_of_birth"
+                        value={formData.date_of_birth}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nationality <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
-                        placeholder="(123) 000-0000"
+                        name="nationality"
+                        value={formData.nationality}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Rwandan"
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Country and Education Level Row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Current Country <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Rwanda"
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Highest Education Level <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="education_level"
+                        value={formData.education_level}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Bachelor's Degree"
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* School and Field of Study Row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        School / University <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="school_university"
+                        value={formData.school_university}
+                        onChange={handleInputChange}
+                        placeholder="e.g. University of Rwanda"
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Field of Study <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="field_of_study"
+                        value={formData.field_of_study}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Computing"
                         required
                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
                       />
@@ -198,11 +375,10 @@ function Internship() {
                   {/* Programs Selection */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Program you want to intern at (You can apply):{" "}
-                      <span className="text-red-500">*</span>
+                      Program you want to intern at: <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {programs.map((program) => (
+                      {programsList.map((program) => (
                         <label
                           key={program.id}
                           className="flex items-center space-x-2 cursor-pointer"
@@ -221,25 +397,10 @@ function Internship() {
                     </div>
                   </div>
 
-                  {/* Field of Study */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Field of Study / Internship Track{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="(123) 000-0000"
-                      required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0f3d2e] focus:border-transparent outline-none"
-                    />
-                  </div>
-
                   {/* CV/Resume Upload */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Choose CV/Resume (PDF){" "}
-                      <span className="text-red-500">*</span>
+                      Choose CV/Resume (PDF) <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center gap-3">
                       <label className="px-4 py-2 bg-[#0f3d2e] text-white text-sm rounded-md cursor-pointer hover:bg-[#0f3d2e]/90 transition-colors">
@@ -247,12 +408,12 @@ function Internship() {
                         <input
                           type="file"
                           accept=".pdf"
-                          required
+                          onChange={handleFileChange}
                           className="hidden"
                         />
                       </label>
                       <span className="text-sm text-gray-500">
-                        No file chosen
+                        {cvFile ? cvFile.name : "No file chosen"}
                       </span>
                     </div>
                   </div>
@@ -261,9 +422,10 @@ function Internship() {
                   <div className="pt-4">
                     <button
                       type="submit"
-                      className="w-full bg-[#0f3d2e] text-white py-3 rounded-md font-semibold hover:bg-[#0f3d2e]/90 transition-colors"
+                      disabled={isLoading}
+                      className="w-full bg-[#0f3d2e] text-white py-3 rounded-md font-semibold hover:bg-[#0f3d2e]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Submit Application
+                      {isLoading ? "Submitting..." : "Submit Application"}
                     </button>
                   </div>
                 </form>

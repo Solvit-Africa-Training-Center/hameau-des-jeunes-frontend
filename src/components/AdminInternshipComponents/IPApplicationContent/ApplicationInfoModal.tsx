@@ -72,7 +72,7 @@ export default function ApplicationInfoModal({
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-xs text-gray-500">Maria Santos</p>
+                  <p className="text-xs text-gray-500 font-medium">Email Address</p>
                   <p className="text-sm text-gray-900">{application.applicantEmail}</p>
                 </div>
               </div>
@@ -149,10 +149,16 @@ export default function ApplicationInfoModal({
                       <p className="text-xs text-gray-500">{doc.filename}</p>
                     </div>
                   </div>
-                  <button className="flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 font-medium">
+                  <a
+                    href={doc.filename}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 font-medium"
+                    download
+                  >
                     <Download className="w-4 h-4" />
                     Download
-                  </button>
+                  </a>
                 </div>
               ))}
             </div>
@@ -167,8 +173,15 @@ export default function ApplicationInfoModal({
           >
             Close
           </button>
-          <button className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors">
-            Download All Documents
+          <button
+            onClick={() => {
+              Object.values(application.documents).forEach((doc) => {
+                if (doc.filename) window.open(doc.filename, "_blank");
+              });
+            }}
+            className="flex-1 py-3 bg-emerald-900 text-white rounded-xl text-sm font-medium hover:bg-emerald-800 transition-colors"
+          >
+            Open All Documents
           </button>
         </div>
       </div>

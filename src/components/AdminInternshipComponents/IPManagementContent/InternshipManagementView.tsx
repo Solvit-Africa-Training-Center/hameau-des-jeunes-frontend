@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, Pencil, Calendar, Users, Clock } from "lucide-react";
+import { useGetApplicationsQuery } from "@/store/api/internshipApi";
 
 export interface ApprovedInternship {
   id: string;
@@ -12,29 +13,29 @@ export interface ApprovedInternship {
   supervisor: string;
   duration: string;
   weeks: string;
-  // Assignment data
-  parentFullName: string;
-  parentGender: string;
-  parentDOB: string;
-  parentNationalId: string;
-  parentPhone: string;
-  parentEducationLevel: string;
-  parentMaritalStatus: string;
-  parentAddress: string;
-  previousEmployment: string;
-  monthlyIncome: string;
-  housingCondition: string;
-  vulnerabilityLevel: string;
-  assessmentNotes: string;
+  // Assignment data - placeholders if not in program yet
+  parentFullName?: string;
+  parentGender?: string;
+  parentDOB?: string;
+  parentNationalId?: string;
+  parentPhone?: string;
+  parentEducationLevel?: string;
+  parentMaritalStatus?: string;
+  parentAddress?: string;
+  previousEmployment?: string;
+  monthlyIncome?: string;
+  housingCondition?: string;
+  vulnerabilityLevel?: string;
+  assessmentNotes?: string;
   // Application info for modal
   phone: string;
   availability: string;
   submissionDate: string;
-  status: "Approved";
+  status: "Approved" | "SUBMITTED" | "UNDER_REVIEW" | "MORE_INFO_NEEDED" | "REJECTED";
   documents: {
     cv: { name: string; filename: string };
-    motivationLetter: { name: string; filename: string };
-    idDocument: { name: string; filename: string };
+    motivationLetter?: { name: string; filename: string };
+    idDocument?: { name: string; filename: string };
   };
 }
 
@@ -48,93 +49,42 @@ export default function InternshipManagementView({
   onViewApplication,
 }: InternshipManagementViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const { data, isLoading } = useGetApplicationsQuery({
+    status: "APPROVED",
+    search: searchQuery
+  });
 
-  const approvedInternships: ApprovedInternship[] = [
-    {
-      id: "1",
-      applicantName: "Maria Santos",
-      applicantEmail: "maria.santos@email.com",
-      country: "Germany",
-      education: "Bachelor's Degree",
-      program: "Ifashe Tugufashe",
-      submitted: "Jan 14, 2026",
-      supervisor: "Jennifer Williams",
-      duration: "2/28/2026 - 5/31/2026",
-      weeks: "13 weeks",
-      // Assignment data
-      parentFullName: "Maria Santos Rodriguez",
-      parentGender: "Female",
-      parentDOB: "1985-03-15",
-      parentNationalId: "DE12345678",
-      parentPhone: "+49 912 345 678",
-      parentEducationLevel: "Bachelor's Degree",
-      parentMaritalStatus: "Single",
-      parentAddress: "123 Berlin Street, Berlin, Germany",
-      previousEmployment: "Teacher",
-      monthlyIncome: "2500",
-      housingCondition: "Rented Apartment",
-      vulnerabilityLevel: "Low",
-      assessmentNotes:
-        "Stable family situation with good educational background.",
-      // Application info
-      phone: "+49 912 345 678",
-      availability: "40 hours/week",
-      submissionDate: "January 14, 2026",
-      status: "Approved",
-      documents: {
-        cv: { name: "CV / Resume", filename: "maria_santos_cv.pdf" },
-        motivationLetter: {
-          name: "Motivation Letter",
-          filename: "motivation_letter.pdf",
-        },
-        idDocument: { name: "ID Document", filename: "passport.pdf" },
-      },
-    },
-    {
-      id: "2",
-      applicantName: "Carlos Rodriguez",
-      applicantEmail: "carlos.rodriguez@email.com",
-      country: "Italy",
-      education: "Bachelor's Degree",
-      program: "Tourism & Cultural Visits",
-      submitted: "Jan 17, 2026",
-      supervisor: "Michael Chen",
-      duration: "3/1/2026 - 5/14/2026",
-      weeks: "11 weeks",
-      // Assignment data
-      parentFullName: "Carlos Rodriguez Martinez",
-      parentGender: "Male",
-      parentDOB: "1990-07-22",
-      parentNationalId: "IT98765432",
-      parentPhone: "+39 789 012 345",
-      parentEducationLevel: "Master's Degree",
-      parentMaritalStatus: "Married",
-      parentAddress: "456 Rome Avenue, Rome, Italy",
-      previousEmployment: "Farmer",
-      monthlyIncome: "1800",
-      housingCondition: "Own House",
-      vulnerabilityLevel: "Medium",
-      assessmentNotes:
-        "Family is managing well, some financial constraints but stable housing.",
-      // Application info
-      phone: "+39 789 012 345",
-      availability: "40 hours/week",
-      submissionDate: "January 17, 2026",
-      status: "Approved",
-      documents: {
-        cv: { name: "CV / Resume", filename: "carlos_cv.pdf" },
-        motivationLetter: {
-          name: "Motivation Letter",
-          filename: "motivation.pdf",
-        },
-        idDocument: { name: "ID Document", filename: "passport.pdf" },
-      },
-    },
-  ];
+  const approvedInternships: ApprovedInternship[] = data?.results.map((app) => ({
+    id: app.id,
+    applicantName: app.full_name,
+    applicantEmail: app.email,
+    country: app.country || "N/A",
+    education: app.education_level || "N/A",
+    program: app.program || "N/A",
+    submitted: new Date(app.applied_on).toLocaleDateString(),
+    supervisor: "TBD", // This would actually come from a separate query to InternshipProgram
+    duration: "TBD",
+    weeks: "TBD",
+    phone: app.phone,
+    availability: app.availability_hours || "N/A",
+    submissionDate: new Date(app.applied_on).toLocaleDateString(),
+    status: "Approved",
+    documents: {
+      cv: { name: "CV / Resume", filename: app.cv_url || "" },
+    }
+  })) || [];
 
   const filteredInternships = approvedInternships.filter((internship) =>
     internship.applicantName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-900"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-screen bg-gray-50 flex flex-col overflow-hidden">

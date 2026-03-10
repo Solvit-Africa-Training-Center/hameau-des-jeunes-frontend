@@ -3,6 +3,7 @@ import InternshipManagementView from "./InternshipManagementView";
 import EditAssignmentModal from "./EditAssignmentModal";
 import ApplicationInfoModal from "../IPApplicationContent/ApplicationInfoModal";
 import type { ApprovedInternship } from "./InternshipManagementView";
+import type { Application } from "../IPApplicationContent/InternshipApplicationsView";
 
 export default function InternshipManagementContent() {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -35,7 +36,14 @@ export default function InternshipManagementContent() {
       <ApplicationInfoModal
         isOpen={showApplicationModal}
         onClose={() => setShowApplicationModal(false)}
-        application={selectedInternship}
+        application={selectedInternship ? {
+          ...selectedInternship,
+          status: selectedInternship.status === "SUBMITTED" ? "Submitted"
+            : selectedInternship.status === "UNDER_REVIEW" ? "Under Review"
+              : selectedInternship.status === "MORE_INFO_NEEDED" ? "More Information Needed"
+                : selectedInternship.status === "REJECTED" ? "Rejected"
+                  : "Approved"
+        } as Application : null}
       />
     </>
   );
