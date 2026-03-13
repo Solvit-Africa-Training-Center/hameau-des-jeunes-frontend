@@ -1,39 +1,60 @@
-import React, { useState } from 'react';
-import { Mail, Phone, Clock, MapPin } from 'lucide-react';
+import React, { useState } from "react";
+import { Mail, Phone, Clock, MapPin } from "lucide-react";
+import {
+  useGetCompanyInfoQuery,
+  useGetWorkingDaysQuery,
+} from "@/store/api/companyInfoApi";
 
 export const GetInTouch: React.FC = () => {
+  const { data: companyList = [] } = useGetCompanyInfoQuery();
+  const { data: workingDays = [] } = useGetWorkingDaysQuery();
+  const info = companyList[0] ?? null;
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    countryCode: '+250',
-    phone: '',
-    message: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    countryCode: "+250",
+    phone: "",
+    message: "",
   });
 
   const countryCodes = [
-    { code: '+1', country: 'United States' },
-    { code: '+44', country: 'United Kingdom' },
-    { code: '+250', country: 'Rwanda' },
-    { code: '+254', country: 'Kenya' },
-    { code: '+255', country: 'Tanzania' },
-    { code: '+256', country: 'Uganda' },
-    { code: '+27', country: 'South Africa' },
-    { code: '+234', country: 'Nigeria' },
-    { code: '+33', country: 'France' },
-    { code: '+49', country: 'Germany' },
+    { code: "+1", country: "United States" },
+    { code: "+44", country: "United Kingdom" },
+    { code: "+250", country: "Rwanda" },
+    { code: "+254", country: "Kenya" },
+    { code: "+255", country: "Tanzania" },
+    { code: "+256", country: "Uganda" },
+    { code: "+27", country: "South Africa" },
+    { code: "+234", country: "Nigeria" },
+    { code: "+33", country: "France" },
+    { code: "+49", country: "Germany" },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  // Format time
+
+  const formatTime = (time: string) => {
+    if (!time) return "";
+    const [h, m] = time.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12;
+    return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
   };
 
   return (
@@ -51,7 +72,8 @@ export const GetInTouch: React.FC = () => {
               Contact Info
             </h3>
             <p className="mb-6 text-sm text-gray-600 sm:text-base md:mb-8">
-              Need to get in touch with us? Either fill out the form with your inquiry or find the contact details below.
+              Need to get in touch with us? Either fill out the form with your
+              inquiry or find the contact details below.
             </p>
 
             <div className="space-y-4 md:space-y-6">
@@ -60,10 +82,17 @@ export const GetInTouch: React.FC = () => {
                   <Mail className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
                 </div>
                 <div>
-                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">Email</h4>
-                  <p className="text-xs text-gray-600 sm:text-sm">Our friendly team is here to help.</p>
-                  <a href="mailto:humurainfo@humura.org.rw" className="text-xs text-[#4A90E2] hover:underline sm:text-sm">
-                    humurainfo@humura.org.rw
+                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">
+                    Email
+                  </h4>
+                  <p className="text-xs text-gray-600 sm:text-sm">
+                    Our friendly team is here to help.
+                  </p>
+                  <a
+                    href="mailto:humurainfo@humura.org.rw"
+                    className="text-xs text-[#4A90E2] hover:underline sm:text-sm"
+                  >
+                    {info?.company_email}
                   </a>
                 </div>
               </div>
@@ -73,10 +102,17 @@ export const GetInTouch: React.FC = () => {
                   <Phone className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
                 </div>
                 <div>
-                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">Phone</h4>
-                  <p className="text-xs text-gray-600 sm:text-sm">Mon-Fri from 8am to 5pm.</p>
-                  <a href="tel:+250788244161" className="text-xs text-[#4A90E2] hover:underline sm:text-sm">
-                    +250 788 244 161
+                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">
+                    Phone
+                  </h4>
+                  <p className="text-xs text-gray-600 sm:text-sm">
+                    Mon-Fri from 8am to 5pm.
+                  </p>
+                  <a
+                    href="tel:+250788244161"
+                    className="text-xs text-[#4A90E2] hover:underline sm:text-sm"
+                  >
+                    {info?.company_phone}
                   </a>
                 </div>
               </div>
@@ -86,9 +122,24 @@ export const GetInTouch: React.FC = () => {
                   <Clock className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
                 </div>
                 <div>
-                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">Office Hours</h4>
-                  <p className="text-xs text-gray-600 sm:text-sm">Monday - Friday: 8am to 5pm</p>
-                  <p className="text-xs text-gray-600 sm:text-sm">Saturday - Sunday: Closed</p>
+                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">
+                    Office Hours
+                  </h4>
+                  {workingDays.length > 0 ? (
+                    workingDays.map((wd) => (
+                      <p key={wd.id} className="text-gray-600">
+                        {wd.close_days
+                          ? `${wd.day}: Closed`
+                          : `${wd.day}: ${formatTime(wd.start_hours)} - ${formatTime(wd.end_hours)}`}
+                      </p>
+                    ))
+                  ) : (
+                    <>
+                      <p className="text-gray-600">Mon-Fri ....</p>
+                      <p className="text-gray-600">Saturday ....</p>
+                      <p className="text-gray-600">Sunday ....</p>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -97,8 +148,18 @@ export const GetInTouch: React.FC = () => {
                   <MapPin className="h-5 w-5 text-[#4A90E2] md:h-6 md:w-6" />
                 </div>
                 <div>
-                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">Address</h4>
-                  <p className="text-xs text-gray-600 sm:text-sm">Kigali, Rwanda</p>
+                  <h4 className="mb-1 text-sm font-semibold text-gray-900 sm:text-base">
+                    Address
+                  </h4>
+                  {info?.company_address ? (
+                    <p className="text-gray-600">{info?.company_address}</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-600">Rwamagana District</p>
+                      <p className="text-gray-600">Eastern Province</p>
+                      <p className="text-gray-600">Rwanda</p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -109,13 +170,17 @@ export const GetInTouch: React.FC = () => {
               Send us a message
             </h3>
             <p className="mb-6 text-sm text-gray-600 sm:text-base md:mb-8">
-              Fill in the form and we'll get back to you as quickly as possible. Our team is ready to help with your questions.
+              Fill in the form and we'll get back to you as quickly as possible.
+              Our team is ready to help with your questions.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="firstName" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
+                  <label
+                    htmlFor="firstName"
+                    className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm"
+                  >
                     First name
                   </label>
                   <input
@@ -129,7 +194,10 @@ export const GetInTouch: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
+                  <label
+                    htmlFor="lastName"
+                    className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm"
+                  >
                     Last name
                   </label>
                   <input
@@ -144,7 +212,10 @@ export const GetInTouch: React.FC = () => {
                 </div>
               </div>
               <div>
-                <label htmlFor="email" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm"
+                >
                   Email
                 </label>
                 <input
@@ -158,7 +229,10 @@ export const GetInTouch: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="phone" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
+                <label
+                  htmlFor="phone"
+                  className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm"
+                >
                   Phone
                 </label>
                 <div className="flex gap-2">
@@ -186,7 +260,10 @@ export const GetInTouch: React.FC = () => {
                 </div>
               </div>
               <div>
-                <label htmlFor="message" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
+                <label
+                  htmlFor="message"
+                  className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm"
+                >
                   Message
                 </label>
                 <textarea

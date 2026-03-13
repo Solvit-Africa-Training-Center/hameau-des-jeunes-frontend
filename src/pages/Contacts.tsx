@@ -127,7 +127,7 @@ export const Contacts = () => {
                   <p className="text-gray-600">
                     Our friendly team is here to help
                   </p>
-                  <p className="text-gray-600">{info?.company_email}</p>
+                  <p className="text-[#4A90E2]">{info?.company_email}</p>
                 </div>
 
                 {/* Phone Card */}
@@ -141,8 +141,24 @@ export const Contacts = () => {
                     </h3>
                   </div>
 
-                  <p className="text-gray-600">Mon-Fri from 8am to 5pm</p>
-                  <p className="text-gray-600">{info?.company_phone}</p>
+                  <p className="text-gray-600">
+                    {workingDays.length > 0 ? (
+                      workingDays.map((wd) => (
+                        <p key={wd.id} className="text-gray-600">
+                          {wd.close_days
+                            ? `${wd.day}: Closed`
+                            : `${wd.day}: ${formatTime(wd.start_hours)} - ${formatTime(wd.end_hours)}`}
+                        </p>
+                      ))
+                    ) : (
+                      <>
+                        <p className="text-gray-600">Mon-Fri ....</p>
+                        <p className="text-gray-600">Saturday ....</p>
+                        <p className="text-gray-600">Sunday ....</p>
+                      </>
+                    )}
+                  </p>
+                  <p className="text-[#4A90E2]">{info?.company_phone}</p>
                 </div>
 
                 {/* Office Hours Card */}
@@ -165,9 +181,9 @@ export const Contacts = () => {
                     ))
                   ) : (
                     <>
-                      <p className="text-gray-600">Mon-Fri from 8am to 5pm</p>
-                      <p className="text-gray-600">Saturday 9am-1pm</p>
-                      <p className="text-gray-600">Sunday closed</p>
+                      <p className="text-gray-600">Mon-Fri ....</p>
+                      <p className="text-gray-600">Saturday ....</p>
+                      <p className="text-gray-600">Sunday ....</p>
                     </>
                   )}
                 </div>
