@@ -7,6 +7,9 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [react(), tailwindcss()],
+preview: {
+    allowedHosts: ["hameaudesjeunes.org"]
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
