@@ -1,33 +1,81 @@
 import React, { useState } from 'react';
 import { Mail, Phone, Clock, MapPin } from 'lucide-react';
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import { useCreateMessageMutation } from '../store/api/message';
+
 
 export const GetInTouch: React.FC = () => {
+
+  const [createMessage, { isLoading: isCreating }] = useCreateMessageMutation();
+
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    countryCode: '+250',
-    phone: '',
+    phone_number: '',
     message: '',
   });
+   const [errors, setErrors] = useState({
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone_number: "",
+      message: "",
+    });
+  
 
-  const countryCodes = [
-    { code: '+1', country: 'United States' },
-    { code: '+44', country: 'United Kingdom' },
-    { code: '+250', country: 'Rwanda' },
-    { code: '+254', country: 'Kenya' },
-    { code: '+255', country: 'Tanzania' },
-    { code: '+256', country: 'Uganda' },
-    { code: '+27', country: 'South Africa' },
-    { code: '+234', country: 'Nigeria' },
-    { code: '+33', country: 'France' },
-    { code: '+49', country: 'Germany' },
-  ];
+
+  const validateForm = () => {
+    const newErrors = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      message: '',
+    };
+
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First name is required";
+    }
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
+    }
+     if (!formData.phone_number.trim()) {
+      newErrors.phone_number = "Phone number is required";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    }
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some((error) => error !== "");
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-  };
+    if (validateForm()) {
+      console.log("Form submitted:", formData);
+      // Handle form submission here
+      alert("Message sent successfully!");
+    }
+
+    createMessage(formData);
+    setFormData({
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      message: '',
+    });
+  };  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -36,6 +84,12 @@ export const GetInTouch: React.FC = () => {
     });
   };
 
+const handlePhoneChange = (value: string | undefined) => {
+  setFormData({
+    ...formData,
+    phone_number: value || "",
+  });
+};
   return (
     <section className="bg-white py-12 md:py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -121,12 +175,19 @@ export const GetInTouch: React.FC = () => {
                   <input
                     type="text"
                     id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-4"
+                    name="first_name"
                     placeholder="First name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border ${
+                      errors.first_name ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
                   />
+                  {errors.first_name && (
+                    <p className="mt-1 text-sm text-red-500">{errors.first_name}</p>
+                  )}                    
+                  
+                  
                 </div>
                 <div>
                   <label htmlFor="lastName" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
@@ -135,12 +196,19 @@ export const GetInTouch: React.FC = () => {
                   <input
                     type="text"
                     id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-4"
                     placeholder="Last name"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border ${
+                      errors.last_name ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
                   />
+                  {errors.last_name && (
+                    <p className="mt-1 text-sm text-red-500">{errors.last_name}</p>
+                  )}                   
+                    
+                  
                 </div>
               </div>
               <div>
@@ -151,37 +219,29 @@ export const GetInTouch: React.FC = () => {
                   type="email"
                   id="email"
                   name="email"
+                  placeholder="you@example.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-4"
-                  placeholder="you@example.com"
-                />
+                  className={`w-full px-4 py-3 border ${
+                      errors.email ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                  )}                    
+                
               </div>
               <div>
                 <label htmlFor="phone" className="mb-2 block text-xs font-medium text-gray-700 sm:text-sm">
                   Phone
                 </label>
                 <div className="flex gap-2">
-                  <select
-                    name="countryCode"
-                    value={formData.countryCode}
-                    onChange={handleChange}
-                    className="rounded-md border border-gray-300 px-2 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-3"
-                  >
-                    {countryCodes.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.code}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-4"
-                    placeholder="788 244 161"
+                  <PhoneInput
+                    placeholder="Enter phone number"
+                    defaultCountry="RW"
+                    value={formData.phone_number}
+                    className="w-full px-4 py-3 border rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-4"
+                    onChange={(phone) => handlePhoneChange(phone)}
                   />
                 </div>
               </div>
@@ -194,17 +254,28 @@ export const GetInTouch: React.FC = () => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  rows={5}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-4"
                   placeholder="Leave us a message..."
-                />
+                  rows={5}
+                  className={`w-full px-4 py-3 border ${
+                      errors.message ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
+                  />
+                  {errors.message && (
+                    <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                  )}                    
+                  
+                
               </div>
-              <button
+              {(isCreating)? <button
+              disabled
+              value="Sending..."
+                className="w-full rounded-md bg-[#1B4332] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#15362a] sm:px-8 sm:py-3 sm:text-base"
+              ></button>:<button
                 type="submit"
                 className="w-full rounded-md bg-[#1B4332] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#15362a] sm:px-8 sm:py-3 sm:text-base"
               >
                 Send Message
-              </button>
+              </button>}
             </form>
           </div>
         </div>
