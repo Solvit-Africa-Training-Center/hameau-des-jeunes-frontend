@@ -23,12 +23,6 @@ const TeamMember: React.FC<TeamMemberProps> = ({ image, name, role }) => {
       </h3>
 
       <p className="text-xs text-gray-600 sm:text-base">{role}</p>
-      {/* <a
-        href={linkedIn}
-        className="text-sm text-blue-400 sm:text-sm hover:font-semibold"
-      >
-        LinkedIn profile
-      </a> */}
     </div>
   );
 };
