@@ -3,29 +3,33 @@ import { TopNavBar } from "@/components/TopNavBar";
 import React, { useState } from "react";
 import { Mail, Phone, Clock, MapPin, Send } from "lucide-react";
 import map from "@/assets/Map.png";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import {
   useGetCompanyInfoQuery,
   useGetWorkingDaysQuery,
 } from "@/store/api/companyInfoApi";
+import { useCreateMessageMutation } from '../store/api/message';
 
 export const Contacts = () => {
+  const [createMessage, { isLoading: isCreating }] = useCreateMessageMutation();
   const { data: companyList = [] } = useGetCompanyInfoQuery();
   const { data: workingDays = [] } = useGetWorkingDaysQuery();
   const info = companyList[0] ?? null;
 
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    subject: "",
-    phone: "",
+    phone_number: "",
     message: "",
   });
 
   const [errors, setErrors] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    subject: "",
-    phone: "",
+    phone_number: "",
     message: "",
   });
 
@@ -41,25 +45,24 @@ export const Contacts = () => {
 
   const validateForm = () => {
     const newErrors = {
-      name: "",
-      email: "",
-      subject: "",
-      phone: "",
-      message: "",
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      message: '',
     };
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First name is required";
+    }
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
     }
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Invalid email format";
-    }
-
-    if (!formData.subject.trim()) {
-      newErrors.subject = "Subject is required";
     }
 
     if (!formData.message.trim()) {
@@ -77,8 +80,21 @@ export const Contacts = () => {
       // Handle form submission here
       alert("Message sent successfully!");
     }
+    createMessage(formData);
+    setFormData({
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      message: '',
+    });
   };
-
+const handlePhoneChange = (value: string | undefined) => {
+  setFormData({
+    ...formData,
+    phone_number: value || "",
+  });
+};
   // Format time
 
   const formatTime = (time: string) => {
@@ -218,27 +234,54 @@ export const Contacts = () => {
               </h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name */}
-                <div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+
                   <label
                     htmlFor="name"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Name
+                    First Name
                   </label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
+                    id="first_name"
+                    name="first_name"
+                    value={formData.first_name}
                     onChange={handleChange}
                     placeholder="Your Name"
                     className={`w-full px-4 py-3 border ${
-                      errors.name ? "border-red-500" : "border-gray-300"
+                      errors.first_name ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
                   />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+                  {errors.first_name && (
+                    <p className="mt-1 text-sm text-red-500">{errors.first_name}</p>
                   )}
+                  </div>
+
+                         <div>
+
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    placeholder="Your Name"
+                    className={`w-full px-4 py-3 border ${
+                      errors.last_name ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
+                  />
+                  {errors.last_name && (
+                    <p className="mt-1 text-sm text-red-500">{errors.last_name}</p>
+                  )}
+                  </div>
                 </div>
 
                 {/* Email */}
@@ -265,49 +308,24 @@ export const Contacts = () => {
                   )}
                 </div>
 
-                {/* Subject */}
-                <div>
-                  <label
-                    htmlFor="subject"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    placeholder="How can we help?"
-                    className={`w-full px-4 py-3 border ${
-                      errors.subject ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
-                  />
-                  {errors.subject && (
-                    <p className="mt-1 text-sm text-red-500">
-                      {errors.subject}
-                    </p>
-                  )}
-                </div>
-
                 {/* Phone */}
                 <div>
                   <label
-                    htmlFor="phone"
+                    htmlFor="phone_number"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
                     Phone Number
                   </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+250 788 123 456"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition"
+
+                   <PhoneInput
+                    placeholder="Enter phone number"
+                    defaultCountry="RW"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    className="w-full px-4 py-3 border rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-[#4A90E2] focus:outline-none focus:ring-1 focus:ring-[#4A90E2] md:px-4"
+                    onChange={handlePhoneChange}
                   />
+               
                 </div>
 
                 {/* Message */}
@@ -337,13 +355,13 @@ export const Contacts = () => {
                 </div>
 
                 {/* Submit Button */}
-                <button
+                {(isCreating)?<button disabled className="w-full bg-[#0f3d2e] hover:bg-[#0f3d2e68] text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center space-x-2">loading...</button>:<button
                   type="submit"
                   className="w-full bg-[#0f3d2e] hover:bg-[#0f3d2e68] text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center space-x-2"
                 >
                   <span>Send Message</span>
                   <Send className="w-5 h-5" />
-                </button>
+                </button>}
               </form>
             </div>
           </div>

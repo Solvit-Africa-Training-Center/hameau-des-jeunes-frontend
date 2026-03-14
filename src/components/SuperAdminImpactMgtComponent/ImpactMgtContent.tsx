@@ -139,6 +139,7 @@ export const ImpactMgtContent = () => {
 
   // Render
 
+  console.log(impactList);
   return (
     <>
       <section className="md:mx-8 mx-5 mt-8">
@@ -368,6 +369,7 @@ export const ImpactMgtContent = () => {
           </div>
         </div>
       )}
+      
     </>
   );
 };
