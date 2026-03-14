@@ -8,8 +8,7 @@
 
 // Get base URL from environment, with fallback for development
 const baseUrl =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://tricky-cyb-matabar-576778bf.koyeb.app/api";
+  import.meta.env.VITE_API_BASE_URL ;
 
 export const API_CONFIG = {
   // Base URL for all API requests (from .env file)

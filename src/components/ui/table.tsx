@@ -65,14 +65,17 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
-    <th
-      data-slot="table-head"
-      className={cn(
-        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-        className
-      )}
-      {...props}
-    />
+<th
+  data-slot="table-head"
+  className={cn(
+    "h-12 px-4 py-3 text-left align-middle font-semibold text-sm uppercase tracking-wide",
+    "text-gray-700 bg-gray-50 border-b border-gray-200",
+    "whitespace-nowrap",
+    "[&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+    className
+  )}
+  {...props}
+/>
   )
 }
 
