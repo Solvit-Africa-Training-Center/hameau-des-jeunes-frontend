@@ -1,5 +1,5 @@
 import { useGetTeamQuery } from "@/store/api/teamApi";
-import React from "react";
+import React, { useState } from "react";
 
 interface TeamMemberProps {
   image: string;
@@ -8,12 +8,7 @@ interface TeamMemberProps {
   linkedIn: string;
 }
 
-const TeamMember: React.FC<TeamMemberProps> = ({
-  image,
-  name,
-  role,
-  linkedIn,
-}) => {
+const TeamMember: React.FC<TeamMemberProps> = ({ image, name, role }) => {
   return (
     <div className="flex flex-col items-center text-center">
       <div className="mb-3 h-40 w-40 overflow-hidden rounded-2xl sm:h-44 sm:w-44 md:mb-4 md:h-48 md:w-48">
@@ -28,12 +23,6 @@ const TeamMember: React.FC<TeamMemberProps> = ({
       </h3>
 
       <p className="text-xs text-gray-600 sm:text-base">{role}</p>
-      <a
-        href={linkedIn}
-        className="text-sm text-blue-400 sm:text-sm hover:font-semibold"
-      >
-        LinkedIn profile
-      </a>
     </div>
   );
 };
@@ -48,6 +37,11 @@ const TeamMemberSkeleton = () => (
 
 export const MeetOurTeam: React.FC = () => {
   const { data: teamMembers = [], isLoading } = useGetTeamQuery();
+  const [page, setPage] = useState(0);
+
+  const PAGE_SIZE = 8;
+  const totalPages = Math.ceil(teamMembers.length / PAGE_SIZE);
+  const paginated = teamMembers.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <section className="bg-gray-100 py-12 md:py-8 lg:py-24">
@@ -63,10 +57,10 @@ export const MeetOurTeam: React.FC = () => {
         </div>
         <div className="mb-8 grid gap-6 sm:grid-cols-2 md:mb-12 md:gap-8 lg:grid-cols-4">
           {isLoading
-            ? Array.from({ length: 4 }).map((_, i) => (
+            ? Array.from({ length: PAGE_SIZE }).map((_, i) => (
                 <TeamMemberSkeleton key={i} />
               ))
-            : teamMembers.map((member) => (
+            : paginated.map((member) => (
                 <TeamMember
                   key={member.id}
                   image={member.image}
@@ -76,11 +70,29 @@ export const MeetOurTeam: React.FC = () => {
                 />
               ))}
         </div>
-        <div className="text-center">
-          <button className="rounded-md border-2 border-gray-900 bg-transparent px-6 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:px-8 sm:py-3 sm:text-base">
-            View All
-          </button>
-        </div>
+
+        {/* Pagination */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => setPage((p) => p - 1)}
+              disabled={page === 0}
+              className="rounded-md border-2 border-gray-900 bg-transparent px-6 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:px-8 sm:py-3 sm:text-base disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-900"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-gray-600">
+              {page + 1} / {totalPages}
+            </span>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page >= totalPages - 1}
+              className="rounded-md border-2 border-gray-900 bg-transparent px-6 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:px-8 sm:py-3 sm:text-base disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-900"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,7 +1,6 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   useCreateTeamMemberMutation,
   useDeleteTeamMemberMutation,
@@ -57,11 +56,16 @@ export const TeamMgtContent = () => {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [previewImageModal, setPreviewImageModal] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isBusy = isCreating || isUpdating;
 
   // Modal helpers
+
+  const closePreviewImageModal = () => {
+    setPreviewImageModal(false);
+  };
 
   const openCreate = () => {
     setForm(emptyForm);
@@ -176,7 +180,7 @@ export const TeamMgtContent = () => {
                 started.
               </p>
             ) : (
-              <div className="rounded-md border overflow-x-auto">
+              <div className="rounded-md border overflow-x-auto h-64 overflow-y-auto scroll-bar hide">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -297,7 +301,7 @@ export const TeamMgtContent = () => {
 
                   <Field>
                     <FieldLabel htmlFor="position">Position</FieldLabel>
-                    <Textarea
+                    <Input
                       id="position"
                       name="position"
                       placeholder="Enter the employee's position"
@@ -323,14 +327,17 @@ export const TeamMgtContent = () => {
                       Profile image
                       {mode === "edit" && " (leave blank to keep current)"}
                     </FieldLabel>
-                    {/* Preview */}
+
                     {imagePreview && (
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-16 h-16 rounded-full object-cover mb-2"
-                      />
+                      <button
+                        type="button"
+                        onClick={() => setPreviewImageModal(true)}
+                        className="text-sm text-blue-600 hover:underline mb-2 inline-block"
+                      >
+                        Preview image
+                      </button>
                     )}
+
                     <Input
                       id="profile_image"
                       name="profile_image"
@@ -340,6 +347,39 @@ export const TeamMgtContent = () => {
                       onChange={handleFileChange}
                     />
                   </Field>
+
+                  {/* Image Preview Popup */}
+                  {previewImageModal && imagePreview && (
+                    <div
+                      className="fixed inset-0 z-[60] flex items-center justify-center"
+                      onClick={closePreviewImageModal}
+                    >
+                      <div className="absolute inset-0 bg-black/60" />
+
+                      <div
+                        className="relative z-10 bg-white rounded-2xl p-4 shadow-2xl max-w-sm w-full mx-4"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-medium text-gray-700">
+                            Image Preview
+                          </span>
+                          <button
+                            onClick={closePreviewImageModal}
+                            className="p-1.5 rounded hover:bg-gray-100 text-gray-500 transition-colors"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
+
+                        <img
+                          src={imagePreview}
+                          alt="Profile preview"
+                          className="w-full h-96 object-cover rounded-xl"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </FieldGroup>
 
                 <div className="flex justify-end gap-3 mt-6">
@@ -352,7 +392,7 @@ export const TeamMgtContent = () => {
                         ? "Saving..."
                         : "Updating..."
                       : mode === "create"
-                        ? "SAve Member"
+                        ? "Save Member"
                         : "Update Member"}
                   </Button>
                 </div>
