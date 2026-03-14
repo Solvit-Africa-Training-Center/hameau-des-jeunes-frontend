@@ -8,15 +8,16 @@ import {
   TableRow,
 } from "../ui/table";
 import { MailOpen, Trash2, X } from "lucide-react";
-import { useGetMessageQuery ,useReadMessageMutation} from "@/store/api/message";
+import { useGetMessageQuery ,useReadMessageMutation,useDeleteMessageMutation} from "@/store/api/message";
 import {  useCreateReplyMessageMutation, type ReplyContactMessage} from "@/store/api/replyMessage";
 import { useState } from "react";
 
 
 
 export const MessagesMgtContent = () => {
-  const [createReplyMessage] = useCreateReplyMessageMutation();
+  const [createReplyMessage,{isLoading:isCreating}] = useCreateReplyMessageMutation();
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteMessage] = useDeleteMessageMutation();
   const [readMessage] = useReadMessageMutation();
 
   interface ContactMessage {
@@ -47,10 +48,13 @@ export const MessagesMgtContent = () => {
   ];
 
   const handleDelete = async (id: string) => {
-    // setDeletingId(id);
-    // await deleteImpact(id);
-    // toast.success("Impact record deleted.");
-    // setDeletingId(null);
+  deleteMessage(id);
+  setModalOpen(false);
+    setSelectedMessage(null);
+    setFormData({
+      reply: '',
+      contact_message: '',
+    });
   };
 
 
@@ -171,7 +175,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                             </button>
 
                             <button
-                              onClick={() => { }}
+                              onClick={() => handleDelete(record.id)}
                               className="p-1.5 rounded hover:bg-red-100 text-red-500 transition-colors disabled:opacity-40"
                               title="Delete"
                             >
@@ -287,19 +291,20 @@ const handleSubmit = async (e: React.FormEvent) => {
 
                 {/* Actions */}
                 <div className="flex justify-between">
-                  <button
-                    onClick={() => { }}
+                  {(isCreating)?<button disabled className="w-full bg-[#0f3d2e] hover:bg-[#0f3d2e68] text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center space-x-2">loading...</button>: <button
+                    onClick={() => handleDelete(selectedMessage!.id)}
                     className="text-red-500 hover:bg-red-50 px-3 py-2 rounded flex items-center gap-2"
                   >
                     <Trash2 size={16} />
                     Delete
                   </button>
+}
 
                   <div className="flex gap-3">
 
-                    <button type="submit">
+                    {(isCreating)?<button disabled className="w-full bg-[#0f3d2e] hover:bg-[#0f3d2e68] text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center space-x-2">loading...</button>:<button type="submit">
                       Reply
-                    </button>
+                    </button>}
                   </div>
                 </div>
                 </form>
