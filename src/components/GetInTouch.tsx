@@ -1,38 +1,51 @@
-import React, { useState } from 'react';
-import { Mail, Phone, Clock, MapPin } from 'lucide-react';
+import React, { useState } from "react";
+import { Mail, Phone, Clock, MapPin } from "lucide-react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { useCreateMessageMutation } from '../store/api/message';
-
+import { useCreateMessageMutation } from "../store/api/message";
+import {
+  useGetCompanyInfoQuery,
+  useGetWorkingDaysQuery,
+} from "@/store/api/companyInfoApi";
 
 export const GetInTouch: React.FC = () => {
-
   const [createMessage, { isLoading: isCreating }] = useCreateMessageMutation();
+  const { data: companyList = [] } = useGetCompanyInfoQuery();
+  const { data: workingDays = [] } = useGetWorkingDaysQuery();
+  const info = companyList[0] ?? null;
+
+  // Format time
+
+  const formatTime = (time: string) => {
+    if (!time) return "";
+    const [h, m] = time.split(":").map(Number);
+    const suffix = h >= 12 ? "PM" : "AM";
+    const hour = h % 12 || 12;
+    return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
+  };
 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone_number: '',
-    message: '',
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    message: "",
   });
-   const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    message: "",
+  });
+
+  const validateForm = () => {
+    const newErrors = {
       first_name: "",
       last_name: "",
       email: "",
       phone_number: "",
       message: "",
-    });
-  
-
-
-  const validateForm = () => {
-    const newErrors = {
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone_number: '',
-      message: '',
     };
 
     if (!formData.first_name.trim()) {
@@ -41,7 +54,7 @@ export const GetInTouch: React.FC = () => {
     if (!formData.last_name.trim()) {
       newErrors.last_name = "Last name is required";
     }
-     if (!formData.phone_number.trim()) {
+    if (!formData.phone_number.trim()) {
       newErrors.phone_number = "Phone number is required";
     }
 
@@ -69,13 +82,13 @@ export const GetInTouch: React.FC = () => {
 
     createMessage(formData);
     setFormData({
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone_number: '',
-      message: '',
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone_number: "",
+      message: "",
     });
-  };  
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -88,12 +101,12 @@ export const GetInTouch: React.FC = () => {
     });
   };
 
-const handlePhoneChange = (value: string | undefined) => {
-  setFormData({
-    ...formData,
-    phone_number: value || "",
-  });
-};
+  const handlePhoneChange = (value: string | undefined) => {
+    setFormData({
+      ...formData,
+      phone_number: value || "",
+    });
+  };
   return (
     <section className="bg-white py-12 md:py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -232,10 +245,10 @@ const handlePhoneChange = (value: string | undefined) => {
                     } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
                   />
                   {errors.first_name && (
-                    <p className="mt-1 text-sm text-red-500">{errors.first_name}</p>
-                  )}                    
-                  
-                  
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.first_name}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -256,10 +269,10 @@ const handlePhoneChange = (value: string | undefined) => {
                     } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
                   />
                   {errors.last_name && (
-                    <p className="mt-1 text-sm text-red-500">{errors.last_name}</p>
-                  )}                   
-                    
-                  
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.last_name}
+                    </p>
+                  )}
                 </div>
               </div>
               <div>
@@ -277,13 +290,12 @@ const handlePhoneChange = (value: string | undefined) => {
                   value={formData.email}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 border ${
-                      errors.email ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
-                  />
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                  )}                    
-                
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
               <div>
                 <label
@@ -317,25 +329,27 @@ const handlePhoneChange = (value: string | undefined) => {
                   placeholder="Leave us a message..."
                   rows={5}
                   className={`w-full px-4 py-3 border ${
-                      errors.message ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
-                  />
-                  {errors.message && (
-                    <p className="mt-1 text-sm text-red-500">{errors.message}</p>
-                  )}                    
-                  
-                
+                    errors.message ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition`}
+                />
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                )}
               </div>
-              {(isCreating)? <button
-              disabled
-              value="Sending..."
-                className="w-full rounded-md bg-[#1B4332] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#15362a] sm:px-8 sm:py-3 sm:text-base"
-              ></button>:<button
-                type="submit"
-                className="w-full rounded-md bg-[#1B4332] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#15362a] sm:px-8 sm:py-3 sm:text-base"
-              >
-                Send Message
-              </button>}
+              {isCreating ? (
+                <button
+                  disabled
+                  value="Sending..."
+                  className="w-full rounded-md bg-[#1B4332] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#15362a] sm:px-8 sm:py-3 sm:text-base"
+                ></button>
+              ) : (
+                <button
+                  type="submit"
+                  className="w-full rounded-md bg-[#1B4332] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#15362a] sm:px-8 sm:py-3 sm:text-base"
+                >
+                  Send Message
+                </button>
+              )}
             </form>
           </div>
         </div>
