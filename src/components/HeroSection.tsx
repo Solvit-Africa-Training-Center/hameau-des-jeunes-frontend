@@ -2,11 +2,13 @@ import hero_image_1 from "@/assets/rwanda_2006/DSC_7109.jpg";
 import hero_image_2 from "@/assets/rwanda_2006/DSC_6896.jpg";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const heroImages = [hero_image_1, hero_image_2];
 
 export const HeroSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,11 +75,15 @@ export const HeroSection = () => {
         gap-4
       "
             >
-              <Button className="w-auto sm:w-auto text-white bg-button-yellow hover:bg-amber-500">
+              <Button
+                onClick={() => navigate("/donate")}
+                className="w-auto sm:w-auto text-white bg-button-yellow hover:bg-amber-500"
+              >
                 Give a Child a Future
               </Button>
 
               <Button
+                onClick={() => navigate("/about")}
                 variant="outline"
                 className="
           w-auto 

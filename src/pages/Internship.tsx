@@ -5,10 +5,13 @@ import { useState } from "react";
 import Interns from "../assets/IIImage.jpg";
 import { FiMail } from "react-icons/fi";
 import { FaPhoneAlt } from "react-icons/fa";
+import { useGetCompanyInfoQuery } from "@/store/api/companyInfoApi";
 
 function Internship() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPrograms, setSelectedPrograms] = useState<string[]>([]);
+  const { data: companyList = [] } = useGetCompanyInfoQuery();
+  const info = companyList[0] ?? null;
 
   const supportWays = [
     {
@@ -71,7 +74,7 @@ function Internship() {
             <p className="text-xl max-w-2xl mx-auto">
               Gain valuable hands-on experience in community development,
               education, and social work. Our internship program offers
-              meaningful learning opportunities in a supportive environmentT
+              meaningful learning opportunities in a supportive environment
             </p>
           </div>
         </section>
@@ -111,13 +114,17 @@ function Internship() {
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-sm sm:text-base">
                 <div className="flex items-center gap-2">
-                  <span className="text-yellow-400"><FaPhoneAlt size={20} /></span>
-                  <span>+250 (788) 436 189</span>
+                  <span className="text-yellow-400">
+                    <FaPhoneAlt size={20} />
+                  </span>
+                  <span>{info?.company_phone}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-yellow-400 "><FiMail size={20} /></span>
-                  <span>hameau_kizito@yahoo.com</span>
+                  <span className="text-yellow-400 ">
+                    <FiMail size={20} />
+                  </span>
+                  <span>{info?.company_email}</span>
                 </div>
               </div>
             </div>

@@ -25,6 +25,9 @@ import { SuperAdminTeamMgt } from "@/pages/DashboardPages/SuperAdminTeamMgt";
 import { SuperAdminCompanyContactMgt } from "@/pages/DashboardPages/SuperAdminCompanyContactMgt";
 import { SuperAdminMessageMgt } from "@/pages/DashboardPages/SuperAdminMessageMgt";
 import { SuperAdminGalleryMgt } from "@/pages/DashboardPages/SuperAdminGalleryMgt";
+import { SuperAdminAboutMgt } from "@/pages/DashboardPages/SuperAdminAboutMgt";
+import { SuperAdminProgramsOutcomesMgt } from "@/pages/DashboardPages/SuperAdminProgramsOutcomesMgt";
+import { SuperAdminOurValuesMgt } from "@/pages/DashboardPages/SuperAdminOurValuesMgt";
 
 export const systemAdminRoutes = [
   <Route
@@ -184,6 +187,36 @@ export const systemAdminRoutes = [
     element={
       <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
         <SuperAdminMessageMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="about"
+    path="/aboutHameau"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminAboutMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="programsOutcome"
+    path="/programsOutcome"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminProgramsOutcomesMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+  <Route
+    key="ourValues"
+    path="/ourValues"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminOurValuesMgt />
       </ProtectedRoute>
     }
   />,

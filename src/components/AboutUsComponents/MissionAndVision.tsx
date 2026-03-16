@@ -1,8 +1,12 @@
+import { useGetAboutUsQuery } from "@/store/api/aboutUsApi";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { FaBullseye } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 
 export const MissionAndVision = () => {
+  const { data } = useGetAboutUsQuery();
+  const about = data?.results?.[0];
+
   return (
     <section>
       <div className="flex items-center justify-center gap-5 px-7 md:grid-cols-1 py-10 sm:px-7 sm:gap-10">
@@ -13,9 +17,7 @@ export const MissionAndVision = () => {
           <CardHeader>
             <CardTitle className="font-bold text-white">Our Mission</CardTitle>
             <CardDescription className="text-sm font-light text-white text-justify">
-              To provide a safe, nurturing environment for vulnerable children
-              while strengthening families and communities to ensure every child
-              can reach their full potential.
+              {about?.our_mission}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -27,9 +29,7 @@ export const MissionAndVision = () => {
           <CardHeader>
             <CardTitle className="font-bold text-white ">Our Mission</CardTitle>
             <CardDescription className="text-sm font-light text-white text-justify">
-              To provide a safe, nurturing environment for vulnerable children
-              while strengthening families and communities to ensure every child
-              can reach their full potential.
+              {about?.our_vision}
             </CardDescription>
           </CardHeader>
         </Card>

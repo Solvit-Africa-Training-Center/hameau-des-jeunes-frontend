@@ -59,22 +59,7 @@ function Gallery() {
                   Photos Captured
                 </p>
               </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-[#0f3d2e] mb-2">
-                  21
-                </div>
-                <p className="text-gray-600 text-sm md:text-base">
-                  Years Documented
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-[#0f3d2e] mb-2">
-                  1000
-                </div>
-                <p className="text-gray-600 text-sm md:text-base">
-                  Lives Captured
-                </p>
-              </div>
+
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-[#0f3d2e] mb-2">
                   {categories.length}+

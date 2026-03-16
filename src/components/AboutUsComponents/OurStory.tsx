@@ -1,6 +1,11 @@
-import ourStoryImage from "@/assets/photo_story.png";
+import { useGetAboutUsQuery } from "@/store/api/aboutUsApi";
+import { useGetWhoWeAreQuery } from "@/store/api/whoWeAreApi";
 
 export const OurStory = () => {
+  const { data: whoWeAre } = useGetWhoWeAreQuery();
+  const { data } = useGetAboutUsQuery();
+  const about = data?.results?.[0];
+
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-[#FAFAFA] px-6 md:px-16 lg:px-30 py-16">
       <div>
@@ -15,26 +20,18 @@ export const OurStory = () => {
           Who We Are
         </h1>
 
-        <p className="mb-10 text-sm md:text-base leading-relaxed text-justify">
-          <span className="font-bold">Hameau des Jeunes Saint Kizito </span>
-          is a youth village with a history deeply rooted in caring for Rwanda’s
-          most vulnerable children. We provide residential care, education, and
-          hands-on vocational training, and we partner with families and
-          communities to create lasting pathways to self-reliance. Today, we
-          house 70 children, have served 2,000+ children over the decades, and
-          run 7 core programs that combine care, learning, and livelihood.
-        </p>
+        {whoWeAre?.map((whoweare) => (
+          <p className="mb-10 text-sm md:text-base leading-relaxed text-justify">
+            {whoweare.description}
+          </p>
+        ))}
 
         <h1 className="font-bold text-3xl md:text-5xl mb-5 text-[#0F3D2E]">
           Our Story
         </h1>
 
         <p className="text-sm md:text-base leading-relaxed text-justify">
-          Founded more than five decades ago by Father Hermann, what began as
-          informal street outreach and skill-teaching grew into a safe haven for
-          children who had nowhere else to go. With early support from friends
-          in Europe, the project became a youth village offering food, shelter,
-          and schooling, and most importantly, purpose in life.
+          {about?.our_story}
         </p>
       </div>
 
@@ -42,7 +39,7 @@ export const OurStory = () => {
         <div className="hidden md:block absolute -left-2.5 top-[5%]  h-[90%] w-[10px] bg-button-yellow rounded-bl-3xl rounded-tl-3xl" />
 
         <img
-          src={ourStoryImage}
+          src={about?.banner_image}
           alt="our_story_image"
           className="w-full object-cover rounded-2xl"
         />
