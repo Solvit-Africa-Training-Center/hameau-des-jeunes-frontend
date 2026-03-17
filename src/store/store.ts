@@ -14,6 +14,7 @@ import { galleryApi } from "./api/galleryApi";
 import { messageApi } from "./api/message";
 import { replyMessageApi } from "./api/replyMessage";
 import { aboutUsApi } from "./api/aboutUsApi";
+import { whatWeDoApi } from "./api/whatWeDoApi";
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ export const store = configureStore({
     [messageApi.reducerPath]: messageApi.reducer,
     [replyMessageApi.reducerPath]: replyMessageApi.reducer,
     [aboutUsApi.reducerPath]: aboutUsApi.reducer,
+    [whatWeDoApi.reducerPath]: whatWeDoApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -50,6 +52,7 @@ export const store = configureStore({
       messageApi.middleware,
       replyMessageApi.middleware,
       aboutUsApi.middleware,
+      whatWeDoApi.middleware,
     ),
 });
 
