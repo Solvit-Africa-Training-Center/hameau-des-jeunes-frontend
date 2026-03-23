@@ -13,12 +13,11 @@ import {
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import impact from "../assets/impact.png";
-import kid from "../assets/kid.jpg";
-import family from "../assets/family.jpg";
-import EmmanuelTeam from "../assets/EmmanuelTeam.jpg";
 import { useGetCompanyImpactQuery } from "@/store/api/companyImpact";
+import { useGetSuccessStoriesQuery } from "@/store/api/successStoryApi";
 
 const OurImpact = () => {
+  const { data: successStories = [], isLoading: isLoadingSuccessStories } = useGetSuccessStoriesQuery();
   const { data: impactList = [], isLoading } = useGetCompanyImpactQuery();
   const d = impactList[0];
 
@@ -70,30 +69,6 @@ const OurImpact = () => {
       description: "Successful family reintegration",
       bgColor: "bg-yellow-500",
       iconColor: "text-white",
-    },
-  ];
-
-  const stories = [
-    {
-      image: kid,
-      title: "Maria's Journey",
-      content:
-        "Maria came to us with a desire to learn new skills and provide for her family. Through our vocational training program, she gained expertise in tailoring and small business management. Today, Maria runs her own successful tailoring business, employing three other women from her community. Her story exemplifies the transformative power of education and opportunity.",
-      reverse: false,
-    },
-    {
-      image: family,
-      title: "John's Family Reunited",
-      content:
-        "After facing difficult circumstances, John's family was struggling to stay together. Our family support program provided counseling, financial literacy training, and resources that helped them rebuild. John now has stable employment and his children are thriving in school. The family's resilience and determination, combined with the right support, made all the difference.",
-      reverse: true,
-    },
-    {
-      image: EmmanuelTeam,
-      title: "Emmanuel's Enterprise",
-      content:
-        "Emmanuel participated in our entrepreneurship program with just an idea and determination. With mentorship, training, and a small seed grant, he launched a sustainable agriculture business that now serves his entire village. His enterprise not only provides for his family but also creates employment opportunities and improves food security in his community.",
-      reverse: false,
     },
   ];
 
@@ -212,11 +187,20 @@ const OurImpact = () => {
               </h2>
               <p className="text-gray-600">Real people, real transformations</p>
             </div>
-
-            {stories.map((story, index) => (
+{isLoadingSuccessStories ? (
+            <div className="p-8 text-center text-sm text-gray-500">
+              Loading testimonials...
+            </div>
+          ) : !successStories?.length ? (
+            <div className="p-8 text-center text-sm text-gray-500">
+              No testimonials yet. Add one to get started.
+            </div>
+          ) : 
+          <div>
+            {successStories.map((story, index) => (
               <div
                 key={index}
-                className={`flex flex-col ${story.reverse ? "md:flex-row-reverse" : "md:flex-row"} gap-8 items-center mb-16`}
+                className={`flex flex-col ${index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"} gap-8 items-center mb-16`}
               >
                 <div className="md:w-1/2">
                   <img
@@ -228,18 +212,21 @@ const OurImpact = () => {
                 <div className="md:w-1/2">
                   <h3 className="text-2xl font-bold mb-4">{story.title}</h3>
                   <p className="text-gray-700 leading-relaxed">
-                    {story.content}
+                    {story.description}
                   </p>
                 </div>
               </div>
             ))}
+            </div>
+}
 
             <div className="text-center mt-12">
-              <button className="px-8 py-3 border-2 inline-flex items-center gap-2  border-teal-700 text-teal-700 font-semibold rounded hover:bg-teal-700 hover:text-white transition-colors">
+              <a href="/success-stories" className="px-8 py-3 border-2 inline-flex items-center gap-2  border-teal-700 text-teal-700 font-semibold rounded hover:bg-teal-700 hover:text-white transition-colors">
                 View More <ArrowUpRight size={19} />
-              </button>
+              </a>
             </div>
           </div>
+          
         </section>
 
         {/* Program Outcomes */}

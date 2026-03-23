@@ -13,6 +13,7 @@ import { companyInfoApi } from "./api/companyInfoApi";
 import { galleryApi } from "./api/galleryApi";
 import { messageApi } from "./api/message";
 import { replyMessageApi } from "./api/replyMessage";
+import { successStoryApi } from "./api/successStoryApi";
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +31,7 @@ export const store = configureStore({
     [galleryApi.reducerPath]: galleryApi.reducer,
     [messageApi.reducerPath]: messageApi.reducer,
     [replyMessageApi.reducerPath]: replyMessageApi.reducer,
+    [successStoryApi.reducerPath]: successStoryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -47,6 +49,7 @@ export const store = configureStore({
       galleryApi.middleware,
       messageApi.middleware,
       replyMessageApi.middleware,
+      successStoryApi.middleware,
     ),
 });
 

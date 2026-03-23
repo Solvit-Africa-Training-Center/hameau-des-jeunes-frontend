@@ -16,6 +16,7 @@ import { IoMdPhotos } from 'react-icons/io';
 import { GiProgression } from "react-icons/gi";
 import { MdMessage } from 'react-icons/md';
 import { FaRocket } from 'react-icons/fa';
+import { FaHeart } from 'react-icons/fa';
 import { IoSettingsOutline } from "react-icons/io5";
 import { UserMenu } from "../UserMenu";
 import { useState } from "react";
@@ -31,6 +32,7 @@ const sidebarItems = [
   { icon: FaUsers, label: "We're", href: "/weAre" },
   { icon: FaLightbulb, label: "Our Work", href: "/whatWeDo" },
   { icon: FaQuoteLeft, label: "Testimonials", href: "/testimonials" },
+  { icon: FaHeart, label: "Success Stories", href: "/successStories" },
   { icon: IoMdPhotos, label: "Our Gallery", href: "/ourGallery" },
   { icon: FaUsers, label: "Team", href: "/team" },
   { icon: MdContactPage, label: "Company Contact", href: "/companyContact" },

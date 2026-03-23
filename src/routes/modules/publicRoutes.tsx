@@ -16,6 +16,7 @@ import NotFound from "@/pages/NotFound";
 import OurImpact from "@/pages/OurImpact";
 import { Programs } from "@/pages/Programs";
 import { ResidentialCare } from "@/pages/ResidentialCare";
+import SuccessStories from "@/pages/SuccessStory";
 
 export const publicRoutes = [
   <Route key="home" path="/" element={<Home />} />,
@@ -33,6 +34,7 @@ export const publicRoutes = [
   />,
   <Route key="internships" path="/internships" element={<Internship />} />,
   <Route key="our-impact" path="/ourImpact" element={<OurImpact />} />,
+  <Route key="success-stories" path="/success-stories" element={<SuccessStories />} />,
   <Route key="donate" path="/donate" element={<Donate />} />,
   <Route key="gallery" path="/gallery" element={<Gallery />} />,
   <Route key="contacts" path="/contacts" element={<Contacts />} />,

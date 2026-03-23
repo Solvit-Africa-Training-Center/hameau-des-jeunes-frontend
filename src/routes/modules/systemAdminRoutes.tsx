@@ -25,6 +25,7 @@ import { SuperAdminTeamMgt } from "@/pages/DashboardPages/SuperAdminTeamMgt";
 import { SuperAdminCompanyContactMgt } from "@/pages/DashboardPages/SuperAdminCompanyContactMgt";
 import { SuperAdminMessageMgt } from "@/pages/DashboardPages/SuperAdminMessageMgt";
 import { SuperAdminGalleryMgt } from "@/pages/DashboardPages/SuperAdminGalleryMgt";
+import { SuperAdminSuccessStories } from "@/pages/DashboardPages/SuperAdminSuccessStories";
 
 export const systemAdminRoutes = [
   <Route
@@ -154,6 +155,16 @@ export const systemAdminRoutes = [
     element={
       <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
         <SuperAdminTestimonialsMgt />
+      </ProtectedRoute>
+    }
+  />,
+
+    <Route
+    key="successStories"
+    path="/successStories"
+    element={
+      <ProtectedRoute allowedRoles={["SYSTEM_ADMIN"]}>
+        <SuperAdminSuccessStories />
       </ProtectedRoute>
     }
   />,
