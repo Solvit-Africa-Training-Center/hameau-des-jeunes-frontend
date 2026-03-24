@@ -15,6 +15,7 @@ import { messageApi } from "./api/message";
 import { replyMessageApi } from "./api/replyMessage";
 import { aboutUsApi } from "./api/aboutUsApi";
 import { whatWeDoApi } from "./api/whatWeDoApi";
+import { successStoryApi } from "./api/successStoryApi";
 import { outcomesApi } from "./api/outcomesApi";
 
 export const store = configureStore({
@@ -35,6 +36,7 @@ export const store = configureStore({
     [replyMessageApi.reducerPath]: replyMessageApi.reducer,
     [aboutUsApi.reducerPath]: aboutUsApi.reducer,
     [whatWeDoApi.reducerPath]: whatWeDoApi.reducer,
+    [successStoryApi.reducerPath]: successStoryApi.reducer,
     [outcomesApi.reducerPath]: outcomesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -55,6 +57,7 @@ export const store = configureStore({
       replyMessageApi.middleware,
       aboutUsApi.middleware,
       whatWeDoApi.middleware,
+      successStoryApi.middleware,
       outcomesApi.middleware,
     ),
 });
