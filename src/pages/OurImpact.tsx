@@ -7,8 +7,6 @@ import {
   BookOpen,
   Heart,
   TrendingUp,
-  Target,
-  BarChart,
   ArrowUpRight,
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
@@ -17,9 +15,12 @@ import kid from "../assets/kid.jpg";
 import family from "../assets/family.jpg";
 import EmmanuelTeam from "../assets/EmmanuelTeam.jpg";
 import { useGetCompanyImpactQuery } from "@/store/api/companyImpact";
+import { useGetOutcomesQuery } from "@/store/api/outcomesApi";
 
 const OurImpact = () => {
   const { data: impactList = [], isLoading } = useGetCompanyImpactQuery();
+  const { data: outcomes = [], isLoading: outcomesLoading } =
+    useGetOutcomesQuery();
   const d = impactList[0];
 
   const stats = [
@@ -94,39 +95,6 @@ const OurImpact = () => {
       content:
         "Emmanuel participated in our entrepreneurship program with just an idea and determination. With mentorship, training, and a small seed grant, he launched a sustainable agriculture business that now serves his entire village. His enterprise not only provides for his family but also creates employment opportunities and improves food security in his community.",
       reverse: false,
-    },
-  ];
-
-  const outcomes = [
-    {
-      icon: <TrendingUp className="w-6 h-6 text-white" />,
-      title: "Education",
-      stats: [
-        "85% successful family reunification",
-        "200+ families provided with livelihood support",
-        "90% of reunified families remain stable",
-        "Average reintegration time: 18 months",
-      ],
-    },
-    {
-      icon: <BarChart className="w-6 h-6 text-white" />,
-      title: "TweseHamwe Program",
-      stats: [
-        "85% successful family reunification",
-        "200+ families provided with livelihood support",
-        "90% of reunified families remain stable",
-        "Average reintegration time: 18 months",
-      ],
-    },
-    {
-      icon: <Target className="w-6 h-6 text-white" />,
-      title: "Education",
-      stats: [
-        "85% successful family reunification",
-        "200+ families provided with livelihood support",
-        "90% of reunified families remain stable",
-        "Average reintegration time: 18 months",
-      ],
     },
   ];
 
@@ -256,25 +224,57 @@ const OurImpact = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {outcomes.map((outcome, index) => (
-                <div key={index} className="bg-white p-8 rounded-lg shadow-md">
-                  <div className="w-12 h-12 bg-teal-700 rounded-lg flex items-center justify-center mb-4">
-                    {outcome.icon}
+              {outcomesLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-white p-8 rounded-lg shadow-md animate-pulse"
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-gray-200 mb-4" />
+                    <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
+                    <div className="space-y-2">
+                      {Array.from({ length: 4 }).map((_, j) => (
+                        <div key={j} className="h-4 bg-gray-100 rounded" />
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold mb-4">{outcome.title}</h3>
-                  <ul className="space-y-2">
-                    {outcome.stats.map((stat, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-3 text-gray-600"
-                      >
-                        <span className="mt-2 h-2 w-2 rounded-full bg-[#1b67ff] "></span>
-                        <span className="leading-relaxed">{stat}</span>
-                      </li>
-                    ))}
-                  </ul>
+                ))
+              ) : outcomes.length === 0 ? (
+                <div className="col-span-3 text-center text-gray-400 text-sm py-12">
+                  No program outcomes available yet.
                 </div>
-              ))}
+              ) : (
+                outcomes.map((outcome, index) => (
+                  <div
+                    key={index}
+                    className="bg-white p-8 rounded-lg shadow-md"
+                  >
+                    <div className="w-12 h-12 bg-teal-700 rounded-lg flex items-center justify-center mb-4">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-4">{outcome.title}</h3>
+                    {outcome.descriptions && outcome.descriptions.length > 0 ? (
+                      <ul className="space-y-2">
+                        {outcome.descriptions.map((desc) => (
+                          <li
+                            key={desc.id}
+                            className="flex items-start gap-3 text-gray-600"
+                          >
+                            <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#1b67ff]"></span>
+                            <span className="leading-relaxed">
+                              {desc.description}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-400">
+                        No descriptions added yet.
+                      </p>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </section>
